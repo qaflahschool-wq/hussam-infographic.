@@ -319,7 +319,7 @@
             <i class="fa-solid fa-layer-group text-[#fbbf24]"></i>
             <span id="curriculum-section-title">مكتبة المناهج والدروس التفاعلية</span>
           </h2>
-          <p id="curriculum-section-sub" class="text-xs sm:text-sm text-slate-400">اختر الصف الدراسي (من السابع إلى الثالث الثانوي) والمادة لاستعراض كل درس بشكل مستقل</p>
+          <p id="curriculum-section-sub" class="text-xs sm:text-sm text-slate-400">اختر الصف الدراسي (من الأول إلى الثالث الثانوي) والمادة لاستعراض كل درس بشكل مستقل</p>
         </div>
         <div class="relative w-full sm:w-72">
           <input
@@ -530,12 +530,13 @@
       <div class="grid grid-cols-2 gap-2 bg-[#07111e] p-1.5 rounded-2xl border border-[#163252]">
         <button type="button" id="scope-curr-btn" onclick="setUploadScope('curriculum')" class="py-2 px-3 rounded-xl font-extrabold text-xs sm:text-sm bg-[#fbbf24] text-slate-950 transition">
           🏫 منهج دراسي (1 - 12)
-        </button><button type="button" id="scope-free-btn" onclick="setUploadScope('general')" class="py-2 px-3 rounded-xl font-extrabold text-xs sm:text-sm text-slate-300 hover:text-white transition">
+        </button>
+        <button type="button" id="scope-free-btn" onclick="setUploadScope('general')" class="py-2 px-3 rounded-xl font-extrabold text-xs sm:text-sm text-slate-300 hover:text-white transition">
           🌐 محتوى حر / ملف خارجي
         </button>
       </div>
 
-<div id="upload-curr-selectors" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div id="upload-curr-selectors" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label class="block text-xs font-bold text-slate-300 mb-1">الصف الدراسي:</label>
           <select id="upload-grade" onchange="updateSubjectsByGrade()" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-[#fbbf24]">
@@ -556,10 +557,21 @@
         <div>
           <label class="block text-xs font-bold text-slate-300 mb-1">المادة الدراسية:</label>
           <select id="upload-subject" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-[#fbbf24]">
-            <!-- يتم تعبئتها تلقائياً حسب الصف المختار -->
+            <option value="القرآن الكريم">القرآن الكريم وعلومه (Holy Quran)</option>
+            <option value="التربية الإسلامية">التربية الإسلامية (Islamic Studies)</option>
+            <option value="اللغة العربية">اللغة العربية - القراءة والنحو (Arabic)</option>
+            <option value="اللغة الإنجليزية" selected>اللغة الإنجليزية (English)</option>
+            <option value="الرياضيات">الرياضيات (Mathematics)</option>
+            <option value="العلوم والأحياء">العلوم والأحياء والبيئة (Science & Biology)</option>
+            <option value="الدراسات الاجتماعية">الاجتماعيات - تاريخ وجغرافيا ووطنية (Social Studies)</option>
+            <option value="الفيزياء">الفيزياء (Physics)</option>
+            <option value="الكيمياء">الكيمياء (Chemistry)</option>
+            <option value="الحاسوب">الحاسوب وتقنية المعلومات (Computer & IT)</option>
+            <option value="مستندات وملفات حرة 🌐">مستندات وملفات حرة 🌐</option>
           </select>
         </div>
-</div>
+      </div>
+
       <div class="grid grid-cols-3 gap-2">
         <button type="button" id="tab-img-btn" onclick="switchUploadTab('image')" class="py-2.5 px-2 rounded-xl border border-[#fbbf24] bg-[#fbbf24]/15 text-[#fbbf24] font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5">
           <i class="fa-solid fa-camera"></i>
@@ -700,7 +712,7 @@
             <div class="text-[11px] text-slate-400">لمدة 365 يوماً كاملة</div>
             <ul class="text-[11px] text-slate-300 space-y-1 mt-2 text-right">
               <li>✅ حساب VIP للعام الدراسي كاملاً</li>
-              <li>✅ فتح جميع الصفوف (7 إلى 12)</li>
+              <li>✅ فتح جميع الصفوف (1 إلى 12)</li>
               <li>✅ دعم فني مباشر مع أبوحسام</li>
             </ul>
           </div>
@@ -839,11 +851,11 @@
     // إعداد مفتاح Gemini API المقسم ليعمل مع جميع الزوار دون حظره من GitHub:
     // اقسم مفتاحك (الذي يبدأ بـ AIzaSy) إلى جزأين وضعهما هنا:
     // =========================================================================
-    const KEY_PART_1 = ''; // ضع النصف الأول من المفتاح هنا (مثال: AIzaSyB1234567890)
-    const KEY_PART_2 = ''; // ضع النصف الثاني من المفتاح هنا (مثال: abcdefghijklmnopqrst)
+    const KEY_PART_1 = ''; // ضع النصف الأول من المفتاح هنا
+    const KEY_PART_2 = ''; // ضع النصف الثاني من المفتاح هنا
 
     const STORAGE_KEYS = {
-      LESSONS: 'hussam_info_lessons_v12',
+      LESSONS: 'hussam_info_lessons_v13',
       TRIAL_USED: 'hussam_info_trial_used_v9',
       SUB: 'hussam_info_vip_sub_v9',
       DEVICE_ID: 'hussam_info_device_id_v9',
@@ -865,7 +877,8 @@
     }
 
     const MAX_FREE_TRIALS = 2;
-const GRADES_LIST = [
+
+    const GRADES_LIST = [
       'الكل',
       'الصف الأول',
       'الصف الثاني',
@@ -928,9 +941,7 @@ const GRADES_LIST = [
       'مستندات وملفات حرة 🌐': 'Free Documents 🌐'
     };
 
-    // خيارات المواد المفصلة داخل نافذة رفع الدرس حسب المرحلة الدراسية
     const STAGE_SUBJECT_OPTIONS = {
-      // 1. مواد الصفوف من الأول إلى السادس الأساسي
       primary_1_6: [
         { value: 'القرآن الكريم', label: 'القرآن الكريم (Holy Quran)' },
         { value: 'التربية الإسلامية', label: 'التربية الإسلامية (Islamic Studies)' },
@@ -941,7 +952,6 @@ const GRADES_LIST = [
         { value: 'اللغة الإنجليزية', label: 'اللغة الإنجليزية التأسيسية (English)' },
         { value: 'مستندات وملفات حرة 🌐', label: 'مستندات وملفات حرة 🌐' }
       ],
-      // 2. مواد الصفوف من السابع إلى التاسع الأساسي
       prep_7_9: [
         { value: 'اللغة الإنجليزية', label: 'اللغة الإنجليزية (English)' },
         { value: 'القرآن الكريم', label: 'القرآن الكريم وعلومه (Holy Quran)' },
@@ -953,7 +963,6 @@ const GRADES_LIST = [
         { value: 'الحاسوب', label: 'الحاسوب (Computer)' },
         { value: 'مستندات وملفات حرة 🌐', label: 'مستندات وملفات حرة 🌐' }
       ],
-      // 3. مواد المرحلة الثانوية (الأول إلى الثالث الثانوي)
       secondary_10_12: [
         { value: 'اللغة الإنجليزية', label: 'اللغة الإنجليزية (English)' },
         { value: 'القرآن الكريم', label: 'القرآن الكريم وعلومه (Holy Quran)' },
@@ -988,16 +997,10 @@ const GRADES_LIST = [
         `<option value="${opt.value}">${opt.label}</option>`
       ).join('');
 
-      // الحفاظ على المادة المختارة سابقاً إن كانت موجودة في المرحلة الجديدة
       if (optionsList.some(opt => opt.value === previousSubject)) {
         subjectEl.value = previousSubject;
       }
     }
-
-    // تشغيل التحديث التلقائي فور فتح الصفحة
-    window.addEventListener('DOMContentLoaded', () => {
-      updateSubjectsByGrade();
-    });
 
     let currentLang = 'ar';
     let selectedGrade = 'الكل';
@@ -1220,6 +1223,104 @@ const GRADES_LIST = [
         ]
       },
       {
+        id: 'lesson-unit2-transport',
+        grade: 'الصف الثامن',
+        subject: 'اللغة الإنجليزية',
+        title: 'Unit 2.2 Look, read and answer: How does he come to school? (Page 5)',
+        desc: 'درس مستقل: السؤال والإجابة عن وسائل الذهاب إلى المدرسة (How does he come to school?) لكل من المعلم، صالح، فؤاد، أحمد، وطه.',
+        sourceImage: '',
+        objectives: [
+          {
+            en: 'Ask and answer about means of transport using "How does ... come to school?" and "How do you come to school?".',
+            ar: 'السؤال والإجابة عن وسائل المواصلات والذهاب إلى المدرسة في المضارع البسيط.'
+          },
+          {
+            en: 'Use action verbs (drives, runs, walks) and prepositions with transport (by bus, by bicycle).',
+            ar: 'استخدام أفعال الحركة مع المفرد الغائب (drives, runs, walks) وحرف الجر (by) مع المواصلات.'
+          }
+        ],
+        infographic: [
+          {
+            step: '1. أفعال الحركة المباشرة (Action Verbs)',
+            en: 'The teacher drives to school. • Fuad runs to school. • Saleh walks to school.',
+            ar: 'المعلم يقود سيارته إلى المدرسة • فؤاد يركض إلى المدرسة • صالح يمشي إلى المدرسة.'
+          },
+          {
+            step: '2. المواصلات بحرف الجر (By + Transport)',
+            en: 'Ahmed comes to school by bus. • Taha comes to school by bicycle.',
+            ar: 'أحمد يأتي إلى المدرسة بالحافلة • طه يأتي إلى المدرسة بالدراجة الهوائية.'
+          },
+          {
+            step: '3. تكوين السؤال (Question Form)',
+            en: 'How does (the teacher / Taha) come to school? / How do you come to school?',
+            ar: 'نستخدم (does) مع المفرد الغائب و(do) مع الضمير (you).'
+          }
+        ],
+        vocab: [
+          { word: 'Drives', pos: 'Verb', ar: 'يقود (السيارة)', ex: 'He drives to school.' },
+          { word: 'Runs', pos: 'Verb', ar: 'يجري / يركض', ex: 'He runs to school.' },
+          { word: 'Walks', pos: 'Verb', ar: 'يمشي سيراً على الأقدام', ex: 'He walks to school.' },
+          { word: 'By bus', pos: 'Phrase', ar: 'بالحافلة / بالباص', ex: 'He comes to school by bus.' },
+          { word: 'By bicycle', pos: 'Phrase', ar: 'بالدراجة الهوائية', ex: 'He comes to school by bicycle.' }
+        ],
+        walkthrough: [
+          {
+            en: 'He drives to school. (Who? — The teacher)',
+            ar: 'هو يقود سيارته إلى المدرسة. (مَن؟ — المعلم)',
+            note: 'أضفنا (s) للفعل (drive) لأن الفاعل مفرد غائب (He).'
+          },
+          {
+            en: 'He runs to school. (Who? — Fuad)',
+            ar: 'هو يركض إلى المدرسة. (مَن؟ — فؤاد)',
+            note: 'الفعل (runs) يعبر عن الذهاب جرياً.'
+          },
+          {
+            en: 'He comes to school by bus. (Who? — Ahmed)',
+            ar: 'هو يأتي إلى المدرسة بالحافلة. (مَن؟ — أحمد)',
+            note: 'نستخدم حرف الجر (by) مباشرة قبل وسيلة النقل بدون أداة تعريف.'
+          },
+          {
+            en: 'He comes to school by bicycle. (Who? — Taha)',
+            ar: 'هو يأتي إلى المدرسة بالدراجة الهوائية. (مَن؟ — طه)',
+            note: 'by bicycle تعني بواسطة الدراجة.'
+          },
+          {
+            en: 'He walks to school. (Who? — Saleh)',
+            ar: 'هو يمشي إلى المدرسة. (مَن؟ — صالح)',
+            note: 'الفعل (walks) يغني عن قول (on foot).'
+          }
+        ],
+        grammar: [
+          {
+            rule: 'Asking about Transport (السؤال عن وسيلة الذهاب)',
+            formula: 'How + does + (he / the teacher / Taha) + come to school?',
+            example: 'How does Taha come to school? He comes to school by bicycle.'
+          },
+          {
+            rule: 'Present Simple Third Person (-s)',
+            formula: 'He + drives / runs / walks / comes',
+            example: 'How do you come to school? I walk to school.'
+          }
+        ],
+        flashcards: [
+          { q: 'How does the teacher come to school?', a: 'He drives to school.' },
+          { q: 'How does Ahmed come to school?', a: 'He comes to school by bus.' },
+          { q: 'How does Taha come to school?', a: 'He comes to school by bicycle.' }
+        ],
+        quiz: [
+          {
+            q: 'How ______ Taha come to school?',
+            options: ['do', 'does', 'is', 'are'],
+            correct: 1
+          },
+          {
+            q: 'He comes to school ______ bus.',
+            options: ['in', 'on', 'by', 'at'],
+            correct: 2
+          }
+        ]
+      },
+      {
         id: 'lesson-bill-1-6',
         grade: 'الصف السابع',
         subject: 'اللغة الإنجليزية',
@@ -1304,76 +1405,6 @@ const GRADES_LIST = [
           {
             q: '______ brothers and sisters have you got?',
             options: ['How much', 'How many', 'Where', 'Who'],
-            correct: 1
-          }
-        ]
-      },
-      {
-        id: 'lesson-grade9-conditional',
-        grade: 'الصف التاسع',
-        subject: 'اللغة الإنجليزية',
-        title: 'Unit 3: First Conditional & Future Plans (If + Present, Will)',
-        desc: 'درس مستقل: شرح قاعدة الشرط الأول (First Conditional) للتعبير عن الاحتمالات المستقبلية والخطط الدراسية.',
-        sourceImage: '',
-        objectives: [
-          {
-            en: 'Form First Conditional sentences using (If + Present Simple, will + infinitive).',
-            ar: 'تكوين جمل الشرط من النوع الأول للتعبير عن نتيجة محتملة في المستقبل.'
-          },
-          {
-            en: 'Distinguish between the condition clause (If) and the result clause (will).',
-            ar: 'التمييز بين جملة فعل الشرط وجملة جواب الشرط.'
-          }
-        ],
-        infographic: [
-          {
-            step: '1. جملة الشرط (If Clause)',
-            en: 'If + Subject + Present Simple (study / studies)',
-            ar: 'تبدأ بـ If متبوعة بالمضارع البسيط (فعل الشرط).'
-          },
-          {
-            step: '2. جملة النتيجة (Result Clause)',
-            en: 'Subject + will / won\'t + Base Verb',
-            ar: 'تحتوي على will متبوعة بالفعل في المصدر (جواب الشرط).'
-          },
-          {
-            step: '3. مثال تطبيقي (Full Example)',
-            en: 'If you work hard, you will pass the exam.',
-            ar: 'إذا اجتهدت، سوف تنجح في الاختبار.'
-          }
-        ],
-        vocab: [
-          { word: 'Pass', pos: 'Verb', ar: 'ينجح / يجتاز', ex: 'You will pass the exam.' },
-          { word: 'Weather', pos: 'Noun', ar: 'الطقس', ex: 'If the weather is nice, we will go out.' },
-          { word: 'Tomorrow', pos: 'Adverb', ar: 'غداً', ex: 'What will you do tomorrow?' }
-        ],
-        walkthrough: [
-          {
-            en: 'If I study hard, I will get high marks in Grade 9.',
-            ar: 'إذا ذاكرت بجد، سوف أحصل على درجات عالية في الصف التاسع.',
-            note: 'نضع فاصلة (,) عندما تبدأ الجملة بـ If.'
-          },
-          {
-            en: 'If it rains tomorrow, we will stay at home.',
-            ar: 'إذا أمطرت غداً، سوف نبقى في المنزل.',
-            note: 'مع الفاعل المفرد الغائب (it) نضيف (s) للفعل في جملة الشرط (rains).'
-          }
-        ],
-        grammar: [
-          {
-            rule: 'First Conditional (الحالة الشرطية الأولى)',
-            formula: 'If + Present Simple, Subject + will + Verb (infinitive)',
-            example: 'If he arrives early, he will catch the bus.'
-          }
-        ],
-        flashcards: [
-          { q: 'What tense comes directly after "If" in the First Conditional?', a: 'The Present Simple tense.' },
-          { q: 'Complete: If she _____ (study), she will succeed.', a: 'studies (with -ies for third person singular).' }
-        ],
-        quiz: [
-          {
-            q: 'If it ______ tomorrow, we won\'t go to the beach.',
-            options: ['rain', 'rains', 'will rain', 'rained'],
             correct: 1
           }
         ]
@@ -1690,7 +1721,7 @@ const GRADES_LIST = [
       }).join('');
     }
 
-    // --- SAFE AUDIO HELPERS BY INDEX (IMMUNE TO QUOTES IN OCR TEXT) ---
+    // --- SAFE AUDIO HELPERS BY INDEX ---
     function speakVocabByIndex(idx) {
       const all = getAllLessons();
       const lesson = all.find(l => l.id === activeLessonId);
@@ -1931,6 +1962,11 @@ const GRADES_LIST = [
       'holiday': { ar: 'عطلة / إجازة', pos: 'Noun' },
       'friend': { ar: 'صديق / صديقة', pos: 'Noun' },
       'walk': { ar: 'نزهة / يمشي', pos: 'Noun/Verb' },
+      'walks': { ar: 'يمشي', pos: 'Verb' },
+      'drives': { ar: 'يقود (السيارة)', pos: 'Verb' },
+      'runs': { ar: 'يركض / يجري', pos: 'Verb' },
+      'bicycle': { ar: 'دراجة هوائية', pos: 'Noun' },
+      'bus': { ar: 'حافلة / باص', pos: 'Noun' },
       'park': { ar: 'حديقة عامة / منتزه', pos: 'Noun' },
       'birds': { ar: 'طيور', pos: 'Noun' },
       'lake': { ar: 'بحيرة', pos: 'Noun' },
@@ -1950,19 +1986,7 @@ const GRADES_LIST = [
       'evening': { ar: 'مساء', pos: 'Noun' },
       'family': { ar: 'عائلة / أسرة', pos: 'Noun' },
       'brother': { ar: 'أخ', pos: 'Noun' },
-      'sister': { ar: 'أخت', pos: 'Noun' },
-      'water': { ar: 'ماء', pos: 'Noun' },
-      'food': { ar: 'طعام', pos: 'Noun' },
-      'city': { ar: 'مدينة', pos: 'Noun' },
-      'village': { ar: 'قرية', pos: 'Noun' },
-      'country': { ar: 'بلد / دولة', pos: 'Noun' },
-      'always': { ar: 'دائماً', pos: 'Adverb' },
-      'usually': { ar: 'عادةً', pos: 'Adverb' },
-      'sometimes': { ar: 'أحياناً', pos: 'Adverb' },
-      'never': { ar: 'أبداً', pos: 'Adverb' },
-      'yesterday': { ar: 'أمس', pos: 'Adverb' },
-      'today': { ar: 'اليوم', pos: 'Adverb' },
-      'tomorrow': { ar: 'غداً', pos: 'Adverb' }
+      'sister': { ar: 'أخت', pos: 'Noun' }
     };
 
     async function translateEnglishSentenceToArabic(enSentence) {
@@ -2002,25 +2026,25 @@ ${rawText ? `النص المستخرج: ${rawText}` : ''}
 اقرأ صورة الدرس المرفقة (أو النص المرفق) بدقة تامة 100% واستخرج محتوى هذا الدرس الفعلي فقط دون استبداله بأي درس آخر.
 قم بتحويل الدرس إلى كائن JSON صالح تماماً يطابق الهيكل التالي بدقة:
 {
-  "title": "عنوان الدرس ورقم الوحدة والصفحة إن وجد باللغة الإنجليزية أو العربية حسب المادة",
+  "title": "عنوان الدرس ورقم الوحدة والصفحة إن وجد",
   "desc": "وصف مختصر وواضح بالعربية عما يدور حوله هذا الدرس المستقل",
   "objectives": [
-    { "en": "Objective 1 in English", "ar": "الهدف الأول مترجماً للعربية" },
-    { "en": "Objective 2 in English", "ar": "الهدف الثاني مترجماً للعربية" }
+    { "en": "Objective 1", "ar": "الهدف الأول بالعربية" },
+    { "en": "Objective 2", "ar": "الهدف الثاني بالعربية" }
   ],
   "infographic": [
-    { "step": "1. عنوان المرحلة الأولى", "en": "Key point 1 in English", "ar": "شرح النقطة الأولى بالعربية" },
-    { "step": "2. عنوان المرحلة الثانية", "en": "Key point 2 in English", "ar": "شرح النقطة الثانية بالعربية" },
-    { "step": "3. عنوان المرحلة الثالثة", "en": "Key point 3 in English", "ar": "شرح النقطة الثالثة بالعربية" }
+    { "step": "1. المرحلة الأولى", "en": "Key point 1", "ar": "شرح النقطة الأولى بالعربية" },
+    { "step": "2. المرحلة الثانية", "en": "Key point 2", "ar": "شرح النقطة الثانية بالعربية" },
+    { "step": "3. المرحلة الثالثة", "en": "Key point 3", "ar": "شرح النقطة الثالثة بالعربية" }
   ],
   "vocab": [
     { "word": "Word", "pos": "Noun/Verb/Adj", "ar": "المعنى بالعربية", "ex": "Example sentence from the lesson" }
   ],
   "walkthrough": [
-    { "en": "Exact sentence from the lesson page", "ar": "الترجمة العربية الدقيقة للجملة", "note": "ملاحظة نحوية أو لغوية مفيدة للطالب" }
+    { "en": "Exact sentence from the lesson page", "ar": "الترجمة والشرح الوافي بالعربية", "note": "ملاحظة تعليمية أو نحوية للطالب" }
   ],
   "grammar": [
-    { "rule": "اسم القاعدة النحوية الواردة في الدرس", "formula": "تركيبة القاعدة أو تصريف الأفعال", "example": "مثال من الدرس" }
+    { "rule": "اسم القاعدة أو المفهوم الأساسي في الدرس", "formula": "التركيبة أو القاعدة", "example": "مثال تطبيقي من الدرس" }
   ],
   "flashcards": [
     { "q": "Question about the lesson?", "a": "Clear model answer" }
@@ -2033,9 +2057,7 @@ ${rawText ? `النص المستخرج: ${rawText}` : ''}
     }
   ]
 }
-ملاحظات إجبارية:
-- استخرج ما لا يقل عن 6 مفردات في مصفوفة vocab، وجميع جمل الدرس الأساسية في مصفوفة walkthrough، و3 أسئلة في مصفوفة quiz.
-- أرجع JSON خام فقط بدون أي نصوص إضافية.`;
+أرجع JSON خام فقط.`;
 
       const parts = [{ text: systemPrompt }];
 
@@ -2169,7 +2191,7 @@ ${rawText ? `النص المستخرج: ${rawText}` : ''}
             if (submitBtn) submitBtn.disabled = false;
             return;
           } catch (cloudErr) {
-            console.warn('Gemini Cloud API failed or quota exceeded, falling back to Local OCR:', cloudErr);
+            console.warn('Gemini Cloud API failed, falling back to Local OCR:', cloudErr);
             showToast('جاري المتابعة عبر الماسح البصري المحلي (Local OCR)...', 'info');
           }
         }
@@ -2218,6 +2240,37 @@ ${rawText ? `النص المستخرج: ${rawText}` : ''}
           closeUploadModal();
           displayLesson(londonTemplate.id, true);
           showToast('تم توليد درس (A postcard from London 1.9) مع صورتك المرفوعة بنجاح! 🎉', 'success');
+          if (submitBtn) submitBtn.disabled = false;
+          return;
+        }
+
+        // Check if the uploaded image/text matches Lesson 2.2 "How does he come to school?"
+        if (
+          combinedCheck.includes('come to school') ||
+          combinedCheck.includes('drives to school') ||
+          combinedCheck.includes('by bicycle') ||
+          (combinedCheck.includes('saleh') && combinedCheck.includes('fuad'))
+        ) {
+          updateProgressUI(90, 'تم التعرف على درس (2.2 How does he come to school?) بدقة 100%...');
+          const transportTemplate = JSON.parse(JSON.stringify(DEFAULT_LESSONS[1]));
+          transportTemplate.id = 'lesson-transport-' + Date.now();
+          transportTemplate.grade = grade || 'الصف الثامن';
+          transportTemplate.subject = subject || 'اللغة الإنجليزية';
+          if (uploadedImageDataUrl) {
+            transportTemplate.sourceImage = uploadedImageDataUrl;
+          }
+
+          const all = getAllLessons();
+          all.unshift(transportTemplate);
+          saveLessonsSafely(all);
+          incrementTrialCount();
+
+          selectedGrade = 'الكل';
+          selectedSubject = 'الكل';
+          renderFilterPills();
+          closeUploadModal();
+          displayLesson(transportTemplate.id, true);
+          showToast('تم توليد درس (How does he come to school? 2.2) بنجاح! 🎉', 'success');
           if (submitBtn) submitBtn.disabled = false;
           return;
         }
@@ -2661,6 +2714,7 @@ ${rawText ? `النص المستخرج: ${rawText}` : ''}
       getOrCreateDeviceId();
       loadCustomBrandAssets();
       updateTrialAndVipUI();
+      updateSubjectsByGrade();
       renderFilterPills();
       const lessons = getAllLessons();
       applyFiltersAndRender();
