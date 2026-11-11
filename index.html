@@ -530,14 +530,15 @@
       <div class="grid grid-cols-2 gap-2 bg-[#07111e] p-1.5 rounded-2xl border border-[#163252]">
         <button type="button" id="scope-curr-btn" onclick="setUploadScope('curriculum')" class="py-2 px-3 rounded-xl font-extrabold text-xs sm:text-sm bg-[#fbbf24] text-slate-950 transition">
           🏫 منهج دراسي (1 - 12)
-        </button>
-        <button type="button" id="scope-free-btn" onclick="setUploadScope('general')" class="py-2 px-3 rounded-xl font-extrabold text-xs sm:text-sm text-slate-300 hover:text-white transition">
+        </button><button type="button" id="scope-free-btn" onclick="setUploadScope('general')" class="py-2 px-3 rounded-xl font-extrabold text-xs sm:text-sm text-slate-300 hover:text-white transition">
           🌐 محتوى حر / ملف خارجي
         </button>
       </div>
-    <div>
+
+<div id="upload-curr-selectors" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
           <label class="block text-xs font-bold text-slate-300 mb-1">الصف الدراسي:</label>
-          <select id="upload-grade" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3 py-2.5 text-sm text-white outline-none">
+          <select id="upload-grade" onchange="updateSubjectsByGrade()" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-[#fbbf24]">
             <option value="الصف الأول">الصف الأول الأساسي (Grade 1)</option>
             <option value="الصف الثاني">الصف الثاني الأساسي (Grade 2)</option>
             <option value="الصف الثالث">الصف الثالث الأساسي (Grade 3)</option>
@@ -551,20 +552,14 @@
             <option value="الثاني الثانوي">الثاني الثانوي (Grade 11)</option>
             <option value="الثالث الثانوي">الثالث الثانوي (Grade 12)</option>
           </select>
-        </div>      </select>
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-300 mb-1">المادة الدراسية:</label>
-          <select id="upload-subject" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3 py-2.5 text-sm text-white outline-none">
-            <option value="اللغة الإنجليزية">اللغة الإنجليزية (English)</option>
-            <option value="العلوم والأحياء">العلوم والأحياء (Science & Biology)</option>
-            <option value="الرياضيات">الرياضيات (Mathematics)</option>
-            <option value="اللغة العربية">اللغة العربية (Arabic)</option>
-            <option value="مستندات وملفات حرة 🌐">مستندات وملفات حرة 🌐</option>
+          <select id="upload-subject" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-[#fbbf24]">
+            <!-- يتم تعبئتها تلقائياً حسب الصف المختار -->
           </select>
         </div>
-      </div>
-
+</div>
       <div class="grid grid-cols-3 gap-2">
         <button type="button" id="tab-img-btn" onclick="switchUploadTab('image')" class="py-2.5 px-2 rounded-xl border border-[#fbbf24] bg-[#fbbf24]/15 text-[#fbbf24] font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5">
           <i class="fa-solid fa-camera"></i>
@@ -870,8 +865,7 @@
     }
 
     const MAX_FREE_TRIALS = 2;
-
-    const GRADES_LIST = [
+const GRADES_LIST = [
       'الكل',
       'الصف الأول',
       'الصف الثاني',
@@ -905,17 +899,105 @@
     };
 
     const SUBJECTS_LIST = [
-      'الكل', 'اللغة الإنجليزية', 'العلوم والأحياء', 'الرياضيات', 'اللغة العربية', 'مستندات وملفات حرة 🌐'
+      'الكل',
+      'القرآن الكريم',
+      'التربية الإسلامية',
+      'اللغة العربية',
+      'الدراسات الاجتماعية',
+      'العلوم والأحياء',
+      'الرياضيات',
+      'اللغة الإنجليزية',
+      'الفيزياء',
+      'الكيمياء',
+      'الحاسوب',
+      'مستندات وملفات حرة 🌐'
     ];
 
     const SUBJECT_EN_MAP = {
       'الكل': 'All Subjects',
-      'اللغة الإنجليزية': 'English Language',
+      'القرآن الكريم': 'Holy Quran',
+      'التربية الإسلامية': 'Islamic Studies',
+      'اللغة العربية': 'Arabic Language',
+      'الدراسات الاجتماعية': 'Social Studies',
       'العلوم والأحياء': 'Science & Biology',
       'الرياضيات': 'Mathematics',
-      'اللغة العربية': 'Arabic Language',
+      'اللغة الإنجليزية': 'English Language',
+      'الفيزياء': 'Physics',
+      'الكيمياء': 'Chemistry',
+      'الحاسوب': 'Computer & IT',
       'مستندات وملفات حرة 🌐': 'Free Documents 🌐'
     };
+
+    // خيارات المواد المفصلة داخل نافذة رفع الدرس حسب المرحلة الدراسية
+    const STAGE_SUBJECT_OPTIONS = {
+      // 1. مواد الصفوف من الأول إلى السادس الأساسي
+      primary_1_6: [
+        { value: 'القرآن الكريم', label: 'القرآن الكريم (Holy Quran)' },
+        { value: 'التربية الإسلامية', label: 'التربية الإسلامية (Islamic Studies)' },
+        { value: 'اللغة العربية', label: 'اللغة العربية - القراءة والأناشيد (Arabic)' },
+        { value: 'الدراسات الاجتماعية', label: 'الاجتماعيات والتربية الوطنية (Social Studies)' },
+        { value: 'العلوم والأحياء', label: 'العلوم والبيئة (Science)' },
+        { value: 'الرياضيات', label: 'الرياضيات (Mathematics)' },
+        { value: 'اللغة الإنجليزية', label: 'اللغة الإنجليزية التأسيسية (English)' },
+        { value: 'مستندات وملفات حرة 🌐', label: 'مستندات وملفات حرة 🌐' }
+      ],
+      // 2. مواد الصفوف من السابع إلى التاسع الأساسي
+      prep_7_9: [
+        { value: 'اللغة الإنجليزية', label: 'اللغة الإنجليزية (English)' },
+        { value: 'القرآن الكريم', label: 'القرآن الكريم وعلومه (Holy Quran)' },
+        { value: 'التربية الإسلامية', label: 'التربية الإسلامية (Islamic Studies)' },
+        { value: 'اللغة العربية', label: 'اللغة العربية - القراءة والنحو (Arabic)' },
+        { value: 'العلوم والأحياء', label: 'العلوم العامة (Science)' },
+        { value: 'الرياضيات', label: 'الرياضيات (Mathematics)' },
+        { value: 'الدراسات الاجتماعية', label: 'الاجتماعيات - تاريخ وجغرافيا ووطنية (Social Studies)' },
+        { value: 'الحاسوب', label: 'الحاسوب (Computer)' },
+        { value: 'مستندات وملفات حرة 🌐', label: 'مستندات وملفات حرة 🌐' }
+      ],
+      // 3. مواد المرحلة الثانوية (الأول إلى الثالث الثانوي)
+      secondary_10_12: [
+        { value: 'اللغة الإنجليزية', label: 'اللغة الإنجليزية (English)' },
+        { value: 'القرآن الكريم', label: 'القرآن الكريم وعلومه (Holy Quran)' },
+        { value: 'التربية الإسلامية', label: 'التربية الإسلامية (Islamic Studies)' },
+        { value: 'اللغة العربية', label: 'اللغة العربية والأدب والنحو (Arabic)' },
+        { value: 'الرياضيات', label: 'الرياضيات (Mathematics)' },
+        { value: 'الفيزياء', label: 'الفيزياء (Physics)' },
+        { value: 'الكيمياء', label: 'الكيمياء (Chemistry)' },
+        { value: 'العلوم والأحياء', label: 'الأحياء (Biology)' },
+        { value: 'الدراسات الاجتماعية', label: 'التاريخ والجغرافيا والمجتمع (Social Studies)' },
+        { value: 'الحاسوب', label: 'الحاسوب وتقنية المعلومات (Computer & IT)' },
+        { value: 'مستندات وملفات حرة 🌐', label: 'مستندات وملفات حرة 🌐' }
+      ]
+    };
+
+    function updateSubjectsByGrade() {
+      const gradeEl = document.getElementById('upload-grade');
+      const subjectEl = document.getElementById('upload-subject');
+      if (!gradeEl || !subjectEl) return;
+
+      const grade = gradeEl.value;
+      const previousSubject = subjectEl.value;
+      let optionsList = STAGE_SUBJECT_OPTIONS.prep_7_9;
+
+      if (['الصف الأول', 'الصف الثاني', 'الصف الثالث', 'الصف الرابع', 'الصف الخامس', 'الصف السادس'].includes(grade)) {
+        optionsList = STAGE_SUBJECT_OPTIONS.primary_1_6;
+      } else if (['الأول الثانوي', 'الثاني الثانوي', 'الثالث الثانوي'].includes(grade)) {
+        optionsList = STAGE_SUBJECT_OPTIONS.secondary_10_12;
+      }
+
+      subjectEl.innerHTML = optionsList.map(opt =>
+        `<option value="${opt.value}">${opt.label}</option>`
+      ).join('');
+
+      // الحفاظ على المادة المختارة سابقاً إن كانت موجودة في المرحلة الجديدة
+      if (optionsList.some(opt => opt.value === previousSubject)) {
+        subjectEl.value = previousSubject;
+      }
+    }
+
+    // تشغيل التحديث التلقائي فور فتح الصفحة
+    window.addEventListener('DOMContentLoaded', () => {
+      updateSubjectsByGrade();
+    });
 
     let currentLang = 'ar';
     let selectedGrade = 'الكل';
