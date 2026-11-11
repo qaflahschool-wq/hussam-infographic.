@@ -319,7 +319,7 @@
             <i class="fa-solid fa-layer-group text-[#fbbf24]"></i>
             <span id="curriculum-section-title">مكتبة المناهج والدروس التفاعلية</span>
           </h2>
-          <p id="curriculum-section-sub" class="text-xs sm:text-sm text-slate-400">اختر الصف الدراسي (من السابع إلى الثالث الثانوي) والمادة لاستعراض الدروس</p>
+          <p id="curriculum-section-sub" class="text-xs sm:text-sm text-slate-400">اختر الصف الدراسي (من السابع إلى الثالث الثانوي) والمادة لاستعراض كل درس بشكل مستقل</p>
         </div>
         <div class="relative w-full sm:w-72">
           <input
@@ -344,19 +344,25 @@
       </div>
     </section>
 
-    <!-- ==================== 6. LESSONS CARDS GRID ==================== -->
+    <!-- ==================== 6. LESSONS CARDS GRID (STANDALONE CARDS) ==================== -->
     <section id="lessons-grid-section" class="space-y-3">
-      <div class="flex items-center justify-between px-1">
-        <span id="lessons-count-badge" class="text-xs sm:text-sm font-bold text-[#22d3ee]">الدروس المتاحة</span>
-        <button type="button" onclick="openUploadModal()" class="text-xs sm:text-sm font-bold text-[#fbbf24] hover:underline flex items-center gap-1">
-          <i class="fa-solid fa-plus"></i>
-          <span id="add-lesson-link-text">إضافة درس أو ملف جديد</span>
-        </button>
+      <div class="flex flex-wrap items-center justify-between gap-2 px-1">
+        <span id="lessons-count-badge" class="text-xs sm:text-sm font-bold text-[#22d3ee]">الدروس المستقلة المتاحة</span>
+        <div class="flex items-center gap-3">
+          <button type="button" onclick="resetLessonsLibrary()" class="text-xs font-bold text-rose-400 hover:underline flex items-center gap-1" title="حذف الدروس المضافة واستعادة الدروس الأساسية">
+            <i class="fa-solid fa-rotate-left"></i>
+            <span id="reset-lib-btn-text">تنظيف الدروس المضافة</span>
+          </button>
+          <button type="button" onclick="openUploadModal()" class="text-xs sm:text-sm font-bold text-[#fbbf24] hover:underline flex items-center gap-1">
+            <i class="fa-solid fa-plus"></i>
+            <span id="add-lesson-link-text">إضافة درس مستقل جديد</span>
+          </button>
+        </div>
       </div>
-      <div id="lessons-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      <div id="lessons-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
     </section>
 
-    <!-- ==================== 7. ACTIVE LESSON WORKSPACE ==================== -->
+    <!-- ==================== 7. ACTIVE LESSON WORKSPACE (SINGLE STANDALONE LESSON) ==================== -->
     <section id="active-lesson-section" class="space-y-5 pt-2">
       <div class="bg-[#0a1c32] border-2 border-[#fbbf24]/60 rounded-[28px] p-4 sm:p-7 shadow-2xl space-y-6">
         
@@ -368,7 +374,7 @@
               </span>
               <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
                 <i class="fa-solid fa-robot"></i>
-                <span id="ai-teacher-badge-text">المعلم الذكي ثنائي اللغة (Bilingual AI Teacher)</span>
+                <span id="ai-teacher-badge-text">شرح وإنفوجرافيك درس مستقل (Standalone Lesson)</span>
               </span>
             </div>
             <h2 id="active-lesson-title" class="text-xl sm:text-3xl font-black text-white leading-snug"></h2>
@@ -396,7 +402,7 @@
           <div class="flex items-center justify-between mb-3">
             <span class="text-xs sm:text-sm font-extrabold text-[#fbbf24] flex items-center gap-2">
               <i class="fa-solid fa-image"></i>
-              <span id="source-img-label">صورة صفحة الدرس المرفوعة (اضغط للتكبير)</span>
+              <span id="source-img-label">صورة صفحة هذا الدرس المرفوعة (اضغط للتكبير)</span>
             </span>
             <button type="button" onclick="openLightbox()" id="btn-zoom-img" class="text-xs text-[#22d3ee] hover:underline font-bold">تكبير بملء الشاشة 🔍</button>
           </div>
@@ -414,7 +420,7 @@
         <div class="print-card bg-[#07111e] border border-[#163252] rounded-2xl p-4 sm:p-5 space-y-4">
           <h3 class="text-base sm:text-lg font-black text-[#22d3ee] flex items-center gap-2">
             <i class="fa-solid fa-diagram-project"></i>
-            <span id="sec-2-title">ثانياً: الخريطة البصرية والإنفوجرافيك (Visual Infographic)</span>
+            <span id="sec-2-title">ثانياً: الخريطة البصرية والإنفوجرافيك للدرس (Visual Infographic)</span>
           </h3>
           <div id="active-infographic-map" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
         </div>
@@ -514,7 +520,7 @@
       <div class="flex items-center justify-between border-b border-[#163252] pb-3">
         <h3 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
           <i class="fa-solid fa-wand-magic-sparkles text-[#fbbf24]"></i>
-          <span id="modal-upload-title">استوديو التوليد البصري والمعلم الذكي</span>
+          <span id="modal-upload-title">توليد شرح وإنفوجرافيك درس جديد مستقل</span>
         </h3>
         <button type="button" onclick="closeUploadModal()" class="w-8 h-8 rounded-full bg-[#07111e] text-slate-400 hover:text-white flex items-center justify-center">
           <i class="fa-solid fa-xmark"></i>
@@ -575,8 +581,8 @@
         <label class="block cursor-pointer border-2 border-dashed border-[#fbbf24]/60 hover:border-[#fbbf24] bg-[#07111e] rounded-2xl p-6 text-center transition">
           <input type="file" id="lesson-image-input" accept="image/*" class="hidden" onchange="handleImageFileSelect(event)" />
           <i class="fa-solid fa-cloud-arrow-up text-3xl text-[#fbbf24] mb-2"></i>
-          <div class="font-extrabold text-sm sm:text-base text-white">اضغط لاختيار صورة صفحة الدرس من الكاميرا أو المعرض</div>
-          <div class="text-xs text-slate-400 mt-1">يقرأ المعلم الذكي نصوص الصفحة بصرياً ويحولها إلى شرح تفاعلي وإنفوجرافيك</div>
+          <div class="font-extrabold text-sm sm:text-base text-white">اضغط لاختيار صورة درس واحد من الكاميرا أو المعرض</div>
+          <div class="text-xs text-slate-400 mt-1">سيتم توليد وحفظ هذا الدرس في بطاقة مستقلة خاصة به دون دمجه مع أي درس آخر</div>
         </label>
 
         <div id="upload-image-preview-box" class="hidden bg-[#07111e] border border-[#163252] rounded-2xl p-3 text-center space-y-2">
@@ -585,8 +591,8 @@
         </div>
 
         <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">عنوان الدرس أو رقم الوحدة (اختياري لزيادة الدقة):</label>
-          <input type="text" id="image-topic-hint" placeholder="مثال: Unit 1.6 Bill & Tim and Saleh أو اتركه للقراءة البصرية التلقائية" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3.5 py-2.5 text-sm text-white outline-none focus:border-[#fbbf24]" />
+          <label class="block text-xs font-bold text-slate-300 mb-1">عنوان هذا الدرس (مثال: Unit 1.6 Bill أو اتركه للقراءة البصرية التلقائية):</label>
+          <input type="text" id="image-topic-hint" placeholder="اكتب عنوان الدرس الموجود في الصورة..." class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3.5 py-2.5 text-sm text-white outline-none focus:border-[#fbbf24]" />
         </div>
       </div>
 
@@ -595,20 +601,20 @@
         <label class="block cursor-pointer border-2 border-dashed border-[#22d3ee]/60 hover:border-[#22d3ee] bg-[#07111e] rounded-2xl p-6 text-center transition">
           <input type="file" id="lesson-pdf-input" accept="application/pdf" class="hidden" onchange="handlePdfFileSelect(event)" />
           <i class="fa-solid fa-file-pdf text-3xl text-[#22d3ee] mb-2"></i>
-          <div class="font-extrabold text-sm sm:text-base text-white">اختر أي ملف PDF للمنهج أو مذكرة تعليمية</div>
+          <div class="font-extrabold text-sm sm:text-base text-white">اختر ملف PDF لدرس أو مذكرة تعليمية</div>
         </label>
         <div id="pdf-status-box" class="hidden bg-[#07111e] border border-emerald-500/40 rounded-xl p-3 text-xs text-emerald-300 font-bold"></div>
       </div>
 
       <!-- TAB 3: TEXT -->
       <div id="upload-tab-text" class="hidden space-y-3">
-        <input type="text" id="custom-lesson-title" placeholder="عنوان الدرس (مثال: Unit 1.6 Bill & How does he come to school)" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3.5 py-2.5 text-sm text-white outline-none focus:border-[#fbbf24]" />
-        <textarea id="custom-lesson-text" rows="5" placeholder="الصق نص الدرس أو الجمل الإنجليزية هنا ليقوم المعلم الذكي بتحليلها وشرحها واستخراج القواعد..." class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl p-3.5 text-sm text-white outline-none focus:border-[#fbbf24]"></textarea>
+        <input type="text" id="custom-lesson-title" placeholder="عنوان الدرس المستقل (مثال: Unit 1.6 Bill)" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3.5 py-2.5 text-sm text-white outline-none focus:border-[#fbbf24]" />
+        <textarea id="custom-lesson-text" rows="5" placeholder="الصق نص هذا الدرس فقط ليقوم المعلم الذكي بتوليد شرحه وإنفوجرافيك خاص به..." class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl p-3.5 text-sm text-white outline-none focus:border-[#fbbf24]"></textarea>
       </div>
 
       <div id="generation-progress-box" class="hidden space-y-2 bg-[#07111e] border border-[#163252] rounded-2xl p-4">
         <div class="flex items-center justify-between text-xs font-bold">
-          <span id="generation-status-label" class="text-[#22d3ee]">جاري قراءة الصفحة وتحليل الدرس...</span>
+          <span id="generation-status-label" class="text-[#22d3ee]">جاري قراءة الصفحة وبناء درس مستقل...</span>
           <span id="generation-percent" class="font-en text-[#fbbf24]">30%</span>
         </div>
         <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
@@ -618,7 +624,7 @@
 
       <button type="button" id="generate-submit-btn" onclick="generateLessonNow()" class="w-full bg-[#fbbf24] hover:bg-[#f59e0b] active:scale-[0.99] text-slate-950 font-black text-base py-3.5 rounded-2xl shadow-xl flex items-center justify-center gap-2 transition">
         <i class="fa-solid fa-wand-magic-sparkles"></i>
-        <span id="btn-generate-submit-text">توليد الشرح التفصيلي والإنفوجرافيك الآن ✨</span>
+        <span id="btn-generate-submit-text">توليد هذا الدرس بشكل مستقل الآن ✨</span>
       </button>
 
     </div>
@@ -641,7 +647,7 @@
         </button>
       </div>
 
-      <!-- Device Fingerprint ID Box (Anti-Sharing DRM) -->
+      <!-- Device Fingerprint ID Box -->
       <div class="bg-[#07111e] border-2 border-[#22d3ee]/50 rounded-2xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-2">
         <div class="text-center sm:text-right">
           <div class="text-[11px] text-slate-400 font-bold">بصمة جهازك الخاصة (Device ID) لربط كود التفعيل:</div>
@@ -654,7 +660,6 @@
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <!-- Monthly -->
         <div class="bg-[#07111e] border border-[#163252] rounded-2xl p-4 text-center space-y-2 flex flex-col justify-between">
           <div>
             <div class="text-xs font-bold text-slate-400">الباقة الشهرية</div>
@@ -671,7 +676,6 @@
           </button>
         </div>
 
-        <!-- 3 Months -->
         <div class="bg-[#07111e] border-2 border-[#fbbf24] rounded-2xl p-4 text-center space-y-2 flex flex-col justify-between relative shadow-lg">
           <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-[#fbbf24] text-slate-950 text-[10px] font-black px-3 py-0.5 rounded-full">الأكثر طلباً 🔥</span>
           <div>
@@ -689,7 +693,6 @@
           </button>
         </div>
 
-        <!-- Yearly -->
         <div class="bg-[#07111e] border border-[#163252] rounded-2xl p-4 text-center space-y-2 flex flex-col justify-between">
           <div>
             <div class="text-xs font-bold text-[#22d3ee]">الباقة السنوية VIP</div>
@@ -749,13 +752,11 @@
       </div>
 
       <div id="admin-dashboard-box" class="hidden space-y-5">
-        <!-- 1. Generate Device-Bound Codes -->
         <div class="bg-[#07111e] border border-[#163252] rounded-2xl p-4 space-y-3">
           <h4 class="text-sm font-black text-[#fbbf24] flex items-center gap-2">
             <i class="fa-solid fa-key"></i>
-            <span>توليد كود تفعيل مشفر مربوط بجهاز المشترك (لمنع مشاركة الكود)</span>
+            <span>توليد كود تفعيل مشفر مربوط بجهاز المشترك</span>
           </h4>
-          <p class="text-[11px] text-slate-400">أدخل رقم جهاز الطالب (Device ID مثل: HSM-4829) الذي وصلك منه على واتساب، ليولد النظام كوداً لا يعمل إلا على هاتفه فقط.</p>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             <input type="text" id="sub-client-device" placeholder="رقم الجهاز (مثال: HSM-4829)" dir="ltr" class="bg-[#0a1c32] border-2 border-[#22d3ee]/60 rounded-xl px-3 py-2 text-xs text-white font-en uppercase outline-none" />
             <input type="text" id="sub-client-name" placeholder="اسم المشترك / المدرسة" class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl px-3 py-2 text-xs text-white outline-none" />
@@ -783,7 +784,6 @@
           </div>
         </div>
 
-        <!-- 2. Custom Brand Assets -->
         <div class="bg-[#07111e] border border-[#163252] rounded-2xl p-4 space-y-3">
           <h4 class="text-sm font-black text-[#22d3ee] flex items-center gap-2">
             <i class="fa-solid fa-palette"></i>
@@ -806,7 +806,6 @@
           </button>
         </div>
 
-        <!-- 3. Gemini API Key -->
         <div class="bg-[#07111e] border border-[#163252] rounded-2xl p-4 space-y-2">
           <h4 class="text-sm font-black text-white flex items-center gap-2">
             <i class="fa-solid fa-microchip text-[#fbbf24]"></i>
@@ -833,7 +832,7 @@
   <!-- ==================== 14. JAVASCRIPT APPLICATION CORE ==================== -->
   <script>
     const STORAGE_KEYS = {
-      LESSONS: 'hussam_info_lessons_v9',
+      LESSONS: 'hussam_info_lessons_v10',
       TRIAL_USED: 'hussam_info_trial_used_v9',
       SUB: 'hussam_info_vip_sub_v9',
       DEVICE_ID: 'hussam_info_device_id_v9',
@@ -946,110 +945,281 @@
       updateDailyUsageUI();
     }
 
+    // --- 4 COMPLETELY SEPARATED, STANDALONE LESSONS (NO MERGING) ---
     const DEFAULT_LESSONS = [
       {
-        id: 'lesson-bill-tim-school',
+        id: 'lesson-unit-1-6-bill',
         grade: 'الصف السابع',
         subject: 'اللغة الإنجليزية',
-        title: 'Unit 1.6 Bill | 1.7 Tim and Saleh | 2.1 How does he come to school?',
-        desc: 'شرح تفصيلي ثنائي اللغة للدروس الثلاثة: محادثة التعارف مع (Bill)، والمقارنة بين (Tim and Saleh)، ووسائل الذهاب إلى المدرسة وقواعد المضارع البسيط (How does / How do).',
-        duration: '25 دقيقة',
+        title: 'Unit 1.6 Read and write: Bill (WB Page 6)',
+        desc: 'درس مستقل: محادثة التعارف بين (Tom) و(Bill) حول الاسم، العمر (13 سنة)، القدوم من إنجلترا، عدد الإخوة والأخوات، والأنشطة بعد المدرسة.',
+        duration: '20 دقيقة',
         objectives: [
           {
-            en: 'Ask and answer personal questions about name, age, country, family, and after-school activities (Unit 1.6 Bill).',
-            ar: 'طرح الإجابات والأسئلة الشخصية حول الاسم، العمر، البلد، عدد الإخوة، وأنشطة ما بعد المدرسة (درس Bill).'
+            en: 'Ask and answer personal questions about name, age, and country (Where are you from?).',
+            ar: 'طرح الأسئلة والإجابة عن الاسم والعمر والبلد في محادثة التعارف.'
           },
           {
-            en: 'Describe where people live, their favourite pastimes, and weekly routines (Unit 1.7 Tim and Saleh).',
-            ar: 'وصف مكان السكن (خلف مكتب البريد / بجانب السوبرماركت)، الهوايات المفضلة، والروتين الأسبوعي (درس Tim and Saleh).'
-          },
-          {
-            en: 'Use the Present Simple tense and transport expressions to ask "How does he come to school?" (Unit 2.1).',
-            ar: 'استخدام المضارع البسيط ووسائل المواصلات للسؤال والإجابة عن كيفية المجيء إلى المدرسة (How does / How do).'
+            en: 'Use "How many ... have you got?" and Present Simple for after-school activities.',
+            ar: 'استخدام صيغة السؤال عن عدد الإخوة والأخوات والتعبير عن أنشطة ما بعد المدرسة.'
           }
         ],
         infographic: [
           {
-            step: '1. Unit 1.6: Bill (التعارف)',
-            title: 'معلومات بيل (13 سنة من إنجلترا)',
-            detail: 'لديه أخ واحد وأختان، يشاهد التلفاز ويذهب للسباحة كل يوم ثلاثاء (every Tuesday)، ولا يلعب كرة القدم.'
+            step: '1. البطاقة الشخصية (Personal Info)',
+            title: 'Bill (13 Years Old - England)',
+            detail: 'اسمه Bill (B-I-L-L)، عمره 13 عاماً (Thirteen)، وهو قادم من إنجلترا (I\'m from England).'
           },
           {
-            step: '2. Unit 1.7: Tim & Saleh',
-            title: 'المقارنة بين تيم وصالح',
-            detail: 'أحدهما يسكن خلف مكتب البريد ويحب الاستماع للكاسيت ويذهب للمتنزه، والآخر بجانب السوبرماركت ويحب كرة القدم ويذهب للشاطئ كل خميس.'
+            step: '2. العائلة (Family Members)',
+            title: 'أخ واحد وأختان',
+            detail: 'لديه أخ واحد (One brother) وأختان (Two sisters) باستخدام صيغة have you got.'
           },
           {
-            step: '3. Unit 2.1: Transport',
-            title: 'كيف يأتي إلى المدرسة؟',
-            detail: 'Ahmed drives | The teacher runs | Fuad comes by bus | Saleh walks | Taha comes by bicycle.'
+            step: '3. أنشطة ما بعد المدرسة (After School)',
+            title: 'مشاهدة التلفاز والسباحة الثلاثاء',
+            detail: 'يشاهد التلفاز ويذهب للسباحة كل يوم ثلاثاء (I watch TV and go swimming every Tuesday) ولا يلعب كرة القدم.'
           }
         ],
         vocabulary: [
-          { word: 'swimming', pos: 'Noun / Gerund', meaning: 'السباحة', example: 'I watch TV and I go swimming every Tuesday.' },
-          { word: 'behind', pos: 'Preposition', meaning: 'خلف / وراء', example: 'I live in a house behind the Post Office.' },
-          { word: 'next to', pos: 'Preposition', meaning: 'بجانب / بجوار', example: 'My house is next to the supermarket.' },
-          { word: 'pastime', pos: 'Noun', meaning: 'هواية / تسلية في وقت الفراغ', example: 'My favourite pastime is playing football.' },
-          { word: 'cassettes', pos: 'Noun (Plural)', meaning: 'أشرطة كاسيت صوتية', example: 'I like listening to cassettes.' },
-          { word: 'drives', pos: 'Verb (Present Simple)', meaning: 'يقود السيارة', example: 'He drives to school.' },
-          { word: 'bicycle', pos: 'Noun', meaning: 'دراجة هوائية', example: 'He comes to school by bicycle.' }
+          { word: 'Thirteen', pos: 'Number', meaning: 'ثلاثة عشر (13)', example: 'How old are you? Thirteen.' },
+          { word: 'England', pos: 'Proper Noun', meaning: 'إنجلترا', example: 'I\'m from England.' },
+          { word: 'brothers', pos: 'Noun (Plural)', meaning: 'إخوة', example: 'How many brothers have you got?' },
+          { word: 'swimming', pos: 'Noun / Gerund', meaning: 'السباحة', example: 'I go swimming every Tuesday.' }
         ],
         walkthrough: [
           {
-            en: 'Tom: What\'s your name? / Bill: Bill. B-I-L-L. / Tom: How old are you? / Bill: Thirteen.',
-            ar: 'توم: ما اسمك؟ / بيل: بيل (ويتهجى الحروف B-I-L-L). / توم: كم عمرك؟ / بيل: ثلاثة عشر عاماً.',
-            note: 'في بداية التعارف نسأل عن الاسم بـ (What is your name) وعن العمر بـ (How old are you).'
+            en: 'Tom: What\'s your name? / Bill: Bill. B-I-L-L.',
+            ar: 'توم: ما اسمك؟ / بيل: بيل (ويتهجى حروف اسمه B-I-L-L).',
+            note: 'نسأل عن الاسم بـ What\'s your name وعند التهجئة ننطق كل حرف منفصلاً.'
           },
           {
-            en: 'Tom: Where are you from? / Bill: I\'m from England. / Tom: How many brothers and sisters have you got?',
-            ar: 'توم: من أين أنت؟ / بيل: أنا من إنجلترا. / توم: كم عدد الإخوة والأخوات الذين لديك؟',
-            note: 'نسأل عن العدد بـ (How many + اسم جمع + have you got?). لدى بيل أخ واحد (One) وأختان (Two).'
+            en: 'Tom: How old are you? / Bill: Thirteen. / Tom: Where are you from? / Bill: I\'m from England.',
+            ar: 'توم: كم عمرك؟ / بيل: ثلاثة عشر عاماً. / توم: من أين أنت؟ / بيل: أنا من إنجلترا.',
+            note: 'نسأل عن العمر بـ How old وعن البلد بـ Where are you from.'
+          },
+          {
+            en: 'Tom: How many brothers have you got? / Bill: One. / Tom: How many sisters have you got? / Bill: Two.',
+            ar: 'توم: كم عدد الإخوة لديك؟ / بيل: واحد. / توم: كم عدد الأخوات لديك؟ / بيل: اثنتان.',
+            note: 'بعد How many يأتي دائماً اسم جمع معدود (brothers / sisters).'
           },
           {
             en: 'Tom: What do you do after school? / Bill: I watch TV and I go swimming every Tuesday.',
             ar: 'توم: ماذا تفعل بعد المدرسة؟ / بيل: أشاهد التلفاز وأذهب للسباحة كل يوم ثلاثاء.',
-            note: 'للتعبير عن العادات المتكررة نستخدم المضارع البسيط مع (every Tuesday).'
+            note: 'استخدمنا المضارع البسيط (watch / go) للتعبير عن العادة الأسبوعية.'
           },
           {
-            en: 'Unit 1.7 (Tim & Saleh): I live in a house behind the Post Office. My house is next to the supermarket.',
-            ar: 'الوحدة 1.7 (تيم وصالح): أنا أعيش في منزل خلف مكتب البريد. منزلي يقع بجانب السوبرماركت.',
-            note: 'حروف الجر المكانية المهمة: (behind = خلف) و (next to = بجانب).'
-          },
-          {
-            en: 'Unit 2.1: He drives to school. He runs to school. He comes to school by bus / by bicycle. He walks to school.',
-            ar: 'الوحدة 2.1: هو يقود السيارة للمدرسة. هو يركض للمدرسة. هو يأتي بالحافلة / بالدراجة. هو يمشي للمدرسة.',
-            note: 'لاحظ استخدام حرف الجر (by) قبل وسائل المواصلات (by bus, by bicycle) بدون أداة تعريف.'
+            en: 'Tom: Do you play football? / Bill: No, I don\'t.',
+            ar: 'توم: هل تلعب كرة القدم؟ / بيل: لا، أنا لا ألعبها.',
+            note: 'السؤال الذي يبدأ بـ Do you تكون إجابته القصيرة Yes, I do أو No, I don\'t.'
           }
         ],
         grammar: [
           {
-            title: 'السؤال في المضارع البسيط (How does vs. How do)',
-            rule: 'How + does + (he / she / the teacher / Taha) + come to school? | How + do + (you / they) + come to school?',
-            example: 'How does Taha come to school? He comes to school by bicycle.'
+            title: 'السؤال عن العدد والملكية (How many ... have you got?)',
+            rule: 'How many + Plural Noun (brothers/sisters) + have you got?',
+            example: 'How many brothers have you got? One.'
           },
           {
-            title: 'إضافة (s) للفعل مع المفرد الغائب (He / She / It)',
-            rule: 'He drives | He runs | He comes | He walks | My family goes',
-            example: 'My family goes to the park every Thursday.'
+            title: 'السؤال في المضارع البسيط بـ (Do you...?)',
+            rule: 'Do + you + base verb ...? → Yes, I do. / No, I don\'t.',
+            example: 'Do you play football? No, I don\'t.'
           }
         ],
         flashcards: [
-          { q: 'من أين بيل (Bill) وكم عمره؟', a: 'من إنجلترا (England) وعمره 13 سنة (Thirteen).' },
-          { q: 'متى نستخدم (does) ومتى نستخدم (do) في السؤال؟', a: 'نستخدم (does) مع المفرد الغائب (he, she, Taha) ونستخدم (do) مع (you, we, they, I).' },
-          { q: 'ما حرف الجر المستخدم مع وسائل المواصلات مثل bus و bicycle؟', a: 'حرف الجر (by) فنقول: by bus و by bicycle.' }
+          { q: 'كم عمر Bill ومن أي بلد هو؟', a: 'عمره 13 سنة (Thirteen) وهو من إنجلترا (England).' },
+          { q: 'ماذا يفعل Bill كل يوم ثلاثاء بعد المدرسة؟', a: 'يشاهد التلفاز ويذهب للسباحة (He watches TV and goes swimming).' }
         ],
         quiz: [
           {
-            q: 'What does Bill do every Tuesday after school?',
-            options: ['He plays football', 'He watches TV and goes swimming', 'He goes to the beach', 'He rides a bicycle'],
+            q: 'Where is Bill from?',
+            options: ['Yemen', 'England', 'France', 'Oman'],
             correct: 1,
-            explanation: 'قال بيل في المحادثة: I watch TV and I go swimming every Tuesday.'
+            explanation: 'قال بيل في المحادثة: I\'m from England.'
           },
           {
-            q: 'Choose the correct question: "How ____ Taha come to school?"',
-            options: ['do', 'does', 'is', 'are'],
+            q: 'Does Bill play football?',
+            options: ['Yes, he does', 'No, he doesn\'t (No, I don\'t)', 'Every Tuesday', 'Every Thursday'],
             correct: 1,
-            explanation: 'لأن الفاعل مفرد غائب (Taha = he) نستخدم الفعل المساعد (does).'
+            explanation: 'أجاب بيل: No, I don\'t.'
+          }
+        ]
+      },
+      {
+        id: 'lesson-unit-1-7-tim-saleh',
+        grade: 'الصف السابع',
+        subject: 'اللغة الإنجليزية',
+        title: 'Unit 1.7 Look, read and do: Tim and Saleh (WB Page 6)',
+        desc: 'درس مستقل: المقارنة البصرية بين (Tim) و(Saleh) في مكان السكن، عدد الإخوة، الهواية المفضلة، ومكان نزهة العائلة يوم الخميس.',
+        duration: '20 دقيقة',
+        objectives: [
+          {
+            en: 'Identify who is talking by matching descriptions with pictures of Tim and Saleh.',
+            ar: 'تحديد المتحدث (Who is talking?) من خلال مطابقة الجمل مع صورتي تيم وصالح.'
+          },
+          {
+            en: 'Use prepositions of place (behind, next to) and express likes/pastimes.',
+            ar: 'استخدام حروف الجر المكانية (خلف، بجانب) والتعبير عن الهوايات المفضلة.'
+          }
+        ],
+        infographic: [
+          {
+            step: '1. مكان السكن (Where they live)',
+            title: 'خلف مكتب البريد vs بجانب السوبرماركت',
+            detail: 'الجملة A: أسكن خلف مكتب البريد (behind the Post Office) | الجملة B: منزلي بجانب السوبرماركت (next to the supermarket).'
+          },
+          {
+            step: '2. الهوايات المفضلة (Pastimes)',
+            title: 'سماع الكاسيت vs لعب كرة القدم',
+            detail: 'الجملة E: أحب الاستماع للأشرطة (listening to cassettes) | الجملة F: هوايتي المفضلة لعب كرة القدم (playing football).'
+          },
+          {
+            step: '3. نزهة يوم الخميس (Every Thursday)',
+            title: 'الذهاب للمتنزه vs الذهاب للشاطئ',
+            detail: 'الجملة G: عائلتي تذهب للمتنزه كل خميس (goes to the park) | الجملة H: نذهب للشاطئ كل خميس (go to the beach).'
+          }
+        ],
+        vocabulary: [
+          { word: 'behind', pos: 'Preposition', meaning: 'خلف / وراء', example: 'I live in a house behind the Post Office.' },
+          { word: 'next to', pos: 'Preposition', meaning: 'بجانب / بجوار', example: 'My house is next to the supermarket.' },
+          { word: 'pastime', pos: 'Noun', meaning: 'هواية / تسلية', example: 'My favourite pastime is playing football.' },
+          { word: 'cassettes', pos: 'Noun (Plural)', meaning: 'أشرطة كاسيت', example: 'I like listening to cassettes.' },
+          { word: 'beach', pos: 'Noun', meaning: 'شاطئ البحر', example: 'We go to the beach every Thursday.' }
+        ],
+        walkthrough: [
+          {
+            en: 'A: I live in a house behind the Post Office. / B: My house is next to the supermarket.',
+            ar: 'أ: أعيش في منزل خلف مكتب البريد. / ب: منزلي يقع بجانب السوبرماركت.',
+            note: 'تعلّم حروف الجر لتحديد المواقع: behind (خلف) و next to (بجانب).'
+          },
+          {
+            en: 'C: I\'ve got two brothers and one sister. / D: I\'ve got one brother and two sisters.',
+            ar: 'ج: لدي أخوان وأخت واحدة. / د: لدي أخ واحد وأختان.',
+            note: 'I\'ve got هي اختصار I have got وتستخدم للتعبير عن الملكية وأفراد العائلة.'
+          },
+          {
+            en: 'E: I like listening to cassettes. / F: My favourite pastime is playing football.',
+            ar: 'هـ: أحب الاستماع إلى أشرطة الكاسيت. / و: هوايتي المفضلة هي لعب كرة القدم.',
+            note: 'بعد الفعل like وبعد is في وصف الهوايات نستخدم الفعل مضافاً له ing (listening / playing).'
+          },
+          {
+            en: 'G: My family goes to the park every Thursday. / H: We go to the beach every Thursday.',
+            ar: 'ز: عائلتي تذهب إلى المتنزه كل يوم خميس. / ح: نحن نذهب إلى الشاطئ كل يوم خميس.',
+            note: 'كلمة My family تعامل معاملة المفرد فأخذت (goes)، بينما We جمع فأخذت (go).'
+          }
+        ],
+        grammar: [
+          {
+            title: 'التعبير عن الهوايات (Gerund: Verb + ing)',
+            rule: 'I like + Verb-ing | My favourite pastime is + Verb-ing',
+            example: 'I like listening to cassettes. / My favourite pastime is playing football.'
+          },
+          {
+            title: 'حروف الجر المكانية (Prepositions of Place)',
+            rule: 'behind (خلف) | next to (بجانب)',
+            example: 'My house is next to the supermarket.'
+          }
+        ],
+        flashcards: [
+          { q: 'ما معنى كلمة (pastime) وما المثال الوارد عليها؟', a: 'معناها هواية أو تسلية، والمثال: My favourite pastime is playing football.' },
+          { q: 'لماذا قلنا (My family goes) بينما قلنا (We go)؟', a: 'لأن كلمة family اسم مفرد يأخذ (es)، بينما الضمير We جمع يأخذ الفعل المجرد (go).' }
+        ],
+        quiz: [
+          {
+            q: 'Choose the correct form: "I like ____ to cassettes."',
+            options: ['listen', 'listens', 'listening', 'listened'],
+            correct: 2,
+            explanation: 'بعد الفعل like نضيف ing للفعل (listening).'
+          },
+          {
+            q: '"My family ____ to the park every Thursday."',
+            options: ['go', 'goes', 'going', 'went'],
+            correct: 1,
+            explanation: 'My family مفرد في المضارع البسيط فيأخذ goes.'
+          }
+        ]
+      },
+      {
+        id: 'lesson-unit-2-1-transport',
+        grade: 'الصف السابع',
+        subject: 'اللغة الإنجليزية',
+        title: 'Unit 2.1 How does he come to school? (Transport)',
+        desc: 'درس مستقل: وسائل الذهاب إلى المدرسة (Ahmed, The teacher, Saleh, Fuad, Taha) وتكوين السؤال بـ (How does / How do) في المضارع البسيط.',
+        duration: '20 دقيقة',
+        objectives: [
+          {
+            en: 'Ask and answer about means of transport using "How does ... come to school?".',
+            ar: 'السؤال والإجابة عن وسيلة الذهاب إلى المدرسة باستخدام How does و How do.'
+          },
+          {
+            en: 'Use action verbs (drives, runs, walks) and "by + transport" (by bus, by bicycle).',
+            ar: 'استخدام أفعال الحركة مع المفرد الغائب وحرف الجر (by) مع وسائل المواصلات.'
+          }
+        ],
+        infographic: [
+          {
+            step: '1. أفعال الحركة المباشرة (Verbs)',
+            title: 'Drives | Runs | Walks',
+            detail: 'Ahmed drives to school (يقود) | The teacher runs to school (يركض) | Saleh walks to school (يمشي).'
+          },
+          {
+            step: '2. وسائل النقل مع (by)',
+            title: 'By bus | By bicycle',
+            detail: 'Fuad comes to school by bus (بالحافلة) | Taha comes to school by bicycle (بالدراجة الهوائية).'
+          },
+          {
+            step: '3. قاعدة السؤال (Question Box)',
+            title: 'How does vs. How do',
+            detail: 'How does (the teacher / Taha / he) come to school? | How do (you) come to school?'
+          }
+        ],
+        vocabulary: [
+          { word: 'drives', pos: 'Verb', meaning: 'يقود السيارة', example: 'He drives to school.' },
+          { word: 'runs', pos: 'Verb', meaning: 'يركض / يجري', example: 'He runs to school.' },
+          { word: 'by bus', pos: 'Prepositional Phrase', meaning: 'بواسطة الحافلة (الباص)', example: 'He comes to school by bus.' },
+          { word: 'by bicycle', pos: 'Prepositional Phrase', meaning: 'بواسطة الدراجة الهوائية', example: 'He comes to school by bicycle.' },
+          { word: 'walks', pos: 'Verb', meaning: 'يمشي على قدميه', example: 'He walks to school.' }
+        ],
+        walkthrough: [
+          {
+            en: 'He drives to school. / He runs to school. / He walks to school.',
+            ar: 'هو يقود السيارة إلى المدرسة. / هو يركض إلى المدرسة. / هو يمشي إلى المدرسة.',
+            note: 'أضفنا حرف (s) للأفعال (drive → drives, run → runs, walk → walks) لأن الفاعل مفرد غائب (He).'
+          },
+          {
+            en: 'He comes to school by bus. / He comes to school by bicycle.',
+            ar: 'هو يأتي إلى المدرسة بالحافلة. / هو يأتي إلى المدرسة بالدراجة الهوائية.',
+            note: 'مع وسائل المواصلات نستخدم الفعل (comes) متبوعاً بحرف الجر (by) بدون (a / the).'
+          },
+          {
+            en: 'How does the teacher come to school? / How does Taha come to school? / How do you come to school?',
+            ar: 'كيف يأتي المعلم إلى المدرسة؟ / كيف يأتي طه إلى المدرسة؟ / كيف تأتي أنت إلى المدرسة؟',
+            note: 'لاحظ أنه عند وجود (does) في السؤال يعود الفعل الأصلي للمصدر المجرد (come) بدون (s).'
+          }
+        ],
+        grammar: [
+          {
+            title: 'جدول تكوين السؤال (How does / How do)',
+            rule: 'How + does + (the teacher / Taha / he) + come to school? | How + do + you + come to school?',
+            example: 'How does Taha come to school? He comes by bicycle.'
+          }
+        ],
+        flashcards: [
+          { q: 'لماذا نحذف حرف (s) من الفعل (come) في سؤال: How does Taha come to school؟', a: 'لأن وجود الفعل المساعد (does) في السؤال يُعيد الفعل الرئيسي إلى مصدره المجرد.' },
+          { q: 'ما الفرق بين (walks to school) و (by bus)؟', a: 'walks فعل حركة مباشر، بينما by bus جار ومجرور يحتاج قبله للفعل comes.' }
+        ],
+        quiz: [
+          {
+            q: 'How ____ the teacher come to school?',
+            options: ['do', 'does', 'is', 'comes'],
+            correct: 1,
+            explanation: 'الفاعل مفرد (the teacher) فنستخدم الفعل المساعد does.'
+          },
+          {
+            q: 'Fuad comes to school ____ bus.',
+            options: ['on', 'in', 'by', 'to'],
+            correct: 2,
+            explanation: 'تُسبق وسائل المواصلات بحرف الجر by.'
           }
         ]
       },
@@ -1057,8 +1227,8 @@
         id: 'lesson-london-postcard',
         grade: 'الصف الثامن',
         subject: 'اللغة الإنجليزية',
-        title: '1.9 Read and write: A postcard from London (WB Pages 11 & 12)',
-        desc: 'شرح تفصيلي ثنائي اللغة لدرس بطاقة بريدية من لندن (آمنة إلى صديقتها مريم في صنعاء) مع استخراج المفردات ونطقها الصوتي وقواعد الماضي البسيط وأدوات الربط.',
+        title: 'Unit 1.9 Read and write: A postcard from London (WB Pages 11 & 12)',
+        desc: 'درس مستقل: بطاقة بريدية من لندن (آمنة إلى صديقتها مريم في صنعاء) مع استخراج المفردات وقواعد الماضي البسيط وأدوات الربط.',
         duration: '25 دقيقة',
         objectives: [
           {
@@ -1147,7 +1317,7 @@
           if (Array.isArray(parsed) && parsed.length > 0) return parsed;
         }
       } catch (e) {}
-      return DEFAULT_LESSONS;
+      return JSON.parse(JSON.stringify(DEFAULT_LESSONS));
     }
 
     function saveAllLessons(lessonsList) {
@@ -1156,6 +1326,17 @@
       } catch (e) {
         showToast(currentLang === 'en' ? 'Saved in current session' : 'تم حفظ الدرس في الجلسة الحالية', 'info');
       }
+    }
+
+    function resetLessonsLibrary() {
+      localStorage.removeItem(STORAGE_KEYS.LESSONS);
+      selectedGrade = 'الكل';
+      selectedSubject = 'الكل';
+      renderFilterPills();
+      applyFiltersAndRender();
+      const fresh = getAllLessons();
+      if (fresh.length > 0) displayLesson(fresh[0].id, false);
+      showToast(currentLang === 'en' ? 'Library reset to standalone lessons ✅' : 'تم تنظيف المكتبة واستعادة الدروس المستقلة بنجاح ✅', 'success');
     }
 
     function formatGradeLabel(g) {
@@ -1215,44 +1396,46 @@
 
       if (countBadge) {
         countBadge.innerText = currentLang === 'en'
-          ? `Available Lessons (${filtered.length})`
-          : `الدروس المتاحة (${filtered.length})`;
+          ? `Standalone Lessons (${filtered.length})`
+          : `الدروس المستقلة المتاحة (${filtered.length})`;
       }
 
-      const viewBtnLabel = currentLang === 'en' ? 'View Lesson' : 'عرض الدرس';
-      const durText = currentLang === 'en' ? '25 mins' : '25 دقيقة';
+      const viewBtnLabel = currentLang === 'en' ? 'Open Lesson' : 'فتح الدرس المستقل';
 
-      grid.innerHTML = filtered.map(item => `
-        <div class="bg-white text-slate-900 rounded-3xl p-5 shadow-xl border border-slate-200 flex flex-col justify-between space-y-4">
-          <div class="space-y-2">
-            <div class="flex items-center justify-between gap-2">
-              <span class="bg-slate-900 text-[#fbbf24] text-[11px] font-extrabold px-3 py-1 rounded-full">
-                ${formatGradeLabel(item.grade)} • ${formatSubjectLabel(item.subject)}
-              </span>
-              <div class="flex items-center gap-1.5 text-slate-400">
-                <button type="button" onclick="shareLesson('${item.id}')" class="hover:text-slate-800 p-1" title="Share">
-                  <i class="fa-solid fa-share-nodes text-xs"></i>
-                </button>
-                <button type="button" onclick="deleteLesson('${item.id}')" class="hover:text-rose-600 p-1" title="Delete">
-                  <i class="fa-solid fa-trash-can text-xs"></i>
-                </button>
+      grid.innerHTML = filtered.map(item => {
+        const isCurrent = item.id === activeLessonId;
+        return `
+          <div class="bg-white text-slate-900 rounded-3xl p-5 shadow-xl border-2 ${isCurrent ? 'border-[#fbbf24] ring-4 ring-[#fbbf24]/25' : 'border-slate-200'} flex flex-col justify-between space-y-4 transition">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between gap-2">
+                <span class="bg-slate-900 text-[#fbbf24] text-[11px] font-extrabold px-3 py-1 rounded-full">
+                  ${formatGradeLabel(item.grade)} • ${formatSubjectLabel(item.subject)}
+                </span>
+                <div class="flex items-center gap-1.5 text-slate-400">
+                  <button type="button" onclick="shareLesson('${item.id}')" class="hover:text-slate-800 p-1" title="Share">
+                    <i class="fa-solid fa-share-nodes text-xs"></i>
+                  </button>
+                  <button type="button" onclick="deleteLesson('${item.id}')" class="hover:text-rose-600 p-1" title="Delete">
+                    <i class="fa-solid fa-trash-can text-xs"></i>
+                  </button>
+                </div>
               </div>
+              <h3 class="font-black text-base text-slate-900 leading-snug">${item.title}</h3>
+              <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed">${item.desc}</p>
             </div>
-            <h3 class="font-black text-base sm:text-lg text-slate-900 leading-snug">${item.title}</h3>
-            <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed">${item.desc}</p>
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-[11px] font-bold text-slate-500">⏱️ ${item.duration || '20 دقيقة'}</span>
+              <button type="button" onclick="displayLesson('${item.id}', true)" class="bg-[#fbbf24] hover:bg-[#f59e0b] text-slate-950 font-black text-xs px-3.5 py-2 rounded-xl shadow flex items-center gap-1.5 transition">
+                <span>${viewBtnLabel}</span>
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
           </div>
-          <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
-            <span class="text-[11px] font-bold text-slate-500">⏱️ ${durText}</span>
-            <button type="button" onclick="displayLesson('${item.id}', true)" class="bg-[#fbbf24] hover:bg-[#f59e0b] text-slate-950 font-black text-xs px-4 py-2 rounded-xl shadow flex items-center gap-1.5 transition">
-              <span>${viewBtnLabel}</span>
-              <i class="fa-solid fa-eye"></i>
-            </button>
-          </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
-    // --- DISPLAY LESSON WITH FREEMIUM VIP GATING ---
+    // --- DISPLAY ONLY THE SELECTED SINGLE LESSON ---
     function displayLesson(lessonId, scrollToView) {
       const all = getAllLessons();
       const lesson = all.find(l => l.id === lessonId) || all[0];
@@ -1262,7 +1445,8 @@
       quizScore = 0;
       const vip = isUserVip();
 
-      // Update lock badges on top buttons
+      applyFiltersAndRender();
+
       const lockAudio = document.getElementById('lock-badge-audio');
       const lockPrint = document.getElementById('lock-badge-print');
       const pdfTag = document.getElementById('pdf-vip-tag');
@@ -1283,6 +1467,7 @@
         imgEl.src = lesson.sourceImage;
         imgBox.classList.remove('hidden');
       } else if (imgBox) {
+        imgBox.src = '';
         imgBox.classList.add('hidden');
       }
 
@@ -1311,7 +1496,7 @@
         `).join('');
       }
 
-      // 3. Vocabulary Lab (First 2 free, 3+ locked for non-VIP)
+      // 3. Vocabulary Lab
       const meaningWord = currentLang === 'en' ? 'Meaning' : 'المعنى';
       const vocabContainer = document.getElementById('active-vocab-grid');
       if (vocabContainer) {
@@ -1336,7 +1521,7 @@
         }).join('');
       }
 
-      // 4. Walkthrough (First 2 lines free, remaining lines blurred with VIP CTA overlay)
+      // 4. Walkthrough
       const lineWord = currentLang === 'en' ? 'Line' : 'الفقرة';
       const speakBtnWord = currentLang === 'en' ? 'Listen' : 'نطق';
       const teacherNoteWord = currentLang === 'en' ? '💡 Teacher Note:' : '💡 إضاءة المعلم:';
@@ -1368,7 +1553,6 @@
               <div class="text-sm sm:text-base font-black text-white">
                 🔒 بقية فقرات الشرح التحليلي (${lines.length - 2} فقرات إضافية مع القواعد والنطق) مخصصة لمشتركي VIP
               </div>
-              <p class="text-xs text-slate-300">اشترك الآن لفتح الشرح الكامل لجميع الدروس وتوليد عدد غير محدود من الصفحات</p>
               <button type="button" onclick="openSubModal('فتح كامل الشرح التحليلي للدرس')" class="bg-[#fbbf24] hover:bg-[#f59e0b] text-slate-950 font-black text-xs sm:text-sm px-6 py-2.5 rounded-xl shadow-lg transition">
                 افتح الشرح الكامل الآن 👑
               </button>
@@ -1480,7 +1664,6 @@
       }
     }
 
-    // --- VIP GATED ACTIONS (PRINT, FULL AUDIO, PDF TAB) ---
     function handlePrintWorksheet() {
       if (!isUserVip()) {
         openSubModal('طباعة ورقة عمل A4 للمدرسة');
@@ -1493,7 +1676,7 @@
     function readActiveLessonAudio() {
       if (!isUserVip()) {
         openSubModal('النطق الصوتي الكامل للدرس 🇬🇧');
-        showToast('النطق الصوتي الكامل للدرس متاح لمشتركي VIP (يمكنك تجربة أول كلمتين في المعجم مجاناً)', 'info');
+        showToast('النطق الصوتي الكامل للدرس متاح لمشتركي VIP', 'info');
         return;
       }
       const all = getAllLessons();
@@ -1504,7 +1687,6 @@
       showToast(currentLang === 'en' ? '🔊 Reading lesson in British English...' : '🔊 جاري قراءة الدرس باللهجة البريطانية...', 'info');
     }
 
-    // --- FULL BILINGUAL LANGUAGE TOGGLE ENGINE ---
     function toggleLanguage() {
       currentLang = currentLang === 'ar' ? 'en' : 'ar';
       const isEn = currentLang === 'en';
@@ -1535,23 +1717,24 @@
       setTxt('stat-4-desc', 'أهداف، مفردات ناطقة، قواعد، بطاقات 3D واختبارات', 'Objectives, audio vocab, grammar, 3D flashcards & quizzes');
 
       setTxt('curriculum-section-title', 'مكتبة المناهج والدروس التفاعلية', 'Interactive Curriculum & Lessons Library');
-      setTxt('curriculum-section-sub', 'اختر الصف الدراسي (من السابع إلى الثالث الثانوي) والمادة لاستعراض الدروس', 'Select grade level (Grades 7–12) and subject to explore lessons');
+      setTxt('curriculum-section-sub', 'اختر الصف الدراسي (من السابع إلى الثالث الثانوي) والمادة لاستعراض كل درس بشكل مستقل', 'Select grade level (Grades 7–12) and subject to explore standalone lessons');
       setTxt('grade-filter-label', 'الصف الدراسي:', 'Grade Level:');
       setTxt('subject-filter-label', 'المادة الدراسية أو المجال:', 'Subject / Field:');
-      setTxt('add-lesson-link-text', 'إضافة درس أو ملف جديد', 'Add New Lesson or File');
+      setTxt('add-lesson-link-text', 'إضافة درس مستقل جديد', 'Add Standalone Lesson');
+      setTxt('reset-lib-btn-text', 'تنظيف الدروس المضافة', 'Reset Added Lessons');
 
       const searchInp = document.getElementById('search-input');
       if (searchInp) {
         searchInp.placeholder = isEn ? 'Search for a lesson, subject, concept...' : 'ابحث عن درس، مادة، مفهوم...';
       }
 
-      setTxt('ai-teacher-badge-text', 'المعلم الذكي ثنائي اللغة (Bilingual AI Teacher)', 'Bilingual AI Teacher');
+      setTxt('ai-teacher-badge-text', 'شرح وإنفوجرافيك درس مستقل (Standalone Lesson)', 'Standalone Bilingual Lesson');
       setTxt('btn-read-lesson', 'نطق الدرس كاملاً 🇬🇧', 'Read Full Lesson 🇬🇧');
       setTxt('btn-print-lesson', 'طباعة ورقة عمل A4', 'Print A4 Worksheet');
-      setTxt('source-img-label', 'صورة صفحة الدرس المرفوعة (اضغط للتكبير)', 'Uploaded Textbook Page (Tap to Zoom)');
+      setTxt('source-img-label', 'صورة صفحة هذا الدرس المرفوعة (اضغط للتكبير)', 'Uploaded Textbook Page (Tap to Zoom)');
       setTxt('btn-zoom-img', 'تكبير بملء الشاشة 🔍', 'Full Screen Zoom 🔍');
       setTxt('sec-1-title', 'أولاً: أهداف الدرس ونواتج التعلم (Objectives)', '1. Lesson Objectives & Target Skills');
-      setTxt('sec-2-title', 'ثانياً: الخريطة البصرية والإنفوجرافيك (Visual Infographic)', '2. Visual Infographic Flow Map');
+      setTxt('sec-2-title', 'ثانياً: الخريطة البصرية والإنفوجرافيك للدرس (Visual Infographic)', '2. Visual Infographic Flow Map');
       setTxt('sec-3-title', 'ثالثاً: معجم المفردات الناطق (Audio Vocabulary Lab)', '3. Interactive Audio Vocabulary Lab');
       setTxt('sec-4-title', 'رابعاً: الشرح التحليلي جملة بجملة (Bilingual Walkthrough)', '4. Bilingual Line-by-Line Walkthrough');
       setTxt('sec-5-title', 'خامساً: معمل القواعد وتصريف الأفعال (Grammar Matrix)', '5. Grammar & Verbs Matrix');
@@ -1561,8 +1744,6 @@
       setTxt('footer-desc', 'منصة تعليمية بصرية ذكية لتحويل المناهج الدراسية (من الصف السابع إلى الثالث الثانوي) إلى إنفوجرافيك وشروحات تفاعلية ثنائية اللغة.', 'Smart visual learning platform transforming school curricula (Grades 7 to 12) into interactive infographics and bilingual lessons.');
       setTxt('footer-sub-link', 'باقات الاشتراك وتفعيل الكود', 'Subscription Plans & Code Activation');
       setTxt('footer-admin-link', 'لوحة النظام', 'System Admin');
-      setTxt('modal-upload-title', 'استوديو التوليد البصري والمعلم الذكي', 'Visual Infographic & AI Lesson Studio');
-      setTxt('btn-generate-submit-text', 'توليد الشرح التفصيلي والإنفوجرافيك الآن ✨', 'Generate Detailed Walkthrough & Infographic Now ✨');
 
       updateDailyUsageUI();
       renderFilterPills();
@@ -1573,8 +1754,32 @@
       showToast(isEn ? 'Language switched to English 🌐' : 'تم تحويل لغة الواجهة إلى العربية 🌐', 'info');
     }
 
+    // --- RESET UPLOAD STATE TO PREVENT MERGING PREVIOUS LESSON DATA ---
+    function resetUploadForm() {
+      uploadedImageDataUrl = '';
+      extractedPdfText = '';
+      const imgInp = document.getElementById('lesson-image-input');
+      const pdfInp = document.getElementById('lesson-pdf-input');
+      const hintInp = document.getElementById('image-topic-hint');
+      const titleInp = document.getElementById('custom-lesson-title');
+      const txtInp = document.getElementById('custom-lesson-text');
+      const prevBox = document.getElementById('upload-image-preview-box');
+      const pdfBox = document.getElementById('pdf-status-box');
+      const progBox = document.getElementById('generation-progress-box');
+
+      if (imgInp) imgInp.value = '';
+      if (pdfInp) pdfInp.value = '';
+      if (hintInp) hintInp.value = '';
+      if (titleInp) titleInp.value = '';
+      if (txtInp) txtInp.value = '';
+      if (prevBox) prevBox.classList.add('hidden');
+      if (pdfBox) pdfBox.classList.add('hidden');
+      if (progBox) progBox.classList.add('hidden');
+    }
+
     // --- MODAL CONTROLS ---
     function openUploadModal() {
+      resetUploadForm();
       const m = document.getElementById('upload-modal');
       if (m) m.style.display = 'flex';
     }
@@ -1705,6 +1910,7 @@
       if (box) box.innerText = `✅ تم تجهيز ملف PDF بنجاح: ${file.name}`;
     }
 
+    // --- GENERATE A SINGLE STANDALONE LESSON ONLY ---
     async function generateLessonNow() {
       const hint = (document.getElementById('image-topic-hint')?.value || '').trim();
       const customT = (document.getElementById('custom-lesson-title')?.value || '').trim();
@@ -1740,23 +1946,35 @@
       const grade = uploadScope === 'curriculum' ? (document.getElementById('upload-grade')?.value || 'الصف السابع') : 'محتوى عام';
       const subject = uploadScope === 'curriculum' ? (document.getElementById('upload-subject')?.value || 'اللغة الإنجليزية') : 'مستندات وملفات حرة 🌐';
 
+      // Isolate ONLY the current active tab's input so old tabs never merge
+      let activeInputText = '';
+      const currentImgUrl = currentUploadTab === 'image' ? uploadedImageDataUrl : '';
+
+      if (currentUploadTab === 'image') {
+        activeInputText = hint;
+      } else if (currentUploadTab === 'pdf') {
+        activeInputText = extractedPdfText;
+      } else if (currentUploadTab === 'text') {
+        activeInputText = [customT, customTxt].filter(Boolean).join('\n');
+      }
+
       let ocrText = '';
       let newLesson = null;
 
       const geminiKey = localStorage.getItem(STORAGE_KEYS.GEMINI_KEY);
       if (geminiKey) {
         try {
-          setProg(40, 'جاري قراءة الصفحة وتحليلها عبر Gemini Vision AI...');
-          newLesson = await callGeminiVisionAPI(geminiKey, grade, subject, [hint, customT, customTxt, extractedPdfText].filter(Boolean).join('\n'), uploadedImageDataUrl);
+          setProg(40, 'جاري قراءة الدرس المستقل عبر Gemini Vision AI...');
+          newLesson = await callGeminiVisionAPI(geminiKey, grade, subject, activeInputText, currentImgUrl);
         } catch (err) {
           newLesson = null;
         }
       }
 
-      if (!newLesson && currentUploadTab === 'image' && uploadedImageDataUrl && !hint && window.Tesseract) {
+      if (!newLesson && currentUploadTab === 'image' && currentImgUrl && window.Tesseract) {
         try {
-          setProg(50, 'جاري القراءة البصرية لنصوص الصورة (OCR)...');
-          const res = await window.Tesseract.recognize(uploadedImageDataUrl, 'eng');
+          setProg(55, 'جاري القراءة البصرية لنصوص هذا الدرس فقط (OCR)...');
+          const res = await window.Tesseract.recognize(currentImgUrl, 'eng');
           ocrText = (res?.data?.text || '').trim();
         } catch (e) {
           ocrText = '';
@@ -1764,15 +1982,15 @@
       }
 
       if (!newLesson) {
-        setProg(85, 'جاري بناء الإنفوجرافيك والشرح ثنائي اللغة...');
+        setProg(85, 'جاري بناء الإنفوجرافيك والشرح المستقل لهذا الدرس...');
         await new Promise(r => setTimeout(r, 350));
-        const combinedRaw = [hint, customT, customTxt, extractedPdfText, ocrText].filter(Boolean).join('\n').trim();
-        newLesson = buildSmartLesson(grade, subject, combinedRaw, uploadedImageDataUrl);
+        const singleLessonText = [activeInputText, ocrText].filter(Boolean).join('\n').trim();
+        newLesson = buildSmartStandaloneLesson(grade, subject, singleLessonText, currentImgUrl);
       }
 
       setProg(100, 'اكتمل التوليد بنجاح!');
-      if (pBox) pBox.classList.add('hidden');
       closeUploadModal();
+      resetUploadForm();
 
       const all = getAllLessons();
       all.unshift(newLesson);
@@ -1782,13 +2000,13 @@
       renderFilterPills();
       applyFiltersAndRender();
       displayLesson(newLesson.id, true);
-      showToast(currentLang === 'en' ? 'Lesson & Infographic Generated Successfully 🎉' : 'تم توليد الدرس والشرح بنجاح 🎉', 'success');
+      showToast(currentLang === 'en' ? 'Standalone Lesson Generated 🎉' : 'تم توليد هذا الدرس بشكل مستقل تماماً 🎉', 'success');
     }
 
     async function callGeminiVisionAPI(apiKey, grade, subject, rawText, imageDataUrl) {
       const parts = [
         {
-          text: `أنت معلم خبير ثنائي اللغة (إنجليزي وعربي) للمنهج الدراسي (${grade} - ${subject}). حلل الصورة أو النص المرفق بدقة تامة واستخرج الدرس الحقيقي الموجود فيها وأعد النتيجة بصيغة JSON فقط يحتوي على الحقول: title, desc, objectives (مصفوفة من {en, ar}), infographic (مصفوفة من 3 عناصر {step, title, detail}), vocabulary (مصفوفة من {word, pos, meaning, example}), walkthrough (مصفوفة من {en, ar, note}), grammar (مصفوفة من {title, rule, example}), flashcards (مصفوفة من {q, a}), quiz (مصفوفة من {q, options (4 خيارات), correct (0-3), explanation}). سياق إضافي: ${rawText}`
+          text: `أنت معلم خبير ثنائي اللغة (إنجليزي وعربي) للمنهج الدراسي (${grade} - ${subject}). حلل الصورة أو النص المرفق وولّد درساً واحداً مستقلاً فقط لما هو موجود أمامك دون دمجه بأي دروس أخرى. أعد النتيجة بصيغة JSON فقط يحتوي على الحقول: title, desc, objectives (مصفوفة من {en, ar}), infographic (مصفوفة من 3 عناصر {step, title, detail}), vocabulary (مصفوفة من {word, pos, meaning, example}), walkthrough (مصفوفة من {en, ar, note}), grammar (مصفوفة من {title, rule, example}), flashcards (مصفوفة من {q, a}), quiz (مصفوفة من {q, options (4 خيارات), correct (0-3), explanation}). سياق: ${rawText}`
         }
       ];
       if (imageDataUrl && imageDataUrl.includes('base64,')) {
@@ -1810,33 +2028,25 @@
       parsed.id = 'lesson-' + Date.now();
       parsed.grade = grade;
       parsed.subject = subject;
-      parsed.duration = '25 دقيقة';
+      parsed.duration = '20 دقيقة';
       if (imageDataUrl) parsed.sourceImage = imageDataUrl;
       return parsed;
     }
 
-    function buildSmartLesson(grade, subject, rawText, imgUrl) {
+    function buildSmartStandaloneLesson(grade, subject, rawText, imgUrl) {
       const lower = (rawText || '').toLowerCase();
 
-      if (
-        lower.includes('bill') ||
-        lower.includes('tim') ||
-        lower.includes('saleh') ||
-        lower.includes('come to school') ||
-        lower.includes('post office') ||
-        lower.includes('thirteen') ||
-        (!rawText && imgUrl)
-      ) {
+      // Match ONLY the specific individual unit without merging all 3!
+      if (lower.includes('1.6') || (lower.includes('bill') && !lower.includes('saleh') && !lower.includes('come to school'))) {
         const copy = JSON.parse(JSON.stringify(DEFAULT_LESSONS[0]));
         copy.id = 'lesson-' + Date.now();
         copy.grade = grade;
         copy.subject = subject;
         if (imgUrl) copy.sourceImage = imgUrl;
-        if (rawText && rawText.length < 75) copy.title = rawText;
         return copy;
       }
 
-      if (lower.includes('postcard') || lower.includes('london') || lower.includes('mariam')) {
+      if (lower.includes('1.7') || lower.includes('tim') || lower.includes('post office') || lower.includes('supermarket')) {
         const copy = JSON.parse(JSON.stringify(DEFAULT_LESSONS[1]));
         copy.id = 'lesson-' + Date.now();
         copy.grade = grade;
@@ -1845,59 +2055,79 @@
         return copy;
       }
 
+      if (lower.includes('2.1') || lower.includes('come to school') || lower.includes('bicycle') || lower.includes('taha')) {
+        const copy = JSON.parse(JSON.stringify(DEFAULT_LESSONS[2]));
+        copy.id = 'lesson-' + Date.now();
+        copy.grade = grade;
+        copy.subject = subject;
+        if (imgUrl) copy.sourceImage = imgUrl;
+        return copy;
+      }
+
+      if (lower.includes('1.9') || lower.includes('postcard') || lower.includes('london') || lower.includes('mariam')) {
+        const copy = JSON.parse(JSON.stringify(DEFAULT_LESSONS[3]));
+        copy.id = 'lesson-' + Date.now();
+        copy.grade = grade;
+        copy.subject = subject;
+        if (imgUrl) copy.sourceImage = imgUrl;
+        return copy;
+      }
+
+      // Dynamic standalone builder for any other uploaded image/text
       const cleanLines = rawText.split(/[\n.?!]+/).map(s => s.trim()).filter(s => s.length > 3);
-      const title = cleanLines[0] ? cleanLines[0].slice(0, 75) : `درس تفاعلي (${subject} - ${grade})`;
+      const timeTag = new Date().toLocaleTimeString('ar-YE', { hour: '2-digit', minute: '2-digit' });
+      const title = cleanLines[0] ? cleanLines[0].slice(0, 75) : `درس مستقل (${subject} - ${grade}) [${timeTag}]`;
       const sentences = cleanLines.slice(0, 6);
-      const words = (rawText.match(/[A-Za-z]{4,}/g) || ['School', 'Lesson', 'Student', 'Teacher', 'Activity']).slice(0, 6);
+      const words = [...new Set((rawText.match(/[A-Za-z]{4,}/g) || ['Lesson', 'Concept', 'Practice', 'Example']))].slice(0, 6);
 
       return {
         id: 'lesson-' + Date.now(),
         grade: grade,
         subject: subject,
         title: title,
-        desc: `شرح تفصيلي ثنائي اللغة وإنفوجرافيك تفاعلي لمنهج (${subject} - ${grade}).`,
-        duration: '25 دقيقة',
+        desc: `شرح وإنفوجرافيك مستقل خاص بهذا الدرس فقط (${subject} - ${grade}).`,
+        duration: '20 دقيقة',
         sourceImage: imgUrl || '',
         objectives: [
-          { en: `Understand the key ideas and sentences in "${title}".`, ar: `فهم الأفكار والجمل الأساسية الواردة في درس "${title}".` },
-          { en: 'Practice vocabulary pronunciation and grammatical rules.', ar: 'التدرب على نطق المفردات وتطبيق القواعد اللغوية.' }
+          { en: `Understand the core ideas and sentences of "${title}".`, ar: `فهم الأفكار والجمل الأساسية الواردة في هذا الدرس المستقل.` },
+          { en: 'Master the extracted vocabulary and grammar structures.', ar: 'إتقان المفردات المستخرجة والقواعد النحوية الخاصة بهذا الدرس.' }
         ],
         infographic: [
-          { step: '1. المدخل الأساسي', title: 'محور الدرس', detail: sentences[0] || title },
-          { step: '2. التحليل والتفصيل', title: 'أهم الجمل والمفاهيم', detail: sentences[1] || 'تحليل تراكيب الدرس وربطها بالأمثلة.' },
-          { step: '3. الخلاصة والتطبيق', title: 'الاستنتاج والتدريب', detail: sentences[2] || 'تطبيق القواعد والمفردات في جمل مفيدة.' }
+          { step: '1. الفكرة المحورية للدرس', title: 'مدخل الدرس', detail: sentences[0] || title },
+          { step: '2. التراكيب والمفاهيم', title: 'العناصر الأساسية', detail: sentences[1] || 'تحليل الجمل والمصطلحات الواردة في صفحة الدرس المرفوعة.' },
+          { step: '3. الخلاصة والتطبيق', title: 'نتيجة التعلم', detail: sentences[2] || 'تطبيق مفردات وقواعد هذا الدرس من خلال التدريبات التفاعلية.' }
         ],
         vocabulary: words.map(w => ({
           word: w,
-          pos: 'Key Word',
-          meaning: `مفردة مستخرجة من النص (${w})`,
-          example: sentences.find(s => s.toLowerCase().includes(w.toLowerCase())) || `We learn the word "${w}" in this unit.`
+          pos: 'Vocabulary',
+          meaning: `مفردة مستخرجة من هذا الدرس (${w})`,
+          example: sentences.find(s => s.toLowerCase().includes(w.toLowerCase())) || `Example with "${w}" from the lesson.`
         })),
-        walkthrough: (sentences.length ? sentences : [title, 'Practice reading every sentence aloud.', 'Review the grammar rules below.']).map((s, idx) => ({
+        walkthrough: (sentences.length ? sentences : [title, 'Read the lesson text carefully and listen to the pronunciation.', 'Apply the key grammar rule in your workbook.']).map((s, idx) => ({
           en: s,
-          ar: `الترجمة والشرح التربوي للفقرة (${idx + 1}) بأسلوب واضح للطالب.`,
-          note: 'ركز على تركيب الجملة وزمن الفعل المستخدم فيها.'
+          ar: `الترجمة والشرح التربوي للفقرة (${idx + 1}) من هذا الدرس.`,
+          note: 'لاحظ تركيب الجملة وزمن الفعل المستخدم في هذا السياق.'
         })),
         grammar: [
-          { title: 'القواعد والتراكيب اللغوية (Grammar Focus)', rule: 'Subject + Verb + Object', example: sentences[0] || title },
-          { title: 'تكوين السؤال والنفي (Questions & Negatives)', rule: 'Do/Does + Subject + Base Verb?', example: 'How does he come to school?' }
+          { title: 'القاعدة النحوية للدرس (Lesson Grammar)', rule: 'Subject + Verb + Object / Complement', example: sentences[0] || title },
+          { title: 'تطبيق القاعدة في جمل الدرس', rule: 'توافق الفاعل مع الفعل في زمن الجملة', example: sentences[1] || title }
         ],
         flashcards: [
-          { q: `ما الموضوع الرئيسي لدرس "${title}"؟`, a: sentences[0] || title },
-          { q: 'كيف تطبق القاعدة النحوية للدرس؟', a: 'بمراعاة توافق الفاعل مع الفعل في الزمن المناسب.' }
+          { q: `ما الفكرة الرئيسية لدرس "${title}"؟`, a: sentences[0] || title },
+          { q: 'ما أهم المفردات الواردة في هذه الصفحة؟', a: words.join(' - ') }
         ],
         quiz: [
           {
-            q: `ما العنوان أو المفهوم الأساسي لهذا الدرس؟`,
-            options: [title, 'موضوع غير مرتبط', 'مقدمة عامة', 'لا شيء مما سبق'],
+            q: `ما الموضوع الذي يناقشه هذا الدرس المستقل؟`,
+            options: [title, 'موضوع خارجي', 'مقدمة غير مرتبطة', 'لا شيء مما سبق'],
             correct: 0,
-            explanation: `يركز الدرس على: ${title}`
+            explanation: `هذا الدرس يركز حصرياً على: ${title}`
           },
           {
-            q: 'أي من المهارات التالية يغطيها هذا الدرس؟',
-            options: ['المفردات والقواعد والشرح التحليلي', 'الرسوم المتحركة فقط', 'الألعاب فقط', 'لا شيء'],
+            q: `أي من الكلمات التالية وردت في هذا الدرس؟`,
+            options: [words[0] || 'Lesson', 'UnrelatedWord1', 'UnrelatedWord2', 'None'],
             correct: 0,
-            explanation: 'يغطي الدرس المفردات الناطقة والقواعد والشرح جملة بجملة.'
+            explanation: `الكلمة (${words[0] || 'Lesson'}) من مفردات هذا الدرس.`
           }
         ]
       };
@@ -1946,7 +2176,6 @@
         : `المتبقي للتجربة المجانية: ${rem} من ${MAX_FREE_TRIALS} محاولات`;
     }
 
-    // --- DEVICE-LOCKED CODE VALIDATION ---
     function activateSubscriptionCode() {
       const inp = document.getElementById('activation-code-input');
       const code = (inp ? inp.value : '').trim().toUpperCase();
@@ -1954,7 +2183,6 @@
 
       const myDeviceId = getOrCreateDeviceId();
 
-      // 1. Check Device-Bound Format: VIP-{DAYS}-{SIGNATURE}
       const match = code.match(/^VIP-(30|90|365)-([A-Z0-9]{5})$/);
       if (match) {
         const days = parseInt(match[1], 10);
@@ -1980,7 +2208,6 @@
         }
       }
 
-      // 2. Owner Master Emergency Code Check (Hashed so it is invisible in View Source)
       if (computeSimpleHash(code) === '9f8e7bc4' || code === [72, 85, 83, 83, 65, 77, 50, 48, 50, 54].map(c => String.fromCharCode(c)).join('')) {
         const sub = {
           code: 'MASTER',
@@ -1998,7 +2225,6 @@
       showToast('❌ كود التفعيل غير صحيح! أرسل رقم جهازك لأبوحسام عبر واتساب للحصول على كودك.', 'error');
     }
 
-    // --- OBFUSCATED OWNER ADMIN LOGIN & GENERATOR ---
     function loginOwnerAdmin() {
       const em = (document.getElementById('admin-email-input')?.value || '').trim().toLowerCase();
       const ps = (document.getElementById('admin-pass-input')?.value || '').trim();
@@ -2108,7 +2334,7 @@
       const all = getAllLessons();
       const l = all.find(x => x.id === lessonId);
       if (!l) return;
-      const txt = `📚 درس تفاعلي عبر منصة Hussam Infographic:\n${l.title}\n${window.location.href}`;
+      const txt = `📚 درس تفاعلي مستقل عبر منصة Hussam Infographic:\n${l.title}\n${window.location.href}`;
       if (navigator.share) {
         navigator.share({ title: l.title, text: txt, url: window.location.href }).catch(() => {});
       } else if (navigator.clipboard) {
@@ -2120,12 +2346,16 @@
     function deleteLesson(lessonId) {
       const all = getAllLessons();
       if (all.length <= 1) {
-        showToast(currentLang === 'en' ? 'Cannot delete all default lessons' : 'لا يمكن حذف جميع الدروس من المكتبة', 'error');
+        showToast(currentLang === 'en' ? 'Cannot delete the last lesson' : 'لا يمكن حذف آخر درس في المكتبة', 'error');
         return;
       }
-      saveAllLessons(all.filter(x => x.id !== lessonId));
+      const remaining = all.filter(x => x.id !== lessonId);
+      saveAllLessons(remaining);
       applyFiltersAndRender();
-      showToast(currentLang === 'en' ? 'Lesson deleted' : 'تم حذف الدرس', 'info');
+      if (activeLessonId === lessonId && remaining.length > 0) {
+        displayLesson(remaining[0].id, false);
+      }
+      showToast(currentLang === 'en' ? 'Lesson deleted' : 'تم حذف الدرس بنجاح', 'info');
     }
 
     function previewReadyLesson() {
