@@ -117,7 +117,7 @@
       <!-- Left Controls: + درس & English -->
       <div class="flex items-center gap-1 sm:gap-2 shrink-0">
         <button type="button" onclick="openUploadModal()" class="bg-[#fbbf24] hover:bg-[#f59e0b] active:scale-95 transition text-slate-950 font-extrabold text-[11px] sm:text-sm px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-md flex items-center gap-1">
-          <span>درس</span>
+          <span id="header-add-btn-text">درس</span>
           <span class="text-sm sm:text-lg leading-none font-black">+</span>
         </button>
         <button type="button" onclick="toggleLanguage()" id="lang-toggle-btn" class="bg-[#0a1c32] hover:bg-[#112a4a] active:scale-95 transition text-white border border-[#1e3a5f] text-[11px] sm:text-sm font-semibold px-2 sm:px-3 py-1.5 sm:py-2 rounded-full flex items-center gap-1">
@@ -126,7 +126,7 @@
         </button>
       </div>
 
-      <!-- Right Brand: HUSSAM INFOGRAPHIC + Squircle Icon (Never Clips) -->
+      <!-- Right Brand: HUSSAM INFOGRAPHIC + Squircle Icon -->
       <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
         <div class="brand-lock font-en font-black tracking-tight">
           <span class="text-white">HUSSAM</span>
@@ -272,7 +272,7 @@
 
         <div onclick="openSubModal()" class="cursor-pointer bg-[#07111e]/90 hover:bg-[#07111e] border border-[#163252] rounded-2xl px-4 py-2.5 flex items-center justify-between text-xs sm:text-sm transition">
           <span class="text-[#fbbf24] font-extrabold flex items-center gap-1">
-            <span>ترقية</span>
+            <span id="upgrade-badge-text">ترقية</span>
             <i class="fa-solid fa-bolt"></i>
           </span>
           <span id="daily-limit-text" class="text-slate-200 font-bold">المتبقي اليوم: 4 من 4 محاولات مجانية</span>
@@ -285,23 +285,23 @@
     <section id="stats-section" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
       <div class="bg-[#0a1c32] border border-[#163252] rounded-3xl p-4 sm:p-5 text-center space-y-1.5 shadow-lg">
         <div class="font-en text-2xl sm:text-3xl font-black text-[#fbbf24]">100%</div>
-        <div class="font-extrabold text-sm sm:text-base text-white">المصدر الأصيل: كتابك المدرسي</div>
-        <p class="text-xs text-slate-400 leading-relaxed">لا اختلاق للمعلومات أو خروج عن المنهج المعتمد</p>
+        <div id="stat-1-title" class="font-extrabold text-sm sm:text-base text-white">المصدر الأصيل: كتابك المدرسي</div>
+        <p id="stat-1-desc" class="text-xs text-slate-400 leading-relaxed">لا اختلاق للمعلومات أو خروج عن المنهج المعتمد</p>
       </div>
       <div class="bg-[#0a1c32] border border-[#163252] rounded-3xl p-4 sm:p-5 text-center space-y-1.5 shadow-lg">
         <div class="font-en text-2xl sm:text-3xl font-black text-[#22d3ee]">10+</div>
-        <div class="font-extrabold text-sm sm:text-base text-white">قوالب إنفوجرافيك تعليمية</div>
-        <p class="text-xs text-slate-400 leading-relaxed">خرائط مفاهيم، مسارات، ومقارنات بصرية ذكية</p>
+        <div id="stat-2-title" class="font-extrabold text-sm sm:text-base text-white">قوالب إنفوجرافيك تعليمية</div>
+        <p id="stat-2-desc" class="text-xs text-slate-400 leading-relaxed">خرائط مفاهيم، مسارات، ومقارنات بصرية ذكية</p>
       </div>
       <div class="bg-[#0a1c32] border border-[#163252] rounded-3xl p-4 sm:p-5 text-center space-y-1.5 shadow-lg">
         <div class="font-en text-2xl sm:text-3xl font-black text-[#22d3ee]">AI Tutor</div>
-        <div class="font-extrabold text-sm sm:text-base text-white">المعلم الذكي المساعد</div>
-        <p class="text-xs text-slate-400 leading-relaxed">شرح تفصيلي ثنائي اللغة ونطق صوتي فوري للمفردات</p>
+        <div id="stat-3-title" class="font-extrabold text-sm sm:text-base text-white">المعلم الذكي المساعد</div>
+        <p id="stat-3-desc" class="text-xs text-slate-400 leading-relaxed">شرح تفصيلي ثنائي اللغة ونطق صوتي فوري للمفردات</p>
       </div>
       <div class="bg-[#0a1c32] border border-[#163252] rounded-3xl p-4 sm:p-5 text-center space-y-1.5 shadow-lg">
-        <div class="text-2xl sm:text-3xl font-black text-[#fbbf24]">5 في 1</div>
-        <div class="font-extrabold text-sm sm:text-base text-white">أنشطة وأسئلة تفاعلية</div>
-        <p class="text-xs text-slate-400 leading-relaxed">أهداف، مفردات ناطقة، قواعد، بطاقات 3D واختبارات</p>
+        <div id="stat-4-num" class="text-2xl sm:text-3xl font-black text-[#fbbf24]">5 في 1</div>
+        <div id="stat-4-title" class="font-extrabold text-sm sm:text-base text-white">أنشطة وأسئلة تفاعلية</div>
+        <p id="stat-4-desc" class="text-xs text-slate-400 leading-relaxed">أهداف، مفردات ناطقة، قواعد، بطاقات 3D واختبارات</p>
       </div>
     </section>
 
@@ -313,7 +313,7 @@
             <i class="fa-solid fa-layer-group text-[#fbbf24]"></i>
             <span id="curriculum-section-title">مكتبة المناهج والدروس التفاعلية</span>
           </h2>
-          <p class="text-xs sm:text-sm text-slate-400">اختر الصف الدراسي والمادة لاستعراض الدروس والإنفوجرافيك المرتبط بها</p>
+          <p id="curriculum-section-sub" class="text-xs sm:text-sm text-slate-400">اختر الصف الدراسي والمادة لاستعراض الدروس والإنفوجرافيك المرتبط بها</p>
         </div>
         <div class="relative w-full sm:w-72">
           <input
@@ -321,19 +321,19 @@
             id="search-input"
             oninput="applyFiltersAndRender()"
             placeholder="ابحث عن درس، مادة، مفهوم..."
-            class="w-full bg-[#07111e] border border-[#1e3a5f] focus:border-[#fbbf24] rounded-2xl py-2.5 pr-10 pl-4 text-sm text-white placeholder-slate-400 outline-none transition"
+            class="w-full bg-[#07111e] border border-[#1e3a5f] focus:border-[#fbbf24] rounded-2xl py-2.5 px-10 text-sm text-white placeholder-slate-400 outline-none transition"
           />
           <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-3 text-slate-400 text-sm"></i>
         </div>
       </div>
 
       <div class="space-y-1.5">
-        <div class="text-xs font-bold text-slate-400">الصف الدراسي:</div>
+        <div id="grade-filter-label" class="text-xs font-bold text-slate-400">الصف الدراسي:</div>
         <div id="grade-pills-container" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1"></div>
       </div>
 
       <div class="space-y-1.5">
-        <div class="text-xs font-bold text-slate-400">المادة الدراسية أو المجال:</div>
+        <div id="subject-filter-label" class="text-xs font-bold text-slate-400">المادة الدراسية أو المجال:</div>
         <div id="subject-pills-container" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1"></div>
       </div>
     </section>
@@ -344,7 +344,7 @@
         <span id="lessons-count-badge" class="text-xs sm:text-sm font-bold text-[#22d3ee]">الدروس المتاحة</span>
         <button type="button" onclick="openUploadModal()" class="text-xs sm:text-sm font-bold text-[#fbbf24] hover:underline flex items-center gap-1">
           <i class="fa-solid fa-plus"></i>
-          <span>إضافة درس أو ملف جديد</span>
+          <span id="add-lesson-link-text">إضافة درس أو ملف جديد</span>
         </button>
       </div>
       <div id="lessons-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
@@ -358,11 +358,11 @@
           <div class="space-y-2">
             <div class="flex flex-wrap items-center gap-2">
               <span id="active-lesson-category" class="bg-[#fbbf24]/20 text-[#fbbf24] border border-[#fbbf24]/40 text-xs font-extrabold px-3 py-1 rounded-full">
-                الصف الثامن • اللغة الإنجليزية
+                الصف السابع • اللغة الإنجليزية
               </span>
               <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
                 <i class="fa-solid fa-robot"></i>
-                <span>المعلم الذكي ثنائي اللغة (Bilingual AI Teacher)</span>
+                <span id="ai-teacher-badge-text">المعلم الذكي ثنائي اللغة (Bilingual AI Teacher)</span>
               </span>
             </div>
             <h2 id="active-lesson-title" class="text-xl sm:text-3xl font-black text-white leading-snug"></h2>
@@ -372,14 +372,14 @@
           <div class="flex flex-wrap items-center gap-2 shrink-0 no-print">
             <button type="button" onclick="readActiveLessonAudio()" class="bg-[#22d3ee] hover:bg-[#06b6d4] text-slate-950 font-black text-xs sm:text-sm px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-md transition">
               <i class="fa-solid fa-volume-high"></i>
-              <span>نطق الدرس كاملاً 🇬🇧</span>
+              <span id="btn-read-lesson">نطق الدرس كاملاً 🇬🇧</span>
             </button>
             <button type="button" onclick="stopSpeech()" class="bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 font-bold text-xs sm:text-sm px-3 py-2.5 rounded-xl transition">
               <i class="fa-solid fa-stop"></i>
             </button>
             <button type="button" onclick="window.print()" class="bg-[#07111e] hover:bg-[#112a4a] text-white border border-[#1e3a5f] font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl flex items-center gap-2 transition">
               <i class="fa-solid fa-print text-[#fbbf24]"></i>
-              <span>طباعة ورقة عمل A4</span>
+              <span id="btn-print-lesson">طباعة ورقة عمل A4</span>
             </button>
           </div>
         </div>
@@ -388,9 +388,9 @@
           <div class="flex items-center justify-between mb-3">
             <span class="text-xs sm:text-sm font-extrabold text-[#fbbf24] flex items-center gap-2">
               <i class="fa-solid fa-image"></i>
-              <span>صورة صفحة الدرس المرفوعة (اضغط للتكبير)</span>
+              <span id="source-img-label">صورة صفحة الدرس المرفوعة (اضغط للتكبير)</span>
             </span>
-            <button type="button" onclick="openLightbox()" class="text-xs text-[#22d3ee] hover:underline font-bold">تكبير بملء الشاشة 🔍</button>
+            <button type="button" onclick="openLightbox()" id="btn-zoom-img" class="text-xs text-[#22d3ee] hover:underline font-bold">تكبير بملء الشاشة 🔍</button>
           </div>
           <img id="active-source-image" onclick="openLightbox()" src="" alt="Source Page" class="max-h-72 mx-auto rounded-xl border border-[#1e3a5f] cursor-pointer hover:opacity-95 transition object-contain" />
         </div>
@@ -398,7 +398,7 @@
         <div class="print-card bg-[#07111e] border border-[#163252] rounded-2xl p-4 sm:p-5 space-y-3">
           <h3 class="text-base sm:text-lg font-black text-[#fbbf24] flex items-center gap-2">
             <i class="fa-solid fa-bullseye"></i>
-            <span>أولاً: أهداف الدرس ونواتج التعلم (Objectives)</span>
+            <span id="sec-1-title">أولاً: أهداف الدرس ونواتج التعلم (Objectives)</span>
           </h3>
           <div id="active-objectives-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
         </div>
@@ -406,7 +406,7 @@
         <div class="print-card bg-[#07111e] border border-[#163252] rounded-2xl p-4 sm:p-5 space-y-4">
           <h3 class="text-base sm:text-lg font-black text-[#22d3ee] flex items-center gap-2">
             <i class="fa-solid fa-diagram-project"></i>
-            <span>ثانياً: الخريطة البصرية والإنفوجرافيك (Visual Infographic)</span>
+            <span id="sec-2-title">ثانياً: الخريطة البصرية والإنفوجرافيك (Visual Infographic)</span>
           </h3>
           <div id="active-infographic-map" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
         </div>
@@ -415,9 +415,9 @@
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <h3 class="text-base sm:text-lg font-black text-[#fbbf24] flex items-center gap-2">
               <i class="fa-solid fa-spell-check"></i>
-              <span>ثالثاً: معجم المفردات الناطق (Audio Vocabulary Lab)</span>
+              <span id="sec-3-title">ثالثاً: معجم المفردات الناطق (Audio Vocabulary Lab)</span>
             </h3>
-            <span class="text-xs text-slate-400 no-print">اضغط على أيقونة السماعة 🔊 للاستماع إلى النطق البريطاني الصحيح</span>
+            <span id="sec-3-sub" class="text-xs text-slate-400 no-print">اضغط على أيقونة السماعة 🔊 للاستماع إلى النطق البريطاني الصحيح</span>
           </div>
           <div id="active-vocab-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
         </div>
@@ -425,7 +425,7 @@
         <div class="print-card bg-[#07111e] border border-[#163252] rounded-2xl p-4 sm:p-5 space-y-4">
           <h3 class="text-base sm:text-lg font-black text-[#22d3ee] flex items-center gap-2">
             <i class="fa-solid fa-chalkboard-user"></i>
-            <span>رابعاً: الشرح التحليلي جملة بجملة (Bilingual Walkthrough)</span>
+            <span id="sec-4-title">رابعاً: الشرح التحليلي جملة بجملة (Bilingual Walkthrough)</span>
           </h3>
           <div id="active-walkthrough-list" class="space-y-3"></div>
         </div>
@@ -433,7 +433,7 @@
         <div class="print-card bg-[#07111e] border border-[#163252] rounded-2xl p-4 sm:p-5 space-y-4">
           <h3 class="text-base sm:text-lg font-black text-[#fbbf24] flex items-center gap-2">
             <i class="fa-solid fa-wand-magic-sparkles"></i>
-            <span>خامساً: معمل القواعد وتصريف الأفعال (Grammar Matrix)</span>
+            <span id="sec-5-title">خامساً: معمل القواعد وتصريف الأفعال (Grammar Matrix)</span>
           </h3>
           <div id="active-grammar-box" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
         </div>
@@ -442,9 +442,9 @@
           <div class="flex items-center justify-between">
             <h3 class="text-base sm:text-lg font-black text-[#22d3ee] flex items-center gap-2">
               <i class="fa-solid fa-clone"></i>
-              <span>سادساً: بطاقات الاستذكار ثلاثية الأبعاد (3D Flip Flashcards)</span>
+              <span id="sec-6-title">سادساً: بطاقات الاستذكار ثلاثية الأبعاد (3D Flip Flashcards)</span>
             </h3>
-            <span class="text-xs text-slate-400">اضغط على البطاقة لقلبها ورؤية الجواب 🔄</span>
+            <span id="sec-6-sub" class="text-xs text-slate-400">اضغط على البطاقة لقلبها ورؤية الجواب 🔄</span>
           </div>
           <div id="active-flashcards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </div>
@@ -453,7 +453,7 @@
           <div class="flex items-center justify-between">
             <h3 class="text-base sm:text-lg font-black text-[#fbbf24] flex items-center gap-2">
               <i class="fa-solid fa-circle-question"></i>
-              <span>سابعاً: اختبر فهمك للدرس (Interactive Quiz)</span>
+              <span id="sec-7-title">سابعاً: اختبر فهمك للدرس (Interactive Quiz)</span>
             </h3>
             <span id="quiz-score-badge" class="bg-[#fbbf24]/20 text-[#fbbf24] text-xs font-black px-3 py-1 rounded-full">النقاط: 0 XP</span>
           </div>
@@ -473,8 +473,8 @@
         <span class="text-[#fbbf24] ml-1.5">INFOGRAPHIC</span>
       </div>
 
-      <p class="text-xs sm:text-sm text-slate-400 max-w-md leading-relaxed">
-        منصة تعليمية بصرية ذكية لتحويل المناهج الدراسية والملفات إلى إنفوجرافيك وشروحات تفاعلية ثنائية اللغة.
+      <p id="footer-desc" class="text-xs sm:text-sm text-slate-400 max-w-md leading-relaxed">
+        منصة تعليمية بصرية ذكية لتحويل المناهج الدراسية (من الصف السابع إلى الثالث الثانوي) إلى إنفوجرافيك وشروحات تفاعلية ثنائية اللغة.
       </p>
 
       <div class="flex flex-wrap items-center justify-center gap-3 text-xs text-slate-300 pt-2">
@@ -485,11 +485,11 @@
           <span dir="ltr">00967774354892</span>
         </a>
         <span>•</span>
-        <button type="button" onclick="openSubModal()" class="text-[#fbbf24] hover:underline font-bold">باقات الاشتراك وتفعيل الكود</button>
+        <button type="button" onclick="openSubModal()" id="footer-sub-link" class="text-[#fbbf24] hover:underline font-bold">باقات الاشتراك وتفعيل الكود</button>
         <span>•</span>
         <button type="button" onclick="openAdminModal()" class="text-slate-400 hover:text-white flex items-center gap-1">
           <i class="fa-solid fa-lock text-[10px]"></i>
-          <span>لوحة النظام</span>
+          <span id="footer-admin-link">لوحة النظام</span>
         </button>
       </div>
 
@@ -506,7 +506,7 @@
       <div class="flex items-center justify-between border-b border-[#163252] pb-3">
         <h3 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
           <i class="fa-solid fa-wand-magic-sparkles text-[#fbbf24]"></i>
-          <span>استوديو التوليد البصري والمعلم الذكي</span>
+          <span id="modal-upload-title">استوديو التوليد البصري والمعلم الذكي</span>
         </h3>
         <button type="button" onclick="closeUploadModal()" class="w-8 h-8 rounded-full bg-[#07111e] text-slate-400 hover:text-white flex items-center justify-center">
           <i class="fa-solid fa-xmark"></i>
@@ -515,7 +515,7 @@
 
       <div class="grid grid-cols-2 gap-2 bg-[#07111e] p-1.5 rounded-2xl border border-[#163252]">
         <button type="button" id="scope-curr-btn" onclick="setUploadScope('curriculum')" class="py-2 px-3 rounded-xl font-extrabold text-xs sm:text-sm bg-[#fbbf24] text-slate-950 transition">
-          🏫 منهج دراسي يمني
+          🏫 منهج دراسي (7 - 12)
         </button>
         <button type="button" id="scope-free-btn" onclick="setUploadScope('general')" class="py-2 px-3 rounded-xl font-extrabold text-xs sm:text-sm text-slate-300 hover:text-white transition">
           🌐 محتوى حر / ملف خارجي
@@ -526,21 +526,21 @@
         <div>
           <label class="block text-xs font-bold text-slate-300 mb-1">الصف الدراسي:</label>
           <select id="upload-grade" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3 py-2.5 text-sm text-white outline-none">
-            <option value="الصف السابع">الصف السابع الأساسي</option>
-            <option value="الصف الثامن">الصف الثامن الأساسي</option>
-            <option value="الصف التاسع">الصف التاسع الأساسي</option>
-            <option value="الأول الثانوي">الأول الثانوي</option>
-            <option value="الثاني الثانوي">الثاني الثانوي</option>
-            <option value="الثالث الثانوي">الثالث الثانوي</option>
+            <option value="الصف السابع">الصف السابع الأساسي (Grade 7)</option>
+            <option value="الصف الثامن">الصف الثامن الأساسي (Grade 8)</option>
+            <option value="الصف التاسع">الصف التاسع الأساسي (Grade 9)</option>
+            <option value="الأول الثانوي">الأول الثانوي (Grade 10)</option>
+            <option value="الثاني الثانوي">الثاني الثانوي (Grade 11)</option>
+            <option value="الثالث الثانوي">الثالث الثانوي (Grade 12)</option>
           </select>
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-300 mb-1">المادة الدراسية:</label>
           <select id="upload-subject" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3 py-2.5 text-sm text-white outline-none">
             <option value="اللغة الإنجليزية">اللغة الإنجليزية (English)</option>
-            <option value="العلوم والأحياء">العلوم والأحياء</option>
-            <option value="الرياضيات">الرياضيات</option>
-            <option value="اللغة العربية">اللغة العربية</option>
+            <option value="العلوم والأحياء">العلوم والأحياء (Science & Biology)</option>
+            <option value="الرياضيات">الرياضيات (Mathematics)</option>
+            <option value="اللغة العربية">اللغة العربية (Arabic)</option>
             <option value="مستندات وملفات حرة 🌐">مستندات وملفات حرة 🌐</option>
           </select>
         </div>
@@ -609,7 +609,7 @@
 
       <button type="button" id="generate-submit-btn" onclick="generateLessonNow()" class="w-full bg-[#fbbf24] hover:bg-[#f59e0b] active:scale-[0.99] text-slate-950 font-black text-base py-3.5 rounded-2xl shadow-xl flex items-center justify-center gap-2 transition">
         <i class="fa-solid fa-wand-magic-sparkles"></i>
-        <span>توليد الشرح التفصيلي والإنفوجرافيك الآن ✨</span>
+        <span id="btn-generate-submit-text">توليد الشرح التفصيلي والإنفوجرافيك الآن ✨</span>
       </button>
 
     </div>
@@ -635,9 +635,9 @@
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div class="bg-[#07111e] border border-[#163252] rounded-2xl p-4 text-center space-y-2 flex flex-col justify-between">
           <div>
-            <div class="text-xs font-bold text-slate-400">الباقة الشهرية</div>
+            <div class="text-xs font-bold text-slate-400">الباقة الشهرية (Monthly)</div>
             <div class="font-en text-3xl font-black text-white my-1">$4.9</div>
-            <div class="text-[11px] text-slate-400">30 يوماً</div>
+            <div class="text-[11px] text-slate-400">30 Days</div>
           </div>
           <a href="https://wa.me/967774354892?text=%D8%A3%D8%B1%D8%BA%D8%A8%20%D8%A8%D8%A7%D9%84%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A8%D8%A7%D9%82%D8%A9%20%D8%A7%D9%84%D8%B4%D9%87%D8%B1%D9%8A%D8%A9%20($4.9)" target="_blank" class="block w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs py-2.5 rounded-xl transition">
             اشترك عبر واتساب 💬
@@ -647,9 +647,9 @@
         <div class="bg-[#07111e] border-2 border-[#fbbf24] rounded-2xl p-4 text-center space-y-2 flex flex-col justify-between relative shadow-lg">
           <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-[#fbbf24] text-slate-950 text-[10px] font-black px-3 py-0.5 rounded-full">الأكثر طلباً 🔥</span>
           <div>
-            <div class="text-xs font-bold text-[#fbbf24]">باقة 3 أشهر</div>
+            <div class="text-xs font-bold text-[#fbbf24]">باقة 3 أشهر (Quarterly)</div>
             <div class="font-en text-3xl font-black text-white my-1">$15</div>
-            <div class="text-[11px] text-slate-400">90 يوماً</div>
+            <div class="text-[11px] text-slate-400">90 Days</div>
           </div>
           <a href="https://wa.me/967774354892?text=%D8%A3%D8%B1%D8%BA%D8%A8%20%D8%A8%D8%A7%D9%84%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D9%81%D9%8A%20%D8%A8%D8%A7%D9%82%D8%A9%203%20%D8%A3%D8%B4%D9%87%D8%B1%20($15)" target="_blank" class="block w-full bg-[#fbbf24] hover:bg-[#f59e0b] text-slate-950 font-black text-xs py-2.5 rounded-xl transition">
             اشترك عبر واتساب 💬
@@ -658,9 +658,9 @@
 
         <div class="bg-[#07111e] border border-[#163252] rounded-2xl p-4 text-center space-y-2 flex flex-col justify-between">
           <div>
-            <div class="text-xs font-bold text-[#22d3ee]">الباقة السنوية VIP</div>
+            <div class="text-xs font-bold text-[#22d3ee]">الباقة السنوية (Yearly VIP)</div>
             <div class="font-en text-3xl font-black text-white my-1">$50</div>
-            <div class="text-[11px] text-slate-400">365 يوماً كاملة</div>
+            <div class="text-[11px] text-slate-400">365 Days</div>
           </div>
           <a href="https://wa.me/967774354892?text=%D8%A3%D8%B1%D8%BA%D8%A8%20%D8%A8%D8%A7%D9%84%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A8%D8%A7%D9%82%D8%A9%20%D8%A7%D9%84%D8%B3%D9%86%D9%88%D9%8A%D8%A9%20($50)" target="_blank" class="block w-full bg-[#22d3ee] hover:bg-[#06b6d4] text-slate-950 font-black text-xs py-2.5 rounded-xl transition">
             اشترك عبر واتساب 💬
@@ -669,9 +669,9 @@
       </div>
 
       <div class="space-y-2 pt-1">
-        <label class="block text-xs font-bold text-slate-300">أدخل كود التفعيل هنا:</label>
+        <label class="block text-xs font-bold text-slate-300">أدخل كود التفعيل هنا (Activation Code):</label>
         <div class="flex gap-2">
-          <input type="text" id="activation-code-input" placeholder="HUSSAM2026 أو الكود المستلم" class="flex-grow bg-[#07111e] border border-[#1e3a5f] rounded-xl px-4 py-2.5 text-sm text-white font-en uppercase outline-none focus:border-[#fbbf24]" />
+          <input type="text" id="activation-code-input" placeholder="HUSSAM2026" class="flex-grow bg-[#07111e] border border-[#1e3a5f] rounded-xl px-4 py-2.5 text-sm text-white font-en uppercase outline-none focus:border-[#fbbf24]" />
           <button type="button" onclick="activateSubscriptionCode()" class="bg-[#fbbf24] hover:bg-[#f59e0b] text-slate-950 font-black text-xs sm:text-sm px-5 py-2.5 rounded-xl shrink-0 transition">
             تفعيل ⚡
           </button>
@@ -710,7 +710,6 @@
       </div>
 
       <div id="admin-dashboard-box" class="hidden space-y-5">
-        <!-- 1. Generate Codes -->
         <div class="bg-[#07111e] border border-[#163252] rounded-2xl p-4 space-y-3">
           <h4 class="text-sm font-black text-[#fbbf24] flex items-center gap-2">
             <i class="fa-solid fa-key"></i>
@@ -739,7 +738,6 @@
           </div>
         </div>
 
-        <!-- 2. Custom Brand Assets -->
         <div class="bg-[#07111e] border border-[#163252] rounded-2xl p-4 space-y-3">
           <h4 class="text-sm font-black text-[#22d3ee] flex items-center gap-2">
             <i class="fa-solid fa-palette"></i>
@@ -762,13 +760,11 @@
           </button>
         </div>
 
-        <!-- 3. Gemini API Key -->
         <div class="bg-[#07111e] border border-[#163252] rounded-2xl p-4 space-y-2">
           <h4 class="text-sm font-black text-white flex items-center gap-2">
             <i class="fa-solid fa-microchip text-[#fbbf24]"></i>
             <span>مفتاح الرؤية السحابية Gemini API Key (اختياري)</span>
           </h4>
-          <p class="text-[11px] text-slate-400">عند إضافة المفتاح يقرأ الذكاء الاصطناعي السحابي صور الكتب بدقة فائقة، وبدونه يعمل قارئ الصور المدمج تلقائياً.</p>
           <div class="flex gap-2">
             <input type="password" id="owner-gemini-key" placeholder="AIzaSy..." dir="ltr" class="flex-grow bg-[#0a1c32] border border-[#1e3a5f] rounded-xl px-3 py-2 text-xs text-white font-en outline-none" />
             <button type="button" onclick="saveOwnerGeminiKey()" class="bg-[#fbbf24] text-slate-950 font-black text-xs px-4 py-2 rounded-xl">حفظ</button>
@@ -790,22 +786,42 @@
   <!-- ==================== 14. JAVASCRIPT APPLICATION CORE ==================== -->
   <script>
     const STORAGE_KEYS = {
-      LESSONS: 'hussam_info_lessons_v7',
-      USAGE: 'hussam_info_daily_usage_v7',
-      SUB: 'hussam_info_vip_sub_v7',
-      CODES: 'hussam_info_valid_codes_v7',
-      BANNER: 'hussam_info_custom_banner_v7',
-      ICON: 'hussam_info_custom_icon_v7',
-      GEMINI_KEY: 'hussam_info_gemini_key_v7'
+      LESSONS: 'hussam_info_lessons_v8',
+      USAGE: 'hussam_info_daily_usage_v8',
+      SUB: 'hussam_info_vip_sub_v8',
+      CODES: 'hussam_info_valid_codes_v8',
+      BANNER: 'hussam_info_custom_banner_v8',
+      ICON: 'hussam_info_custom_icon_v8',
+      GEMINI_KEY: 'hussam_info_gemini_key_v8'
     };
 
     const GRADES_LIST = [
       'الكل', 'الصف السابع', 'الصف الثامن', 'الصف التاسع', 'الأول الثانوي', 'الثاني الثانوي', 'الثالث الثانوي'
     ];
 
+    const GRADE_EN_MAP = {
+      'الكل': 'All Grades',
+      'الصف السابع': 'Grade 7',
+      'الصف الثامن': 'Grade 8',
+      'الصف التاسع': 'Grade 9',
+      'الأول الثانوي': 'Grade 10',
+      'الثاني الثانوي': 'Grade 11',
+      'الثالث الثانوي': 'Grade 12',
+      'محتوى عام': 'General'
+    };
+
     const SUBJECTS_LIST = [
       'الكل', 'اللغة الإنجليزية', 'العلوم والأحياء', 'الرياضيات', 'اللغة العربية', 'مستندات وملفات حرة 🌐'
     ];
+
+    const SUBJECT_EN_MAP = {
+      'الكل': 'All Subjects',
+      'اللغة الإنجليزية': 'English Language',
+      'العلوم والأحياء': 'Science & Biology',
+      'الرياضيات': 'Mathematics',
+      'اللغة العربية': 'Arabic Language',
+      'مستندات وملفات حرة 🌐': 'Free Documents 🌐'
+    };
 
     let currentLang = 'ar';
     let selectedGrade = 'الكل';
@@ -818,7 +834,6 @@
     let quizScore = 0;
     let lastGeneratedCode = '';
 
-    // Built-in lessons including the exact 3 units from the user's textbook pages (Bill, Tim & Saleh, How does he come to school?)
     const DEFAULT_LESSONS = [
       {
         id: 'lesson-bill-tim-school',
@@ -923,12 +938,6 @@
             options: ['do', 'does', 'is', 'are'],
             correct: 1,
             explanation: 'لأن الفاعل مفرد غائب (Taha = he) نستخدم الفعل المساعد (does).'
-          },
-          {
-            q: 'He comes to school ____ bicycle.',
-            options: ['in', 'on', 'by', 'at'],
-            correct: 2,
-            explanation: 'تُسبق وسائل المواصلات بحرف الجر (by) مباشرة.'
           }
         ]
       },
@@ -1024,8 +1033,16 @@
       try {
         localStorage.setItem(STORAGE_KEYS.LESSONS, JSON.stringify(lessonsList));
       } catch (e) {
-        showToast('تم حفظ الدرس في الجلسة الحالية', 'info');
+        showToast(currentLang === 'en' ? 'Saved in current session' : 'تم حفظ الدرس في الجلسة الحالية', 'info');
       }
+    }
+
+    function formatGradeLabel(g) {
+      return currentLang === 'en' ? (GRADE_EN_MAP[g] || g) : g;
+    }
+
+    function formatSubjectLabel(s) {
+      return currentLang === 'en' ? (SUBJECT_EN_MAP[s] || s) : s;
     }
 
     function renderFilterPills() {
@@ -1035,14 +1052,14 @@
         gEl.innerHTML = GRADES_LIST.map(g => `
           <button type="button" onclick="selectGradeFilter('${g}')" class="shrink-0 px-3.5 py-1.5 rounded-full text-xs font-extrabold transition ${
             g === selectedGrade ? 'bg-[#fbbf24] text-slate-950 shadow-md' : 'bg-[#07111e] text-slate-300 border border-[#163252]'
-          }">${g}</button>
+          }">${formatGradeLabel(g)}</button>
         `).join('');
       }
       if (sEl) {
         sEl.innerHTML = SUBJECTS_LIST.map(s => `
           <button type="button" onclick="selectSubjectFilter('${s}')" class="shrink-0 px-3.5 py-1.5 rounded-full text-xs font-extrabold transition ${
             s === selectedSubject ? 'bg-[#22d3ee] text-slate-950 shadow-md' : 'bg-[#07111e] text-slate-300 border border-[#163252]'
-          }">${s}</button>
+          }">${formatSubjectLabel(s)}</button>
         `).join('');
       }
     }
@@ -1075,20 +1092,27 @@
         return mG && mS && mQ;
       });
 
-      if (countBadge) countBadge.innerText = `الدروس المتاحة (${filtered.length})`;
+      if (countBadge) {
+        countBadge.innerText = currentLang === 'en'
+          ? `Available Lessons (${filtered.length})`
+          : `الدروس المتاحة (${filtered.length})`;
+      }
+
+      const viewBtnLabel = currentLang === 'en' ? 'View Lesson' : 'عرض الدرس';
+      const durText = currentLang === 'en' ? '25 mins' : '25 دقيقة';
 
       grid.innerHTML = filtered.map(item => `
         <div class="bg-white text-slate-900 rounded-3xl p-5 shadow-xl border border-slate-200 flex flex-col justify-between space-y-4">
           <div class="space-y-2">
             <div class="flex items-center justify-between gap-2">
               <span class="bg-slate-900 text-[#fbbf24] text-[11px] font-extrabold px-3 py-1 rounded-full">
-                ${item.grade} • ${item.subject}
+                ${formatGradeLabel(item.grade)} • ${formatSubjectLabel(item.subject)}
               </span>
               <div class="flex items-center gap-1.5 text-slate-400">
-                <button type="button" onclick="shareLesson('${item.id}')" class="hover:text-slate-800 p-1" title="مشاركة">
+                <button type="button" onclick="shareLesson('${item.id}')" class="hover:text-slate-800 p-1" title="Share">
                   <i class="fa-solid fa-share-nodes text-xs"></i>
                 </button>
-                <button type="button" onclick="deleteLesson('${item.id}')" class="hover:text-rose-600 p-1" title="حذف">
+                <button type="button" onclick="deleteLesson('${item.id}')" class="hover:text-rose-600 p-1" title="Delete">
                   <i class="fa-solid fa-trash-can text-xs"></i>
                 </button>
               </div>
@@ -1097,9 +1121,9 @@
             <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed">${item.desc}</p>
           </div>
           <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
-            <span class="text-[11px] font-bold text-slate-500">⏱️ ${item.duration || '25 دقيقة'}</span>
+            <span class="text-[11px] font-bold text-slate-500">⏱️ ${durText}</span>
             <button type="button" onclick="displayLesson('${item.id}', true)" class="bg-[#fbbf24] hover:bg-[#f59e0b] text-slate-950 font-black text-xs px-4 py-2 rounded-xl shadow flex items-center gap-1.5 transition">
-              <span>عرض الدرس</span>
+              <span>${viewBtnLabel}</span>
               <i class="fa-solid fa-eye"></i>
             </button>
           </div>
@@ -1118,7 +1142,7 @@
       const catEl = document.getElementById('active-lesson-category');
       const titleEl = document.getElementById('active-lesson-title');
       const descEl = document.getElementById('active-lesson-desc');
-      if (catEl) catEl.innerText = `${lesson.grade} • ${lesson.subject}`;
+      if (catEl) catEl.innerText = `${formatGradeLabel(lesson.grade)} • ${formatSubjectLabel(lesson.subject)}`;
       if (titleEl) titleEl.innerText = lesson.title;
       if (descEl) descEl.innerText = lesson.desc;
 
@@ -1131,11 +1155,12 @@
         imgBox.classList.add('hidden');
       }
 
+      const objTitleWord = currentLang === 'en' ? 'Objective' : 'الهدف';
       const objContainer = document.getElementById('active-objectives-list');
       if (objContainer) {
         objContainer.innerHTML = (lesson.objectives || []).map((o, idx) => `
           <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-3.5 space-y-1">
-            <div class="text-xs font-black text-[#fbbf24]">الهدف ${idx + 1}</div>
+            <div class="text-xs font-black text-[#fbbf24]">${objTitleWord} ${idx + 1}</div>
             <p dir="ltr" class="font-en text-xs sm:text-sm font-bold text-white">${o.en}</p>
             <p class="text-xs sm:text-sm text-slate-300">${o.ar}</p>
           </div>
@@ -1153,6 +1178,7 @@
         `).join('');
       }
 
+      const meaningWord = currentLang === 'en' ? 'Meaning' : 'المعنى';
       const vocabContainer = document.getElementById('active-vocab-grid');
       if (vocabContainer) {
         vocabContainer.innerHTML = (lesson.vocabulary || []).map(v => `
@@ -1166,26 +1192,29 @@
                 <i class="fa-solid fa-volume-high text-xs"></i>
               </button>
             </div>
-            <div class="text-xs font-extrabold text-[#fbbf24]">المعنى: ${v.meaning}</div>
+            <div class="text-xs font-extrabold text-[#fbbf24]">${meaningWord}: ${v.meaning}</div>
             ${v.example ? `<div dir="ltr" class="text-[11px] font-en text-slate-300 bg-[#07111e] px-2 py-1 rounded border border-[#163252]">"${v.example}"</div>` : ''}
           </div>
         `).join('');
       }
 
+      const lineWord = currentLang === 'en' ? 'Line' : 'الفقرة';
+      const speakBtnWord = currentLang === 'en' ? 'Listen' : 'نطق';
+      const teacherNoteWord = currentLang === 'en' ? '💡 Teacher Note:' : '💡 إضاءة المعلم:';
       const walkContainer = document.getElementById('active-walkthrough-list');
       if (walkContainer) {
         walkContainer.innerHTML = (lesson.walkthrough || []).map((line, idx) => `
           <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-2xl p-4 space-y-2">
             <div class="flex items-center justify-between">
-              <span class="bg-[#22d3ee]/20 text-[#22d3ee] text-[11px] font-black px-2.5 py-0.5 rounded-full">الفقرة ${idx + 1}</span>
+              <span class="bg-[#22d3ee]/20 text-[#22d3ee] text-[11px] font-black px-2.5 py-0.5 rounded-full">${lineWord} ${idx + 1}</span>
               <button type="button" onclick="speakText('${line.en.replace(/'/g, "\\'")}', 'en-GB')" class="bg-[#07111e] text-[#fbbf24] border border-[#1e3a5f] text-xs font-bold px-3 py-1 rounded-lg flex items-center gap-1 no-print">
-                <i class="fa-solid fa-volume-high"></i> نطق
+                <i class="fa-solid fa-volume-high"></i> ${speakBtnWord}
               </button>
             </div>
             <p dir="ltr" class="font-en text-sm sm:text-base font-extrabold text-white">${line.en}</p>
             <p class="text-sm font-bold text-[#fbbf24]">${line.ar}</p>
             <div class="bg-[#07111e] border-r-4 border-[#22d3ee] rounded-lg p-2.5 text-xs text-slate-300">
-              <strong class="text-[#22d3ee]">💡 إضاءة المعلم:</strong> ${line.note}
+              <strong class="text-[#22d3ee]">${teacherNoteWord}</strong> ${line.note}
             </div>
           </div>
         `).join('');
@@ -1197,22 +1226,24 @@
           <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-4 space-y-2">
             <div class="font-black text-sm text-[#fbbf24]">${g.title}</div>
             <div dir="ltr" class="font-en text-xs font-bold text-[#22d3ee] bg-[#07111e] p-2 rounded border border-[#163252]">${g.rule}</div>
-            <div class="text-xs text-slate-300">مثال: <span dir="ltr" class="font-en text-white">${g.example}</span></div>
+            <div class="text-xs text-slate-300"><span dir="ltr" class="font-en text-white">${g.example}</span></div>
           </div>
         `).join('');
       }
 
+      const flashFrontLabel = currentLang === 'en' ? 'Flashcard Question (Tap to Flip 🔄)' : 'سؤال الاستذكار (اضغط للقلب 🔄)';
+      const flashBackLabel = currentLang === 'en' ? 'Model Answer ✅' : 'الإجابة ✅';
       const flashContainer = document.getElementById('active-flashcards-grid');
       if (flashContainer) {
         flashContainer.innerHTML = (lesson.flashcards || []).map(c => `
           <div onclick="this.querySelector('.flip-card-inner').classList.toggle('is-flipped')" class="perspective-1000 h-36 cursor-pointer select-none">
             <div class="flip-card-inner">
               <div class="flip-card-front bg-[#0a1c32] border-2 border-[#1e3a5f] p-4 flex flex-col items-center justify-center text-center">
-                <span class="text-[10px] font-bold text-[#22d3ee] mb-1">سؤال الاستذكار (اضغط للقلب 🔄)</span>
+                <span class="text-[10px] font-bold text-[#22d3ee] mb-1">${flashFrontLabel}</span>
                 <p class="font-extrabold text-xs sm:text-sm text-white">${c.q}</p>
               </div>
               <div class="flip-card-back bg-[#fbbf24] text-slate-950 p-4 flex flex-col items-center justify-center text-center shadow-lg">
-                <span class="text-[10px] font-black uppercase mb-1">الإجابة ✅</span>
+                <span class="text-[10px] font-black uppercase mb-1">${flashBackLabel}</span>
                 <p class="font-black text-xs sm:text-sm">${c.a}</p>
               </div>
             </div>
@@ -1231,7 +1262,7 @@
     function renderQuiz(quizList) {
       const container = document.getElementById('active-quiz-container');
       const badge = document.getElementById('quiz-score-badge');
-      if (badge) badge.innerText = `النقاط: ${quizScore} XP`;
+      if (badge) badge.innerText = currentLang === 'en' ? `Score: ${quizScore} XP` : `النقاط: ${quizScore} XP`;
       if (!container) return;
 
       container.innerHTML = quizList.map((qItem, qIdx) => `
@@ -1252,12 +1283,87 @@
       if (selected === correct) {
         quizScore += 10;
         const b = document.getElementById('quiz-score-badge');
-        if (b) b.innerText = `النقاط: ${quizScore} XP`;
+        if (b) b.innerText = currentLang === 'en' ? `Score: ${quizScore} XP` : `النقاط: ${quizScore} XP`;
         if (typeof confetti === 'function') confetti({ particleCount: 40, spread: 60 });
-        showToast('إجابة صحيحة! أحسنت 🌟', 'success');
+        showToast(currentLang === 'en' ? 'Correct Answer! Well done 🌟' : 'إجابة صحيحة! أحسنت 🌟', 'success');
       } else {
-        showToast('إجابة غير صحيحة، حاول مجدداً', 'error');
+        showToast(currentLang === 'en' ? 'Try again!' : 'إجابة غير صحيحة، حاول مجدداً', 'error');
       }
+    }
+
+    // --- FULL BILINGUAL LANGUAGE TOGGLE ENGINE ---
+    function toggleLanguage() {
+      currentLang = currentLang === 'ar' ? 'en' : 'ar';
+      const isEn = currentLang === 'en';
+
+      document.documentElement.lang = currentLang;
+      document.documentElement.dir = isEn ? 'ltr' : 'rtl';
+
+      const setTxt = (id, arTxt, enTxt) => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = isEn ? enTxt : arTxt;
+      };
+
+      setTxt('lang-btn-text', 'English', 'العربية');
+      setTxt('header-add-btn-text', 'درس', 'Lesson');
+      setTxt('hero-callout-title', 'من أي درس .. نصنع تجربة تعلم مذهلة', 'From Any Lesson .. We Craft an Amazing Learning Experience');
+      setTxt('btn-upload-text', 'ارفع صفحة الدرس...', 'Upload Lesson Page...');
+      setTxt('btn-preview-text', 'استعراض درس جاهز', 'Preview Ready Lesson');
+      setTxt('upgrade-badge-text', 'ترقية', 'Upgrade');
+
+      // 4 Stats Cards
+      setTxt('stat-1-title', 'المصدر الأصيل: كتابك المدرسي', 'Authentic Source: Your Textbook');
+      setTxt('stat-1-desc', 'لا اختلاق للمعلومات أو خروج عن المنهج المعتمد', '100% faithful to the approved school curriculum');
+      setTxt('stat-2-title', 'قوالب إنفوجرافيك تعليمية', 'Educational Infographic Templates');
+      setTxt('stat-2-desc', 'خرائط مفاهيم، مسارات، ومقارنات بصرية ذكية', 'Concept maps, visual flows, and smart comparisons');
+      setTxt('stat-3-title', 'المعلم الذكي المساعد', 'Bilingual AI Assistant Tutor');
+      setTxt('stat-3-desc', 'شرح تفصيلي ثنائي اللغة ونطق صوتي فوري للمفردات', 'Detailed bilingual walkthrough & instant audio pronunciation');
+      setTxt('stat-4-num', '5 في 1', '5 in 1');
+      setTxt('stat-4-title', 'أنشطة وأسئلة تفاعلية', 'Interactive Activities & Quizzes');
+      setTxt('stat-4-desc', 'أهداف، مفردات ناطقة، قواعد، بطاقات 3D واختبارات', 'Objectives, audio vocab, grammar, 3D flashcards & quizzes');
+
+      // Curriculum & Filters
+      setTxt('curriculum-section-title', 'مكتبة المناهج والدروس التفاعلية', 'Interactive Curriculum & Lessons Library');
+      setTxt('curriculum-section-sub', 'اختر الصف الدراسي والمادة لاستعراض الدروس والإنفوجرافيك المرتبط بها', 'Select grade level (Grades 7–12) and subject to explore lessons');
+      setTxt('grade-filter-label', 'الصف الدراسي:', 'Grade Level:');
+      setTxt('subject-filter-label', 'المادة الدراسية أو المجال:', 'Subject / Field:');
+      setTxt('add-lesson-link-text', 'إضافة درس أو ملف جديد', 'Add New Lesson or File');
+
+      const searchInp = document.getElementById('search-input');
+      if (searchInp) {
+        searchInp.placeholder = isEn ? 'Search for a lesson, subject, concept...' : 'ابحث عن درس، مادة، مفهوم...';
+      }
+
+      // Active Lesson Headers
+      setTxt('ai-teacher-badge-text', 'المعلم الذكي ثنائي اللغة (Bilingual AI Teacher)', 'Bilingual AI Teacher');
+      setTxt('btn-read-lesson', 'نطق الدرس كاملاً 🇬🇧', 'Read Full Lesson 🇬🇧');
+      setTxt('btn-print-lesson', 'طباعة ورقة عمل A4', 'Print A4 Worksheet');
+      setTxt('source-img-label', 'صورة صفحة الدرس المرفوعة (اضغط للتكبير)', 'Uploaded Textbook Page (Tap to Zoom)');
+      setTxt('btn-zoom-img', 'تكبير بملء الشاشة 🔍', 'Full Screen Zoom 🔍');
+      setTxt('sec-1-title', 'أولاً: أهداف الدرس ونواتج التعلم (Objectives)', '1. Lesson Objectives & Target Skills');
+      setTxt('sec-2-title', 'ثانياً: الخريطة البصرية والإنفوجرافيك (Visual Infographic)', '2. Visual Infographic Flow Map');
+      setTxt('sec-3-title', 'ثالثاً: معجم المفردات الناطق (Audio Vocabulary Lab)', '3. Interactive Audio Vocabulary Lab');
+      setTxt('sec-3-sub', 'اضغط على أيقونة السماعة 🔊 للاستماع إلى النطق البريطاني الصحيح', 'Click the speaker icon 🔊 to hear British English pronunciation');
+      setTxt('sec-4-title', 'رابعاً: الشرح التحليلي جملة بجملة (Bilingual Walkthrough)', '4. Bilingual Line-by-Line Walkthrough');
+      setTxt('sec-5-title', 'خامساً: معمل القواعد وتصريف الأفعال (Grammar Matrix)', '5. Grammar & Verbs Matrix');
+      setTxt('sec-6-title', 'سادساً: بطاقات الاستذكار ثلاثية الأبعاد (3D Flip Flashcards)', '6. 3D Interactive Flip Flashcards');
+      setTxt('sec-6-sub', 'اضغط على البطاقة لقلبها ورؤية الجواب 🔄', 'Tap any card to flip and reveal the answer 🔄');
+      setTxt('sec-7-title', 'سابعاً: اختبر فهمك للدرس (Interactive Quiz)', '7. Interactive Assessment Quiz');
+
+      // Footer & Modals
+      setTxt('footer-desc', 'منصة تعليمية بصرية ذكية لتحويل المناهج الدراسية (من الصف السابع إلى الثالث الثانوي) إلى إنفوجرافيك وشروحات تفاعلية ثنائية اللغة.', 'Smart visual learning platform transforming school curricula (Grades 7 to 12) into interactive infographics and bilingual lessons.');
+      setTxt('footer-sub-link', 'باقات الاشتراك وتفعيل الكود', 'Subscription Plans & Code Activation');
+      setTxt('footer-admin-link', 'لوحة النظام', 'System Admin');
+      setTxt('modal-upload-title', 'استوديو التوليد البصري والمعلم الذكي', 'Visual Infographic & AI Lesson Studio');
+      setTxt('btn-generate-submit-text', 'توليد الشرح التفصيلي والإنفوجرافيك الآن ✨', 'Generate Detailed Walkthrough & Infographic Now ✨');
+
+      updateDailyUsageUI();
+      renderFilterPills();
+      applyFiltersAndRender();
+      if (activeLessonId) {
+        displayLesson(activeLessonId, false);
+      }
+      showToast(isEn ? 'Language switched to English 🌐' : 'تم تحويل لغة الواجهة إلى العربية 🌐', 'info');
     }
 
     // --- MODAL CONTROLS ---
@@ -1329,7 +1435,7 @@
         const box = document.getElementById('upload-image-preview-box');
         const name = document.getElementById('upload-image-name');
         if (prev) prev.src = uploadedImageDataUrl;
-        if (name) name.innerText = `✅ تم اختيار الصورة: ${file.name}`;
+        if (name) name.innerText = `✅ ${file.name}`;
         if (box) box.classList.remove('hidden');
       };
       r.readAsDataURL(file);
@@ -1371,15 +1477,15 @@
       const customTxt = (document.getElementById('custom-lesson-text')?.value || '').trim();
 
       if (currentUploadTab === 'image' && !uploadedImageDataUrl && !hint) {
-        showToast('يرجى اختيار صورة الدرس أولاً', 'error');
+        showToast(currentLang === 'en' ? 'Please select a lesson image first' : 'يرجى اختيار صورة الدرس أولاً', 'error');
         return;
       }
       if (currentUploadTab === 'pdf' && !extractedPdfText) {
-        showToast('يرجى اختيار ملف PDF أولاً', 'error');
+        showToast(currentLang === 'en' ? 'Please select a PDF file first' : 'يرجى اختيار ملف PDF أولاً', 'error');
         return;
       }
       if (currentUploadTab === 'text' && !customTxt && !customT) {
-        showToast('يرجى كتابة عنوان أو نص الدرس أولاً', 'error');
+        showToast(currentLang === 'en' ? 'Please enter lesson title or text' : 'يرجى كتابة عنوان أو نص الدرس أولاً', 'error');
         return;
       }
 
@@ -1403,19 +1509,16 @@
       let ocrText = '';
       let newLesson = null;
 
-      // 1. Try Cloud Gemini Vision API if owner key is saved
       const geminiKey = localStorage.getItem(STORAGE_KEYS.GEMINI_KEY);
       if (geminiKey) {
         try {
           setProg(40, 'جاري قراءة الصفحة وتحليلها عبر Gemini Vision AI...');
           newLesson = await callGeminiVisionAPI(geminiKey, grade, subject, [hint, customT, customTxt, extractedPdfText].filter(Boolean).join('\n'), uploadedImageDataUrl);
         } catch (err) {
-          console.warn('Gemini fallback to local engine:', err);
           newLesson = null;
         }
       }
 
-      // 2. If no Gemini key, run local OCR on uploaded image if no text hint was provided
       if (!newLesson && currentUploadTab === 'image' && uploadedImageDataUrl && !hint && window.Tesseract) {
         try {
           setProg(50, 'جاري القراءة البصرية لنصوص الصورة (OCR)...');
@@ -1445,13 +1548,13 @@
       renderFilterPills();
       applyFiltersAndRender();
       displayLesson(newLesson.id, true);
-      showToast('تم توليد الدرس والشرح بنجاح 🎉', 'success');
+      showToast(currentLang === 'en' ? 'Lesson & Infographic Generated Successfully 🎉' : 'تم توليد الدرس والشرح بنجاح 🎉', 'success');
     }
 
     async function callGeminiVisionAPI(apiKey, grade, subject, rawText, imageDataUrl) {
       const parts = [
         {
-          text: `أنت معلم خبير ثنائي اللغة (إنجليزي وعربي) للمنهج اليمني (${grade} - ${subject}). حلل الصورة أو النص المرفق بدقة تامة واستخرج الدرس الحقيقي الموجود فيها وأعد النتيجة بصيغة JSON فقط يحتوي على الحقول: title, desc, objectives (مصفوفة من {en, ar}), infographic (مصفوفة من 3 عناصر {step, title, detail}), vocabulary (مصفوفة من {word, pos, meaning, example}), walkthrough (مصفوفة من {en, ar, note}), grammar (مصفوفة من {title, rule, example}), flashcards (مصفوفة من {q, a}), quiz (مصفوفة من {q, options (4 خيارات), correct (0-3), explanation}). سياق إضافي: ${rawText}`
+          text: `أنت معلم خبير ثنائي اللغة (إنجليزي وعربي) للمنهج الدراسي (${grade} - ${subject}). حلل الصورة أو النص المرفق بدقة تامة واستخرج الدرس الحقيقي الموجود فيها وأعد النتيجة بصيغة JSON فقط يحتوي على الحقول: title, desc, objectives (مصفوفة من {en, ar}), infographic (مصفوفة من 3 عناصر {step, title, detail}), vocabulary (مصفوفة من {word, pos, meaning, example}), walkthrough (مصفوفة من {en, ar, note}), grammar (مصفوفة من {title, rule, example}), flashcards (مصفوفة من {q, a}), quiz (مصفوفة من {q, options (4 خيارات), correct (0-3), explanation}). سياق إضافي: ${rawText}`
         }
       ];
       if (imageDataUrl && imageDataUrl.includes('base64,')) {
@@ -1481,7 +1584,6 @@
     function buildSmartLesson(grade, subject, rawText, imgUrl) {
       const lower = (rawText || '').toLowerCase();
 
-      // Match the 3 units in the user's textbook image (Bill / Tim and Saleh / How does he come to school?)
       if (
         lower.includes('bill') ||
         lower.includes('tim') ||
@@ -1509,7 +1611,6 @@
         return copy;
       }
 
-      // Dynamic parsing of extracted OCR or pasted text
       const cleanLines = rawText.split(/[\n.?!]+/).map(s => s.trim()).filter(s => s.length > 3);
       const title = cleanLines[0] ? cleanLines[0].slice(0, 75) : `درس تفاعلي (${subject} - ${grade})`;
       const sentences = cleanLines.slice(0, 6);
@@ -1577,7 +1678,7 @@
       if (!lesson) return;
       const fullTxt = (lesson.walkthrough || []).map(w => w.en).join('. ');
       speakText(fullTxt || lesson.title, 'en-GB');
-      showToast('🔊 جاري قراءة الدرس باللهجة البريطانية...', 'info');
+      showToast(currentLang === 'en' ? '🔊 Reading lesson in British English...' : '🔊 جاري قراءة الدرس باللهجة البريطانية...', 'info');
     }
 
     function checkAndConsumeLimit() {
@@ -1592,7 +1693,7 @@
       }
       if (usage.used >= 4) {
         openSubModal();
-        showToast('استنفدت محاولات اليوم المجانية (4/4)، اشترك للتوليد غير المحدود', 'error');
+        showToast(currentLang === 'en' ? 'Daily free limit (4/4) reached. Upgrade to VIP!' : 'استنفدت محاولات اليوم المجانية (4/4)، اشترك للتوليد غير المحدود', 'error');
         return false;
       }
       usage.used += 1;
@@ -1606,13 +1707,15 @@
       if (!el) return;
       const sub = JSON.parse(localStorage.getItem(STORAGE_KEYS.SUB) || 'null');
       if (sub && sub.expiresAt && Date.now() < sub.expiresAt) {
-        el.innerText = '🌟 حساب مشترك VIP (توليد غير محدود)';
+        el.innerText = currentLang === 'en' ? '🌟 VIP Subscriber (Unlimited Generation)' : '🌟 حساب مشترك VIP (توليد غير محدود)';
         return;
       }
       const today = new Date().toISOString().slice(0, 10);
       const usage = JSON.parse(localStorage.getItem(STORAGE_KEYS.USAGE) || '{"date":"","used":0}');
       const rem = usage.date === today ? Math.max(0, 4 - usage.used) : 4;
-      el.innerText = `المتبقي اليوم: ${rem} من 4 محاولات مجانية`;
+      el.innerText = currentLang === 'en'
+        ? `Remaining today: ${rem} of 4 free tries`
+        : `المتبقي اليوم: ${rem} من 4 محاولات مجانية`;
     }
 
     function activateSubscriptionCode() {
@@ -1624,9 +1727,9 @@
         localStorage.setItem(STORAGE_KEYS.SUB, JSON.stringify(sub));
         updateDailyUsageUI();
         closeSubModal();
-        showToast('تم تفعيل اشتراك VIP بنجاح 🎉', 'success');
+        showToast(currentLang === 'en' ? 'VIP Subscription Activated 🎉' : 'تم تفعيل اشتراك VIP بنجاح 🎉', 'success');
       } else {
-        showToast('كود التفعيل غير صحيح', 'error');
+        showToast(currentLang === 'en' ? 'Invalid Activation Code' : 'كود التفعيل غير صحيح', 'error');
       }
     }
 
@@ -1729,26 +1832,19 @@
         navigator.share({ title: l.title, text: txt, url: window.location.href }).catch(() => {});
       } else if (navigator.clipboard) {
         navigator.clipboard.writeText(txt);
-        showToast('تم نسخ رابط الدرس للمشاركة 📋', 'success');
+        showToast(currentLang === 'en' ? 'Lesson link copied 📋' : 'تم نسخ رابط الدرس للمشاركة 📋', 'success');
       }
     }
 
     function deleteLesson(lessonId) {
       const all = getAllLessons();
       if (all.length <= 1) {
-        showToast('لا يمكن حذف جميع الدروس من المكتبة', 'error');
+        showToast(currentLang === 'en' ? 'Cannot delete all default lessons' : 'لا يمكن حذف جميع الدروس من المكتبة', 'error');
         return;
       }
       saveAllLessons(all.filter(x => x.id !== lessonId));
       applyFiltersAndRender();
-      showToast('تم حذف الدرس', 'info');
-    }
-
-    function toggleLanguage() {
-      currentLang = currentLang === 'ar' ? 'en' : 'ar';
-      document.documentElement.lang = currentLang;
-      document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-      document.getElementById('lang-btn-text').innerText = currentLang === 'ar' ? 'English' : 'العربية';
+      showToast(currentLang === 'en' ? 'Lesson deleted' : 'تم حذف الدرس', 'info');
     }
 
     function previewReadyLesson() {
