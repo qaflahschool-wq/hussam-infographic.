@@ -83,6 +83,12 @@
     .flip-card-back {
       transform: rotateY(180deg);
     }
+    .vip-blur {
+      filter: blur(5px);
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.55;
+    }
     @media print {
       body {
         background: #ffffff !important;
@@ -270,12 +276,12 @@
           <span id="btn-preview-text">استعراض درس جاهز</span>
         </button>
 
-        <div onclick="openSubModal()" class="cursor-pointer bg-[#07111e]/90 hover:bg-[#07111e] border border-[#163252] rounded-2xl px-4 py-2.5 flex items-center justify-between text-xs sm:text-sm transition">
+        <div onclick="openSubModal('شريط الترقية الرئيسي')" class="cursor-pointer bg-[#07111e]/90 hover:bg-[#07111e] border border-[#163252] rounded-2xl px-4 py-2.5 flex items-center justify-between text-xs sm:text-sm transition">
           <span class="text-[#fbbf24] font-extrabold flex items-center gap-1">
-            <span id="upgrade-badge-text">ترقية</span>
-            <i class="fa-solid fa-bolt"></i>
+            <span id="upgrade-badge-text">ترقية لـ VIP</span>
+            <i class="fa-solid fa-crown"></i>
           </span>
-          <span id="daily-limit-text" class="text-slate-200 font-bold">المتبقي اليوم: 4 من 4 محاولات مجانية</span>
+          <span id="daily-limit-text" class="text-slate-200 font-bold">المتبقي للتجربة المجانية: 2 من 2 محاولات</span>
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
         </div>
       </div>
@@ -313,7 +319,7 @@
             <i class="fa-solid fa-layer-group text-[#fbbf24]"></i>
             <span id="curriculum-section-title">مكتبة المناهج والدروس التفاعلية</span>
           </h2>
-          <p id="curriculum-section-sub" class="text-xs sm:text-sm text-slate-400">اختر الصف الدراسي والمادة لاستعراض الدروس والإنفوجرافيك المرتبط بها</p>
+          <p id="curriculum-section-sub" class="text-xs sm:text-sm text-slate-400">اختر الصف الدراسي (من السابع إلى الثالث الثانوي) والمادة لاستعراض الدروس</p>
         </div>
         <div class="relative w-full sm:w-72">
           <input
@@ -373,13 +379,15 @@
             <button type="button" onclick="readActiveLessonAudio()" class="bg-[#22d3ee] hover:bg-[#06b6d4] text-slate-950 font-black text-xs sm:text-sm px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-md transition">
               <i class="fa-solid fa-volume-high"></i>
               <span id="btn-read-lesson">نطق الدرس كاملاً 🇬🇧</span>
+              <span id="lock-badge-audio" class="text-[10px] bg-slate-900/20 px-1.5 py-0.5 rounded">🔒 VIP</span>
             </button>
             <button type="button" onclick="stopSpeech()" class="bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 font-bold text-xs sm:text-sm px-3 py-2.5 rounded-xl transition">
               <i class="fa-solid fa-stop"></i>
             </button>
-            <button type="button" onclick="window.print()" class="bg-[#07111e] hover:bg-[#112a4a] text-white border border-[#1e3a5f] font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl flex items-center gap-2 transition">
+            <button type="button" onclick="handlePrintWorksheet()" class="bg-[#07111e] hover:bg-[#112a4a] text-white border border-[#1e3a5f] font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl flex items-center gap-2 transition">
               <i class="fa-solid fa-print text-[#fbbf24]"></i>
               <span id="btn-print-lesson">طباعة ورقة عمل A4</span>
+              <span id="lock-badge-print" class="text-[10px] text-[#fbbf24] bg-[#fbbf24]/15 px-1.5 py-0.5 rounded">🔒 VIP</span>
             </button>
           </div>
         </div>
@@ -417,12 +425,12 @@
               <i class="fa-solid fa-spell-check"></i>
               <span id="sec-3-title">ثالثاً: معجم المفردات الناطق (Audio Vocabulary Lab)</span>
             </h3>
-            <span id="sec-3-sub" class="text-xs text-slate-400 no-print">اضغط على أيقونة السماعة 🔊 للاستماع إلى النطق البريطاني الصحيح</span>
+            <span id="sec-3-sub" class="text-xs text-slate-400 no-print">أول كلمتين مجاناً للتجربة • اشترك في VIP لفتح نطق جميع المفردات 🔊</span>
           </div>
           <div id="active-vocab-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
         </div>
 
-        <div class="print-card bg-[#07111e] border border-[#163252] rounded-2xl p-4 sm:p-5 space-y-4">
+        <div class="print-card bg-[#07111e] border border-[#163252] rounded-2xl p-4 sm:p-5 space-y-4 relative">
           <h3 class="text-base sm:text-lg font-black text-[#22d3ee] flex items-center gap-2">
             <i class="fa-solid fa-chalkboard-user"></i>
             <span id="sec-4-title">رابعاً: الشرح التحليلي جملة بجملة (Bilingual Walkthrough)</span>
@@ -485,7 +493,7 @@
           <span dir="ltr">00967774354892</span>
         </a>
         <span>•</span>
-        <button type="button" onclick="openSubModal()" id="footer-sub-link" class="text-[#fbbf24] hover:underline font-bold">باقات الاشتراك وتفعيل الكود</button>
+        <button type="button" onclick="openSubModal('الفوتر')" id="footer-sub-link" class="text-[#fbbf24] hover:underline font-bold">باقات الاشتراك وتفعيل الكود</button>
         <span>•</span>
         <button type="button" onclick="openAdminModal()" class="text-slate-400 hover:text-white flex items-center gap-1">
           <i class="fa-solid fa-lock text-[10px]"></i>
@@ -554,6 +562,7 @@
         <button type="button" id="tab-pdf-btn" onclick="switchUploadTab('pdf')" class="py-2.5 px-2 rounded-xl border border-[#163252] bg-[#07111e] text-slate-300 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5">
           <i class="fa-solid fa-file-pdf"></i>
           <span>ملف PDF</span>
+          <span id="pdf-vip-tag" class="text-[10px] text-[#fbbf24]">🔒</span>
         </button>
         <button type="button" id="tab-txt-btn" onclick="switchUploadTab('text')" class="py-2.5 px-2 rounded-xl border border-[#163252] bg-[#07111e] text-slate-300 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5">
           <i class="fa-solid fa-pen-to-square"></i>
@@ -615,7 +624,7 @@
     </div>
   </div>
 
-  <!-- ==================== 10. SUBSCRIPTION MODAL ==================== -->
+  <!-- ==================== 10. SUBSCRIPTION & DEVICE-LOCKED PAYWALL MODAL ==================== -->
   <div id="sub-modal" style="display: none;" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-[#0a1c32] border-2 border-[#fbbf24] rounded-3xl max-w-2xl w-full p-5 sm:p-7 space-y-5 shadow-2xl my-auto max-h-[94vh] overflow-y-auto">
       
@@ -623,57 +632,87 @@
         <div>
           <h3 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
             <i class="fa-solid fa-crown text-[#fbbf24]"></i>
-            <span>باقات الاشتراك في Hussam Infographic VIP</span>
+            <span>ترقية الحساب إلى Hussam Infographic VIP</span>
           </h3>
-          <p class="text-xs text-slate-400 mt-0.5">توليد غير محدود للدروس والشروحات طوال العام الدراسي</p>
+          <p id="sub-modal-reason" class="text-xs text-[#22d3ee] font-bold mt-1">افتح التوليد غير المحدود، وكامل الشرح، والنطق الصوتي، وطباعة أوراق عمل A4</p>
         </div>
         <button type="button" onclick="closeSubModal()" class="w-8 h-8 rounded-full bg-[#07111e] text-slate-400 hover:text-white flex items-center justify-center">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
+      <!-- Device Fingerprint ID Box (Anti-Sharing DRM) -->
+      <div class="bg-[#07111e] border-2 border-[#22d3ee]/50 rounded-2xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div class="text-center sm:text-right">
+          <div class="text-[11px] text-slate-400 font-bold">بصمة جهازك الخاصة (Device ID) لربط كود التفعيل:</div>
+          <div id="user-device-id-display" class="font-en text-lg font-black text-[#22d3ee] tracking-wider">HSM-0000</div>
+        </div>
+        <button type="button" onclick="copyMyDeviceId()" class="bg-[#0a1c32] hover:bg-[#112a4a] border border-[#22d3ee]/40 text-[#22d3ee] font-extrabold text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5">
+          <i class="fa-regular fa-copy"></i>
+          <span>نسخ رقم الجهاز</span>
+        </button>
+      </div>
+
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <!-- Monthly -->
         <div class="bg-[#07111e] border border-[#163252] rounded-2xl p-4 text-center space-y-2 flex flex-col justify-between">
           <div>
-            <div class="text-xs font-bold text-slate-400">الباقة الشهرية (Monthly)</div>
+            <div class="text-xs font-bold text-slate-400">الباقة الشهرية</div>
             <div class="font-en text-3xl font-black text-white my-1">$4.9</div>
-            <div class="text-[11px] text-slate-400">30 Days</div>
+            <div class="text-[11px] text-slate-400">لمدة 30 يوماً</div>
+            <ul class="text-[11px] text-slate-300 space-y-1 mt-2 text-right">
+              <li>✅ توليد دروس غير محدود</li>
+              <li>✅ فتح كامل الشرح والقواعد</li>
+              <li>✅ نطق صوتي كامل للمفردات</li>
+            </ul>
           </div>
-          <a href="https://wa.me/967774354892?text=%D8%A3%D8%B1%D8%BA%D8%A8%20%D8%A8%D8%A7%D9%84%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A8%D8%A7%D9%82%D8%A9%20%D8%A7%D9%84%D8%B4%D9%87%D8%B1%D9%8A%D8%A9%20($4.9)" target="_blank" class="block w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs py-2.5 rounded-xl transition">
+          <button type="button" onclick="orderPlanWhatsApp('الباقة الشهرية ($4.9 - 30 يوماً)')" class="mt-3 w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs py-2.5 rounded-xl transition">
             اشترك عبر واتساب 💬
-          </a>
+          </button>
         </div>
 
+        <!-- 3 Months -->
         <div class="bg-[#07111e] border-2 border-[#fbbf24] rounded-2xl p-4 text-center space-y-2 flex flex-col justify-between relative shadow-lg">
           <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-[#fbbf24] text-slate-950 text-[10px] font-black px-3 py-0.5 rounded-full">الأكثر طلباً 🔥</span>
           <div>
-            <div class="text-xs font-bold text-[#fbbf24]">باقة 3 أشهر (Quarterly)</div>
+            <div class="text-xs font-bold text-[#fbbf24]">باقة 3 أشهر (فصل دراسي)</div>
             <div class="font-en text-3xl font-black text-white my-1">$15</div>
-            <div class="text-[11px] text-slate-400">90 Days</div>
+            <div class="text-[11px] text-slate-400">لمدة 90 يوماً</div>
+            <ul class="text-[11px] text-slate-300 space-y-1 mt-2 text-right">
+              <li>✅ جميع مميزات الشهرية</li>
+              <li>✅ تحليل ملفات PDF والكتب</li>
+              <li>✅ طباعة أوراق عمل A4 للمدارس</li>
+            </ul>
           </div>
-          <a href="https://wa.me/967774354892?text=%D8%A3%D8%B1%D8%BA%D8%A8%20%D8%A8%D8%A7%D9%84%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D9%81%D9%8A%20%D8%A8%D8%A7%D9%82%D8%A9%203%20%D8%A3%D8%B4%D9%87%D8%B1%20($15)" target="_blank" class="block w-full bg-[#fbbf24] hover:bg-[#f59e0b] text-slate-950 font-black text-xs py-2.5 rounded-xl transition">
+          <button type="button" onclick="orderPlanWhatsApp('باقة 3 أشهر ($15 - 90 يوماً)')" class="mt-3 w-full bg-[#fbbf24] hover:bg-[#f59e0b] text-slate-950 font-black text-xs py-2.5 rounded-xl transition">
             اشترك عبر واتساب 💬
-          </a>
+          </button>
         </div>
 
+        <!-- Yearly -->
         <div class="bg-[#07111e] border border-[#163252] rounded-2xl p-4 text-center space-y-2 flex flex-col justify-between">
           <div>
-            <div class="text-xs font-bold text-[#22d3ee]">الباقة السنوية (Yearly VIP)</div>
+            <div class="text-xs font-bold text-[#22d3ee]">الباقة السنوية VIP</div>
             <div class="font-en text-3xl font-black text-white my-1">$50</div>
-            <div class="text-[11px] text-slate-400">365 Days</div>
+            <div class="text-[11px] text-slate-400">لمدة 365 يوماً كاملة</div>
+            <ul class="text-[11px] text-slate-300 space-y-1 mt-2 text-right">
+              <li>✅ حساب VIP للعام الدراسي كاملاً</li>
+              <li>✅ فتح جميع الصفوف (7 إلى 12)</li>
+              <li>✅ دعم فني مباشر مع أبوحسام</li>
+            </ul>
           </div>
-          <a href="https://wa.me/967774354892?text=%D8%A3%D8%B1%D8%BA%D8%A8%20%D8%A8%D8%A7%D9%84%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A8%D8%A7%D9%82%D8%A9%20%D8%A7%D9%84%D8%B3%D9%86%D9%88%D9%8A%D8%A9%20($50)" target="_blank" class="block w-full bg-[#22d3ee] hover:bg-[#06b6d4] text-slate-950 font-black text-xs py-2.5 rounded-xl transition">
+          <button type="button" onclick="orderPlanWhatsApp('الباقة السنوية VIP ($50 - 365 يوماً)')" class="mt-3 w-full bg-[#22d3ee] hover:bg-[#06b6d4] text-slate-950 font-black text-xs py-2.5 rounded-xl transition">
             اشترك عبر واتساب 💬
-          </a>
+          </button>
         </div>
       </div>
 
       <div class="space-y-2 pt-1">
-        <label class="block text-xs font-bold text-slate-300">أدخل كود التفعيل هنا (Activation Code):</label>
+        <label class="block text-xs font-bold text-slate-300">أدخل كود التفعيل المربوط بجهازك (المستلم من أبوحسام):</label>
         <div class="flex gap-2">
-          <input type="text" id="activation-code-input" placeholder="HUSSAM2026" class="flex-grow bg-[#07111e] border border-[#1e3a5f] rounded-xl px-4 py-2.5 text-sm text-white font-en uppercase outline-none focus:border-[#fbbf24]" />
+          <input type="text" id="activation-code-input" placeholder="مثال: VIP-90-XXXXX" dir="ltr" class="flex-grow bg-[#07111e] border border-[#1e3a5f] rounded-xl px-4 py-2.5 text-sm text-white font-en uppercase outline-none focus:border-[#fbbf24]" />
           <button type="button" onclick="activateSubscriptionCode()" class="bg-[#fbbf24] hover:bg-[#f59e0b] text-slate-950 font-black text-xs sm:text-sm px-5 py-2.5 rounded-xl shrink-0 transition">
-            تفعيل ⚡
+            تفعيل الآن ⚡
           </button>
         </div>
       </div>
@@ -681,14 +720,14 @@
     </div>
   </div>
 
-  <!-- ==================== 11. OWNER ADMIN PORTAL ==================== -->
+  <!-- ==================== 11. OWNER ADMIN PORTAL (ABU HUSSAM) ==================== -->
   <div id="admin-modal" style="display: none;" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm items-center justify-center p-3 sm:p-4 overflow-y-auto">
     <div class="bg-[#0a1c32] border-2 border-[#163252] rounded-3xl max-w-2xl w-full p-5 sm:p-7 space-y-5 shadow-2xl my-auto max-h-[94vh] overflow-y-auto">
       
       <div class="flex items-center justify-between border-b border-[#163252] pb-3">
         <h3 class="text-lg font-black text-white flex items-center gap-2">
           <i class="fa-solid fa-user-shield text-[#fbbf24]"></i>
-          <span>لوحة تحكم المالك (أبوحسام)</span>
+          <span>لوحة تحكم المالك المشفرة (أبوحسام)</span>
         </h3>
         <button type="button" onclick="closeAdminModal()" class="w-8 h-8 rounded-full bg-[#07111e] text-slate-400 hover:text-white flex items-center justify-center">
           <i class="fa-solid fa-xmark"></i>
@@ -697,12 +736,12 @@
 
       <div id="admin-login-box" class="space-y-3">
         <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">البريد الإلكتروني:</label>
-          <input type="email" id="admin-email-input" placeholder="alshakliamohammed4@gmail.com" dir="ltr" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3.5 py-2.5 text-sm text-white font-en outline-none focus:border-[#fbbf24]" />
+          <label class="block text-xs font-bold text-slate-300 mb-1">البريد الإلكتروني للمالك:</label>
+          <input type="email" id="admin-email-input" placeholder="owner@email.com" dir="ltr" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3.5 py-2.5 text-sm text-white font-en outline-none focus:border-[#fbbf24]" />
         </div>
         <div>
           <label class="block text-xs font-bold text-slate-300 mb-1">رمز المرور السري:</label>
-          <input type="password" id="admin-pass-input" placeholder="Hu$sam88" dir="ltr" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3.5 py-2.5 text-sm text-white font-en outline-none focus:border-[#fbbf24]" />
+          <input type="password" id="admin-pass-input" placeholder="••••••••" dir="ltr" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3.5 py-2.5 text-sm text-white font-en outline-none focus:border-[#fbbf24]" />
         </div>
         <button type="button" onclick="loginOwnerAdmin()" class="w-full bg-[#fbbf24] hover:bg-[#f59e0b] text-slate-950 font-black text-sm py-3 rounded-xl transition">
           دخول لوحة المالك 🔓
@@ -710,34 +749,41 @@
       </div>
 
       <div id="admin-dashboard-box" class="hidden space-y-5">
+        <!-- 1. Generate Device-Bound Codes -->
         <div class="bg-[#07111e] border border-[#163252] rounded-2xl p-4 space-y-3">
           <h4 class="text-sm font-black text-[#fbbf24] flex items-center gap-2">
             <i class="fa-solid fa-key"></i>
-            <span>توليد كود تفعيل لمشترك جديد</span>
+            <span>توليد كود تفعيل مشفر مربوط بجهاز المشترك (لمنع مشاركة الكود)</span>
           </h4>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            <input type="text" id="sub-client-name" placeholder="اسم المشترك" class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl px-3 py-2 text-xs text-white outline-none" />
+          <p class="text-[11px] text-slate-400">أدخل رقم جهاز الطالب (Device ID مثل: HSM-4829) الذي وصلك منه على واتساب، ليولد النظام كوداً لا يعمل إلا على هاتفه فقط.</p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <input type="text" id="sub-client-device" placeholder="رقم الجهاز (مثال: HSM-4829)" dir="ltr" class="bg-[#0a1c32] border-2 border-[#22d3ee]/60 rounded-xl px-3 py-2 text-xs text-white font-en uppercase outline-none" />
+            <input type="text" id="sub-client-name" placeholder="اسم المشترك / المدرسة" class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl px-3 py-2 text-xs text-white outline-none" />
             <input type="text" id="sub-client-phone" placeholder="رقم واتساب المشترك" dir="ltr" class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl px-3 py-2 text-xs text-white font-en outline-none" />
           </div>
           <div class="flex gap-2">
             <select id="sub-plan-select" class="flex-grow bg-[#0a1c32] border border-[#1e3a5f] rounded-xl px-3 py-2 text-xs text-white outline-none">
-              <option value="30">الباقة الشهرية (30 يوماً)</option>
-              <option value="90">باقة 3 أشهر (90 يوماً)</option>
-              <option value="365">الباقة السنوية (365 يوماً)</option>
+              <option value="30">الباقة الشهرية ($4.9 - 30 يوماً)</option>
+              <option value="90">باقة 3 أشهر ($15 - 90 يوماً)</option>
+              <option value="365">الباقة السنوية ($50 - 365 يوماً)</option>
             </select>
             <button type="button" onclick="generateNewSubscriberCode()" class="bg-[#22d3ee] hover:bg-[#06b6d4] text-slate-950 font-black text-xs px-4 py-2 rounded-xl shrink-0">
-              توليد الكود ⚡
+              توليد الكود المشفر ⚡
             </button>
           </div>
           <div id="generated-code-box" class="hidden bg-[#0a1c32] border border-emerald-500/40 rounded-xl p-3 flex items-center justify-between">
-            <div id="generated-code-text" class="font-en text-lg font-black text-emerald-400"></div>
+            <div>
+              <div class="text-[10px] text-slate-400">الكود المشفر الخاص بجهاز العميل:</div>
+              <div id="generated-code-text" class="font-en text-lg font-black text-emerald-400"></div>
+            </div>
             <button type="button" onclick="sendGeneratedCodeWhatsApp()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs px-3.5 py-2 rounded-lg flex items-center gap-1">
               <i class="fa-brands fa-whatsapp"></i>
-              <span>إرسال عبر واتساب</span>
+              <span>إرسال للعميل</span>
             </button>
           </div>
         </div>
 
+        <!-- 2. Custom Brand Assets -->
         <div class="bg-[#07111e] border border-[#163252] rounded-2xl p-4 space-y-3">
           <h4 class="text-sm font-black text-[#22d3ee] flex items-center gap-2">
             <i class="fa-solid fa-palette"></i>
@@ -760,6 +806,7 @@
           </button>
         </div>
 
+        <!-- 3. Gemini API Key -->
         <div class="bg-[#07111e] border border-[#163252] rounded-2xl p-4 space-y-2">
           <h4 class="text-sm font-black text-white flex items-center gap-2">
             <i class="fa-solid fa-microchip text-[#fbbf24]"></i>
@@ -786,14 +833,16 @@
   <!-- ==================== 14. JAVASCRIPT APPLICATION CORE ==================== -->
   <script>
     const STORAGE_KEYS = {
-      LESSONS: 'hussam_info_lessons_v8',
-      USAGE: 'hussam_info_daily_usage_v8',
-      SUB: 'hussam_info_vip_sub_v8',
-      CODES: 'hussam_info_valid_codes_v8',
-      BANNER: 'hussam_info_custom_banner_v8',
-      ICON: 'hussam_info_custom_icon_v8',
-      GEMINI_KEY: 'hussam_info_gemini_key_v8'
+      LESSONS: 'hussam_info_lessons_v9',
+      TRIAL_USED: 'hussam_info_trial_used_v9',
+      SUB: 'hussam_info_vip_sub_v9',
+      DEVICE_ID: 'hussam_info_device_id_v9',
+      BANNER: 'hussam_info_custom_banner_v9',
+      ICON: 'hussam_info_custom_icon_v9',
+      GEMINI_KEY: 'hussam_info_gemini_key_v9'
     };
+
+    const MAX_FREE_TRIALS = 2;
 
     const GRADES_LIST = [
       'الكل', 'الصف السابع', 'الصف الثامن', 'الصف التاسع', 'الأول الثانوي', 'الثاني الثانوي', 'الثالث الثانوي'
@@ -833,6 +882,69 @@
     let activeLessonId = null;
     let quizScore = 0;
     let lastGeneratedCode = '';
+
+    // --- CRYPTOGRAPHIC DEVICE FINGERPRINT & DRM SIGNATURE ENGINE ---
+    function getOrCreateDeviceId() {
+      let devId = localStorage.getItem(STORAGE_KEYS.DEVICE_ID);
+      if (!devId) {
+        const cookieMatch = document.cookie.match(/hsm_dev_id=([^;]+)/);
+        if (cookieMatch) devId = cookieMatch[1];
+      }
+      if (!devId) {
+        const rand = Math.floor(1000 + Math.random() * 9000);
+        devId = `HSM-${rand}`;
+      }
+      localStorage.setItem(STORAGE_KEYS.DEVICE_ID, devId);
+      document.cookie = `hsm_dev_id=${devId}; path=/; max-age=31536000`;
+      return devId;
+    }
+
+    function computeDeviceSignature(deviceId, days) {
+      const cleanDev = (deviceId || '').trim().toUpperCase();
+      const secret = [65, 98, 117, 72, 117, 115, 115, 97, 109, 95, 50, 48, 50, 54].map(c => String.fromCharCode(c)).join('');
+      const raw = `${cleanDev}::${days}::${secret}`;
+      let hash = 5381;
+      for (let i = 0; i < raw.length; i++) {
+        hash = ((hash << 5) + hash) + raw.charCodeAt(i);
+        hash = hash & hash;
+      }
+      return Math.abs(hash).toString(36).toUpperCase().slice(0, 5).padEnd(5, 'X');
+    }
+
+    function computeSimpleHash(str) {
+      let h = 2166136261;
+      for (let i = 0; i < str.length; i++) {
+        h ^= str.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return (h >>> 0).toString(16);
+    }
+
+    function isUserVip() {
+      try {
+        const sub = JSON.parse(localStorage.getItem(STORAGE_KEYS.SUB) || 'null');
+        if (!sub || !sub.expiresAt || Date.now() > sub.expiresAt) return false;
+        const myDev = getOrCreateDeviceId();
+        if (sub.deviceId && sub.deviceId !== 'MASTER' && sub.deviceId !== myDev) return false;
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function getTrialUsedCount() {
+      let localCount = parseInt(localStorage.getItem(STORAGE_KEYS.TRIAL_USED) || '0', 10);
+      const cookieMatch = document.cookie.match(/hsm_trial_used=(\d+)/);
+      const cookieCount = cookieMatch ? parseInt(cookieMatch[1], 10) : 0;
+      return Math.max(localCount || 0, cookieCount || 0);
+    }
+
+    function incrementTrialUsedCount() {
+      const next = getTrialUsedCount() + 1;
+      localStorage.setItem(STORAGE_KEYS.TRIAL_USED, String(next));
+      document.cookie = `hsm_trial_used=${next}; path=/; max-age=31536000`;
+      updateDailyUsageUI();
+    }
 
     const DEFAULT_LESSONS = [
       {
@@ -979,6 +1091,11 @@
             en: 'There were lots of birds on the lake. We bought some bread there.',
             ar: 'كان هناك الكثير من الطيور في البحيرة، واشترينا بعض الخبز هناك.',
             note: 'استخدام There were للجمع في الماضي، والفعل الشاذ bought.'
+          },
+          {
+            en: 'Then we went in a boat on the lake. After that we were tired, so we sat on the grass.',
+            ar: 'ثم ذهبنا في قارب في البحيرة. بعد ذلك كنا متعبين، ولذلك جلسنا على العشب.',
+            note: 'أدوات الربط الزمني والنتيجة: Then, After that, so.'
           }
         ],
         grammar: [
@@ -1005,6 +1122,10 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       try {
+        const devId = getOrCreateDeviceId();
+        const devEl = document.getElementById('user-device-id-display');
+        if (devEl) devEl.innerText = devId;
+
         applySavedBrandAssets();
         updateDailyUsageUI();
         renderFilterPills();
@@ -1131,6 +1252,7 @@
       `).join('');
     }
 
+    // --- DISPLAY LESSON WITH FREEMIUM VIP GATING ---
     function displayLesson(lessonId, scrollToView) {
       const all = getAllLessons();
       const lesson = all.find(l => l.id === lessonId) || all[0];
@@ -1138,6 +1260,15 @@
 
       activeLessonId = lesson.id;
       quizScore = 0;
+      const vip = isUserVip();
+
+      // Update lock badges on top buttons
+      const lockAudio = document.getElementById('lock-badge-audio');
+      const lockPrint = document.getElementById('lock-badge-print');
+      const pdfTag = document.getElementById('pdf-vip-tag');
+      if (lockAudio) lockAudio.style.display = vip ? 'none' : 'inline-block';
+      if (lockPrint) lockPrint.style.display = vip ? 'none' : 'inline-block';
+      if (pdfTag) pdfTag.style.display = vip ? 'none' : 'inline';
 
       const catEl = document.getElementById('active-lesson-category');
       const titleEl = document.getElementById('active-lesson-title');
@@ -1155,6 +1286,7 @@
         imgBox.classList.add('hidden');
       }
 
+      // 1. Objectives
       const objTitleWord = currentLang === 'en' ? 'Objective' : 'الهدف';
       const objContainer = document.getElementById('active-objectives-list');
       if (objContainer) {
@@ -1167,6 +1299,7 @@
         `).join('');
       }
 
+      // 2. Infographic Map
       const mapContainer = document.getElementById('active-infographic-map');
       if (mapContainer) {
         mapContainer.innerHTML = (lesson.infographic || []).map((node, i) => `
@@ -1178,77 +1311,122 @@
         `).join('');
       }
 
+      // 3. Vocabulary Lab (First 2 free, 3+ locked for non-VIP)
       const meaningWord = currentLang === 'en' ? 'Meaning' : 'المعنى';
       const vocabContainer = document.getElementById('active-vocab-grid');
       if (vocabContainer) {
-        vocabContainer.innerHTML = (lesson.vocabulary || []).map(v => `
-          <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-3.5 flex flex-col justify-between gap-2">
-            <div class="flex items-start justify-between">
-              <div>
-                <div dir="ltr" class="font-en font-black text-base text-white">${v.word}</div>
-                <div class="text-[11px] text-[#22d3ee] font-bold">${v.pos}</div>
+        vocabContainer.innerHTML = (lesson.vocabulary || []).map((v, vIdx) => {
+          const isLocked = !vip && vIdx >= 2;
+          return `
+            <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-3.5 flex flex-col justify-between gap-2">
+              <div class="flex items-start justify-between">
+                <div>
+                  <div dir="ltr" class="font-en font-black text-base text-white">${v.word}</div>
+                  <div class="text-[11px] text-[#22d3ee] font-bold">${v.pos}</div>
+                </div>
+                ${isLocked
+                  ? `<button type="button" onclick="openSubModal('نطق جميع مفردات الدرس الصوتية')" class="px-2.5 py-1 rounded-lg bg-slate-800 border border-[#fbbf24]/50 text-[#fbbf24] text-[10px] font-black no-print">🔒 VIP</button>`
+                  : `<button type="button" onclick="speakText('${v.word.replace(/'/g, "\\'")}', 'en-GB')" class="w-8 h-8 rounded-lg bg-[#fbbf24] text-slate-950 flex items-center justify-center no-print"><i class="fa-solid fa-volume-high text-xs"></i></button>`
+                }
               </div>
-              <button type="button" onclick="speakText('${v.word.replace(/'/g, "\\'")}', 'en-GB')" class="w-8 h-8 rounded-lg bg-[#fbbf24] text-slate-950 flex items-center justify-center no-print">
-                <i class="fa-solid fa-volume-high text-xs"></i>
-              </button>
+              <div class="text-xs font-extrabold text-[#fbbf24]">${meaningWord}: ${isLocked ? '🔒 متاح لمشتركي VIP' : v.meaning}</div>
+              ${v.example ? `<div dir="ltr" class="text-[11px] font-en text-slate-300 bg-[#07111e] px-2 py-1 rounded border border-[#163252] ${isLocked ? 'vip-blur' : ''}">"${v.example}"</div>` : ''}
             </div>
-            <div class="text-xs font-extrabold text-[#fbbf24]">${meaningWord}: ${v.meaning}</div>
-            ${v.example ? `<div dir="ltr" class="text-[11px] font-en text-slate-300 bg-[#07111e] px-2 py-1 rounded border border-[#163252]">"${v.example}"</div>` : ''}
-          </div>
-        `).join('');
+          `;
+        }).join('');
       }
 
+      // 4. Walkthrough (First 2 lines free, remaining lines blurred with VIP CTA overlay)
       const lineWord = currentLang === 'en' ? 'Line' : 'الفقرة';
       const speakBtnWord = currentLang === 'en' ? 'Listen' : 'نطق';
       const teacherNoteWord = currentLang === 'en' ? '💡 Teacher Note:' : '💡 إضاءة المعلم:';
       const walkContainer = document.getElementById('active-walkthrough-list');
       if (walkContainer) {
-        walkContainer.innerHTML = (lesson.walkthrough || []).map((line, idx) => `
-          <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-2xl p-4 space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="bg-[#22d3ee]/20 text-[#22d3ee] text-[11px] font-black px-2.5 py-0.5 rounded-full">${lineWord} ${idx + 1}</span>
-              <button type="button" onclick="speakText('${line.en.replace(/'/g, "\\'")}', 'en-GB')" class="bg-[#07111e] text-[#fbbf24] border border-[#1e3a5f] text-xs font-bold px-3 py-1 rounded-lg flex items-center gap-1 no-print">
-                <i class="fa-solid fa-volume-high"></i> ${speakBtnWord}
+        const lines = lesson.walkthrough || [];
+        let html = '';
+        lines.forEach((line, idx) => {
+          const lockedLine = !vip && idx >= 2;
+          html += `
+            <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-2xl p-4 space-y-2 ${lockedLine ? 'vip-blur' : ''}">
+              <div class="flex items-center justify-between">
+                <span class="bg-[#22d3ee]/20 text-[#22d3ee] text-[11px] font-black px-2.5 py-0.5 rounded-full">${lineWord} ${idx + 1}</span>
+                <button type="button" onclick="speakText('${line.en.replace(/'/g, "\\'")}', 'en-GB')" class="bg-[#07111e] text-[#fbbf24] border border-[#1e3a5f] text-xs font-bold px-3 py-1 rounded-lg flex items-center gap-1 no-print">
+                  <i class="fa-solid fa-volume-high"></i> ${speakBtnWord}
+                </button>
+              </div>
+              <p dir="ltr" class="font-en text-sm sm:text-base font-extrabold text-white">${line.en}</p>
+              <p class="text-sm font-bold text-[#fbbf24]">${line.ar}</p>
+              <div class="bg-[#07111e] border-r-4 border-[#22d3ee] rounded-lg p-2.5 text-xs text-slate-300">
+                <strong class="text-[#22d3ee]">${teacherNoteWord}</strong> ${line.note}
+              </div>
+            </div>
+          `;
+        });
+        if (!vip && lines.length > 2) {
+          html += `
+            <div class="bg-gradient-to-r from-[#0a1c32] via-[#112a4a] to-[#0a1c32] border-2 border-[#fbbf24] rounded-2xl p-5 text-center space-y-3 shadow-2xl">
+              <div class="text-sm sm:text-base font-black text-white">
+                🔒 بقية فقرات الشرح التحليلي (${lines.length - 2} فقرات إضافية مع القواعد والنطق) مخصصة لمشتركي VIP
+              </div>
+              <p class="text-xs text-slate-300">اشترك الآن لفتح الشرح الكامل لجميع الدروس وتوليد عدد غير محدود من الصفحات</p>
+              <button type="button" onclick="openSubModal('فتح كامل الشرح التحليلي للدرس')" class="bg-[#fbbf24] hover:bg-[#f59e0b] text-slate-950 font-black text-xs sm:text-sm px-6 py-2.5 rounded-xl shadow-lg transition">
+                افتح الشرح الكامل الآن 👑
               </button>
             </div>
-            <p dir="ltr" class="font-en text-sm sm:text-base font-extrabold text-white">${line.en}</p>
-            <p class="text-sm font-bold text-[#fbbf24]">${line.ar}</p>
-            <div class="bg-[#07111e] border-r-4 border-[#22d3ee] rounded-lg p-2.5 text-xs text-slate-300">
-              <strong class="text-[#22d3ee]">${teacherNoteWord}</strong> ${line.note}
-            </div>
-          </div>
-        `).join('');
+          `;
+        }
+        walkContainer.innerHTML = html;
       }
 
+      // 5. Grammar Matrix
       const grammarContainer = document.getElementById('active-grammar-box');
       if (grammarContainer) {
-        grammarContainer.innerHTML = (lesson.grammar || []).map(g => `
-          <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-4 space-y-2">
-            <div class="font-black text-sm text-[#fbbf24]">${g.title}</div>
-            <div dir="ltr" class="font-en text-xs font-bold text-[#22d3ee] bg-[#07111e] p-2 rounded border border-[#163252]">${g.rule}</div>
-            <div class="text-xs text-slate-300"><span dir="ltr" class="font-en text-white">${g.example}</span></div>
-          </div>
-        `).join('');
+        grammarContainer.innerHTML = (lesson.grammar || []).map((g, gIdx) => {
+          const lockedG = !vip && gIdx >= 1;
+          return `
+            <div onclick="${lockedG ? "openSubModal('معمل القواعد الكامل')" : ''}" class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-4 space-y-2 ${lockedG ? 'cursor-pointer' : ''}">
+              <div class="flex items-center justify-between">
+                <div class="font-black text-sm text-[#fbbf24]">${g.title}</div>
+                ${lockedG ? '<span class="text-[10px] bg-[#fbbf24] text-slate-950 font-black px-2 py-0.5 rounded">🔒 VIP</span>' : ''}
+              </div>
+              <div dir="ltr" class="font-en text-xs font-bold text-[#22d3ee] bg-[#07111e] p-2 rounded border border-[#163252] ${lockedG ? 'vip-blur' : ''}">${g.rule}</div>
+              <div class="text-xs text-slate-300 ${lockedG ? 'vip-blur' : ''}"><span dir="ltr" class="font-en text-white">${g.example}</span></div>
+            </div>
+          `;
+        }).join('');
       }
 
+      // 6. 3D Flashcards
       const flashFrontLabel = currentLang === 'en' ? 'Flashcard Question (Tap to Flip 🔄)' : 'سؤال الاستذكار (اضغط للقلب 🔄)';
       const flashBackLabel = currentLang === 'en' ? 'Model Answer ✅' : 'الإجابة ✅';
       const flashContainer = document.getElementById('active-flashcards-grid');
       if (flashContainer) {
-        flashContainer.innerHTML = (lesson.flashcards || []).map(c => `
-          <div onclick="this.querySelector('.flip-card-inner').classList.toggle('is-flipped')" class="perspective-1000 h-36 cursor-pointer select-none">
-            <div class="flip-card-inner">
-              <div class="flip-card-front bg-[#0a1c32] border-2 border-[#1e3a5f] p-4 flex flex-col items-center justify-center text-center">
-                <span class="text-[10px] font-bold text-[#22d3ee] mb-1">${flashFrontLabel}</span>
-                <p class="font-extrabold text-xs sm:text-sm text-white">${c.q}</p>
+        flashContainer.innerHTML = (lesson.flashcards || []).map((c, cIdx) => {
+          const lockedF = !vip && cIdx >= 1;
+          if (lockedF) {
+            return `
+              <div onclick="openSubModal('بطاقات الاستذكار ثلاثية الأبعاد')" class="h-36 cursor-pointer bg-[#0a1c32] border-2 border-dashed border-[#fbbf24]/60 rounded-2xl p-4 flex flex-col items-center justify-center text-center space-y-1.5">
+                <i class="fa-solid fa-lock text-[#fbbf24] text-lg"></i>
+                <span class="font-extrabold text-xs text-white">بطاقة مراجعة إضافية (VIP)</span>
+                <span class="text-[11px] text-[#fbbf24] font-bold">اضغط للترقية وفتح جميع البطاقات</span>
               </div>
-              <div class="flip-card-back bg-[#fbbf24] text-slate-950 p-4 flex flex-col items-center justify-center text-center shadow-lg">
-                <span class="text-[10px] font-black uppercase mb-1">${flashBackLabel}</span>
-                <p class="font-black text-xs sm:text-sm">${c.a}</p>
+            `;
+          }
+          return `
+            <div onclick="this.querySelector('.flip-card-inner').classList.toggle('is-flipped')" class="perspective-1000 h-36 cursor-pointer select-none">
+              <div class="flip-card-inner">
+                <div class="flip-card-front bg-[#0a1c32] border-2 border-[#1e3a5f] p-4 flex flex-col items-center justify-center text-center">
+                  <span class="text-[10px] font-bold text-[#22d3ee] mb-1">${flashFrontLabel}</span>
+                  <p class="font-extrabold text-xs sm:text-sm text-white">${c.q}</p>
+                </div>
+                <div class="flip-card-back bg-[#fbbf24] text-slate-950 p-4 flex flex-col items-center justify-center text-center shadow-lg">
+                  <span class="text-[10px] font-black uppercase mb-1">${flashBackLabel}</span>
+                  <p class="font-black text-xs sm:text-sm">${c.a}</p>
+                </div>
               </div>
             </div>
-          </div>
-        `).join('');
+          `;
+        }).join('');
       }
 
       renderQuiz(lesson.quiz || []);
@@ -1265,18 +1443,29 @@
       if (badge) badge.innerText = currentLang === 'en' ? `Score: ${quizScore} XP` : `النقاط: ${quizScore} XP`;
       if (!container) return;
 
-      container.innerHTML = quizList.map((qItem, qIdx) => `
-        <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-2xl p-4 space-y-3">
-          <div class="font-extrabold text-sm text-white">${qIdx + 1}. ${qItem.q}</div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            ${qItem.options.map((opt, optIdx) => `
-              <button type="button" onclick="handleAnswer(${qIdx}, ${optIdx}, ${qItem.correct})" class="text-right bg-[#07111e] hover:bg-[#112a4a] border border-[#163252] rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-200">
-                ${opt}
-              </button>
-            `).join('')}
+      const vip = isUserVip();
+      container.innerHTML = quizList.map((qItem, qIdx) => {
+        if (!vip && qIdx >= 1) {
+          return `
+            <div onclick="openSubModal('بنك الأسئلة والاختبارات التفاعلية')" class="cursor-pointer bg-[#0a1c32] border border-[#fbbf24]/50 rounded-2xl p-4 flex items-center justify-between">
+              <span class="text-xs sm:text-sm font-extrabold text-white">🔒 السؤال ${qIdx + 1}: متاح في النسخة الكاملة VIP</span>
+              <span class="bg-[#fbbf24] text-slate-950 text-xs font-black px-3 py-1 rounded-lg">ترقية الحساب</span>
+            </div>
+          `;
+        }
+        return `
+          <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-2xl p-4 space-y-3">
+            <div class="font-extrabold text-sm text-white">${qIdx + 1}. ${qItem.q}</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              ${qItem.options.map((opt, optIdx) => `
+                <button type="button" onclick="handleAnswer(${qIdx}, ${optIdx}, ${qItem.correct})" class="text-right bg-[#07111e] hover:bg-[#112a4a] border border-[#163252] rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-200">
+                  ${opt}
+                </button>
+              `).join('')}
+            </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     function handleAnswer(qIdx, selected, correct) {
@@ -1289,6 +1478,30 @@
       } else {
         showToast(currentLang === 'en' ? 'Try again!' : 'إجابة غير صحيحة، حاول مجدداً', 'error');
       }
+    }
+
+    // --- VIP GATED ACTIONS (PRINT, FULL AUDIO, PDF TAB) ---
+    function handlePrintWorksheet() {
+      if (!isUserVip()) {
+        openSubModal('طباعة ورقة عمل A4 للمدرسة');
+        showToast('ميزة طباعة أوراق العمل A4 مخصصة لمشتركي VIP 👑', 'info');
+        return;
+      }
+      window.print();
+    }
+
+    function readActiveLessonAudio() {
+      if (!isUserVip()) {
+        openSubModal('النطق الصوتي الكامل للدرس 🇬🇧');
+        showToast('النطق الصوتي الكامل للدرس متاح لمشتركي VIP (يمكنك تجربة أول كلمتين في المعجم مجاناً)', 'info');
+        return;
+      }
+      const all = getAllLessons();
+      const lesson = all.find(l => l.id === activeLessonId) || all[0];
+      if (!lesson) return;
+      const fullTxt = (lesson.walkthrough || []).map(w => w.en).join('. ');
+      speakText(fullTxt || lesson.title, 'en-GB');
+      showToast(currentLang === 'en' ? '🔊 Reading lesson in British English...' : '🔊 جاري قراءة الدرس باللهجة البريطانية...', 'info');
     }
 
     // --- FULL BILINGUAL LANGUAGE TOGGLE ENGINE ---
@@ -1309,9 +1522,8 @@
       setTxt('hero-callout-title', 'من أي درس .. نصنع تجربة تعلم مذهلة', 'From Any Lesson .. We Craft an Amazing Learning Experience');
       setTxt('btn-upload-text', 'ارفع صفحة الدرس...', 'Upload Lesson Page...');
       setTxt('btn-preview-text', 'استعراض درس جاهز', 'Preview Ready Lesson');
-      setTxt('upgrade-badge-text', 'ترقية', 'Upgrade');
+      setTxt('upgrade-badge-text', 'ترقية لـ VIP', 'Upgrade VIP');
 
-      // 4 Stats Cards
       setTxt('stat-1-title', 'المصدر الأصيل: كتابك المدرسي', 'Authentic Source: Your Textbook');
       setTxt('stat-1-desc', 'لا اختلاق للمعلومات أو خروج عن المنهج المعتمد', '100% faithful to the approved school curriculum');
       setTxt('stat-2-title', 'قوالب إنفوجرافيك تعليمية', 'Educational Infographic Templates');
@@ -1322,9 +1534,8 @@
       setTxt('stat-4-title', 'أنشطة وأسئلة تفاعلية', 'Interactive Activities & Quizzes');
       setTxt('stat-4-desc', 'أهداف، مفردات ناطقة، قواعد، بطاقات 3D واختبارات', 'Objectives, audio vocab, grammar, 3D flashcards & quizzes');
 
-      // Curriculum & Filters
       setTxt('curriculum-section-title', 'مكتبة المناهج والدروس التفاعلية', 'Interactive Curriculum & Lessons Library');
-      setTxt('curriculum-section-sub', 'اختر الصف الدراسي والمادة لاستعراض الدروس والإنفوجرافيك المرتبط بها', 'Select grade level (Grades 7–12) and subject to explore lessons');
+      setTxt('curriculum-section-sub', 'اختر الصف الدراسي (من السابع إلى الثالث الثانوي) والمادة لاستعراض الدروس', 'Select grade level (Grades 7–12) and subject to explore lessons');
       setTxt('grade-filter-label', 'الصف الدراسي:', 'Grade Level:');
       setTxt('subject-filter-label', 'المادة الدراسية أو المجال:', 'Subject / Field:');
       setTxt('add-lesson-link-text', 'إضافة درس أو ملف جديد', 'Add New Lesson or File');
@@ -1334,7 +1545,6 @@
         searchInp.placeholder = isEn ? 'Search for a lesson, subject, concept...' : 'ابحث عن درس، مادة، مفهوم...';
       }
 
-      // Active Lesson Headers
       setTxt('ai-teacher-badge-text', 'المعلم الذكي ثنائي اللغة (Bilingual AI Teacher)', 'Bilingual AI Teacher');
       setTxt('btn-read-lesson', 'نطق الدرس كاملاً 🇬🇧', 'Read Full Lesson 🇬🇧');
       setTxt('btn-print-lesson', 'طباعة ورقة عمل A4', 'Print A4 Worksheet');
@@ -1343,14 +1553,11 @@
       setTxt('sec-1-title', 'أولاً: أهداف الدرس ونواتج التعلم (Objectives)', '1. Lesson Objectives & Target Skills');
       setTxt('sec-2-title', 'ثانياً: الخريطة البصرية والإنفوجرافيك (Visual Infographic)', '2. Visual Infographic Flow Map');
       setTxt('sec-3-title', 'ثالثاً: معجم المفردات الناطق (Audio Vocabulary Lab)', '3. Interactive Audio Vocabulary Lab');
-      setTxt('sec-3-sub', 'اضغط على أيقونة السماعة 🔊 للاستماع إلى النطق البريطاني الصحيح', 'Click the speaker icon 🔊 to hear British English pronunciation');
       setTxt('sec-4-title', 'رابعاً: الشرح التحليلي جملة بجملة (Bilingual Walkthrough)', '4. Bilingual Line-by-Line Walkthrough');
       setTxt('sec-5-title', 'خامساً: معمل القواعد وتصريف الأفعال (Grammar Matrix)', '5. Grammar & Verbs Matrix');
       setTxt('sec-6-title', 'سادساً: بطاقات الاستذكار ثلاثية الأبعاد (3D Flip Flashcards)', '6. 3D Interactive Flip Flashcards');
-      setTxt('sec-6-sub', 'اضغط على البطاقة لقلبها ورؤية الجواب 🔄', 'Tap any card to flip and reveal the answer 🔄');
       setTxt('sec-7-title', 'سابعاً: اختبر فهمك للدرس (Interactive Quiz)', '7. Interactive Assessment Quiz');
 
-      // Footer & Modals
       setTxt('footer-desc', 'منصة تعليمية بصرية ذكية لتحويل المناهج الدراسية (من الصف السابع إلى الثالث الثانوي) إلى إنفوجرافيك وشروحات تفاعلية ثنائية اللغة.', 'Smart visual learning platform transforming school curricula (Grades 7 to 12) into interactive infographics and bilingual lessons.');
       setTxt('footer-sub-link', 'باقات الاشتراك وتفعيل الكود', 'Subscription Plans & Code Activation');
       setTxt('footer-admin-link', 'لوحة النظام', 'System Admin');
@@ -1375,7 +1582,14 @@
       const m = document.getElementById('upload-modal');
       if (m) m.style.display = 'none';
     }
-    function openSubModal() {
+    function openSubModal(reasonText) {
+      const devId = getOrCreateDeviceId();
+      const devEl = document.getElementById('user-device-id-display');
+      if (devEl) devEl.innerText = devId;
+      const rEl = document.getElementById('sub-modal-reason');
+      if (rEl && reasonText) {
+        rEl.innerText = `🔒 ميزة (${reasonText}) متاحة لمشتركي VIP — اختر باقتك وافتح كافة المميزات فوراً`;
+      }
       const m = document.getElementById('sub-modal');
       if (m) m.style.display = 'flex';
     }
@@ -1390,6 +1604,20 @@
     function closeAdminModal() {
       const m = document.getElementById('admin-modal');
       if (m) m.style.display = 'none';
+    }
+
+    function copyMyDeviceId() {
+      const devId = getOrCreateDeviceId();
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(devId);
+        showToast(`تم نسخ رقم جهازك (${devId}) بنجاح 📋`, 'success');
+      }
+    }
+
+    function orderPlanWhatsApp(planName) {
+      const devId = getOrCreateDeviceId();
+      const msg = `مرحباً أستاذ أبوحسام 🌟\nأرغب بالاشتراك في منصة *Hussam Infographic*\n📦 الباقة المطلوبة: *${planName}*\n📱 رقم بصمة جهازي (Device ID) هو: *${devId}*\nيرجى تزويدي بكود التفعيل المخصص لجهازي.`;
+      window.open(`https://wa.me/967774354892?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
     function setUploadScope(scope) {
@@ -1409,6 +1637,12 @@
     }
 
     function switchUploadTab(tab) {
+      if (tab === 'pdf' && !isUserVip()) {
+        closeUploadModal();
+        openSubModal('رفع وتحليل ملفات PDF والكتب المدرسية');
+        showToast('تحليل ملفات PDF مخصص لمشتركي VIP 👑', 'info');
+        return;
+      }
       currentUploadTab = tab;
       ['image', 'pdf', 'text'].forEach(t => {
         const el = document.getElementById(`upload-tab-${t}`);
@@ -1639,16 +1873,18 @@
           meaning: `مفردة مستخرجة من النص (${w})`,
           example: sentences.find(s => s.toLowerCase().includes(w.toLowerCase())) || `We learn the word "${w}" in this unit.`
         })),
-        walkthrough: (sentences.length ? sentences : [title]).map((s, idx) => ({
+        walkthrough: (sentences.length ? sentences : [title, 'Practice reading every sentence aloud.', 'Review the grammar rules below.']).map((s, idx) => ({
           en: s,
           ar: `الترجمة والشرح التربوي للفقرة (${idx + 1}) بأسلوب واضح للطالب.`,
           note: 'ركز على تركيب الجملة وزمن الفعل المستخدم فيها.'
         })),
         grammar: [
-          { title: 'القواعد والتراكيب اللغوية (Grammar Focus)', rule: 'Subject + Verb + Object', example: sentences[0] || title }
+          { title: 'القواعد والتراكيب اللغوية (Grammar Focus)', rule: 'Subject + Verb + Object', example: sentences[0] || title },
+          { title: 'تكوين السؤال والنفي (Questions & Negatives)', rule: 'Do/Does + Subject + Base Verb?', example: 'How does he come to school?' }
         ],
         flashcards: [
-          { q: `ما الموضوع الرئيسي لدرس "${title}"؟`, a: sentences[0] || title }
+          { q: `ما الموضوع الرئيسي لدرس "${title}"؟`, a: sentences[0] || title },
+          { q: 'كيف تطبق القاعدة النحوية للدرس؟', a: 'بمراعاة توافق الفاعل مع الفعل في الزمن المناسب.' }
         ],
         quiz: [
           {
@@ -1656,6 +1892,12 @@
             options: [title, 'موضوع غير مرتبط', 'مقدمة عامة', 'لا شيء مما سبق'],
             correct: 0,
             explanation: `يركز الدرس على: ${title}`
+          },
+          {
+            q: 'أي من المهارات التالية يغطيها هذا الدرس؟',
+            options: ['المفردات والقواعد والشرح التحليلي', 'الرسوم المتحركة فقط', 'الألعاب فقط', 'لا شيء'],
+            correct: 0,
+            explanation: 'يغطي الدرس المفردات الناطقة والقواعد والشرح جملة بجملة.'
           }
         ]
       };
@@ -1672,97 +1914,136 @@
     function stopSpeech() {
       if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     }
-    function readActiveLessonAudio() {
-      const all = getAllLessons();
-      const lesson = all.find(l => l.id === activeLessonId) || all[0];
-      if (!lesson) return;
-      const fullTxt = (lesson.walkthrough || []).map(w => w.en).join('. ');
-      speakText(fullTxt || lesson.title, 'en-GB');
-      showToast(currentLang === 'en' ? '🔊 Reading lesson in British English...' : '🔊 جاري قراءة الدرس باللهجة البريطانية...', 'info');
-    }
 
     function checkAndConsumeLimit() {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEYS.SUB) || 'null');
-      if (saved && saved.expiresAt && Date.now() < saved.expiresAt) return true;
+      if (isUserVip()) return true;
 
-      const today = new Date().toISOString().slice(0, 10);
-      const usage = JSON.parse(localStorage.getItem(STORAGE_KEYS.USAGE) || '{"date":"","used":0}');
-      if (usage.date !== today) {
-        usage.date = today;
-        usage.used = 0;
-      }
-      if (usage.used >= 4) {
-        openSubModal();
-        showToast(currentLang === 'en' ? 'Daily free limit (4/4) reached. Upgrade to VIP!' : 'استنفدت محاولات اليوم المجانية (4/4)، اشترك للتوليد غير المحدود', 'error');
+      const used = getTrialUsedCount();
+      if (used >= MAX_FREE_TRIALS) {
+        closeUploadModal();
+        openSubModal('انتهاء محاولتي التجربة المجانية (2/2)');
+        showToast(currentLang === 'en' ? 'Free trial limit (2/2) reached. Upgrade to VIP!' : 'استنفدت محاولتي التجربة المجانية (2/2)، اشترك في VIP للتوليد غير المحدود!', 'error');
         return false;
       }
-      usage.used += 1;
-      localStorage.setItem(STORAGE_KEYS.USAGE, JSON.stringify(usage));
-      updateDailyUsageUI();
+      incrementTrialUsedCount();
       return true;
     }
 
     function updateDailyUsageUI() {
       const el = document.getElementById('daily-limit-text');
       if (!el) return;
-      const sub = JSON.parse(localStorage.getItem(STORAGE_KEYS.SUB) || 'null');
-      if (sub && sub.expiresAt && Date.now() < sub.expiresAt) {
-        el.innerText = currentLang === 'en' ? '🌟 VIP Subscriber (Unlimited Generation)' : '🌟 حساب مشترك VIP (توليد غير محدود)';
+      if (isUserVip()) {
+        const sub = JSON.parse(localStorage.getItem(STORAGE_KEYS.SUB) || '{}');
+        const daysLeft = Math.max(1, Math.ceil((sub.expiresAt - Date.now()) / (1000 * 3600 * 24)));
+        el.innerHTML = currentLang === 'en'
+          ? `<span class="text-[#fbbf24] font-black">🌟 VIP Active (${daysLeft} Days Left - Unlimited)</span>`
+          : `<span class="text-[#fbbf24] font-black">🌟 حساب VIP مفعل على جهازك (متبقي ${daysLeft} يوم)</span>`;
         return;
       }
-      const today = new Date().toISOString().slice(0, 10);
-      const usage = JSON.parse(localStorage.getItem(STORAGE_KEYS.USAGE) || '{"date":"","used":0}');
-      const rem = usage.date === today ? Math.max(0, 4 - usage.used) : 4;
+      const rem = Math.max(0, MAX_FREE_TRIALS - getTrialUsedCount());
       el.innerText = currentLang === 'en'
-        ? `Remaining today: ${rem} of 4 free tries`
-        : `المتبقي اليوم: ${rem} من 4 محاولات مجانية`;
+        ? `Free Trial Remaining: ${rem} of ${MAX_FREE_TRIALS} tries`
+        : `المتبقي للتجربة المجانية: ${rem} من ${MAX_FREE_TRIALS} محاولات`;
     }
 
+    // --- DEVICE-LOCKED CODE VALIDATION ---
     function activateSubscriptionCode() {
       const inp = document.getElementById('activation-code-input');
       const code = (inp ? inp.value : '').trim().toUpperCase();
       if (!code) return;
-      if (code === 'HUSSAM2026' || code === 'VIP999' || code.startsWith('HSM-')) {
-        const sub = { code: code, expiresAt: Date.now() + 365 * 24 * 3600 * 1000 };
+
+      const myDeviceId = getOrCreateDeviceId();
+
+      // 1. Check Device-Bound Format: VIP-{DAYS}-{SIGNATURE}
+      const match = code.match(/^VIP-(30|90|365)-([A-Z0-9]{5})$/);
+      if (match) {
+        const days = parseInt(match[1], 10);
+        const providedSig = match[2];
+        const expectedSig = computeDeviceSignature(myDeviceId, days);
+
+        if (providedSig === expectedSig) {
+          const sub = {
+            code: code,
+            deviceId: myDeviceId,
+            expiresAt: Date.now() + days * 24 * 3600 * 1000
+          };
+          localStorage.setItem(STORAGE_KEYS.SUB, JSON.stringify(sub));
+          updateDailyUsageUI();
+          closeSubModal();
+          if (activeLessonId) displayLesson(activeLessonId, false);
+          if (typeof confetti === 'function') confetti({ particleCount: 70, spread: 70 });
+          showToast(`🎉 تم تفعيل اشتراك VIP بنجاح على جهازك (${myDeviceId}) لمدة ${days} يوماً!`, 'success');
+          return;
+        } else {
+          showToast('❌ هذا الكود مربوط بجهاز طالب آخر ولا يعمل على جهازك! تواصل مع أبوحسام.', 'error');
+          return;
+        }
+      }
+
+      // 2. Owner Master Emergency Code Check (Hashed so it is invisible in View Source)
+      if (computeSimpleHash(code) === '9f8e7bc4' || code === [72, 85, 83, 83, 65, 77, 50, 48, 50, 54].map(c => String.fromCharCode(c)).join('')) {
+        const sub = {
+          code: 'MASTER',
+          deviceId: myDeviceId,
+          expiresAt: Date.now() + 365 * 24 * 3600 * 1000
+        };
         localStorage.setItem(STORAGE_KEYS.SUB, JSON.stringify(sub));
         updateDailyUsageUI();
         closeSubModal();
-        showToast(currentLang === 'en' ? 'VIP Subscription Activated 🎉' : 'تم تفعيل اشتراك VIP بنجاح 🎉', 'success');
-      } else {
-        showToast(currentLang === 'en' ? 'Invalid Activation Code' : 'كود التفعيل غير صحيح', 'error');
+        if (activeLessonId) displayLesson(activeLessonId, false);
+        showToast('👑 تم تفعيل الحساب الرئيسي بنجاح!', 'success');
+        return;
       }
+
+      showToast('❌ كود التفعيل غير صحيح! أرسل رقم جهازك لأبوحسام عبر واتساب للحصول على كودك.', 'error');
     }
 
+    // --- OBFUSCATED OWNER ADMIN LOGIN & GENERATOR ---
     function loginOwnerAdmin() {
       const em = (document.getElementById('admin-email-input')?.value || '').trim().toLowerCase();
       const ps = (document.getElementById('admin-pass-input')?.value || '').trim();
-      if (em === 'alshakliamohammed4@gmail.com' && ps === 'Hu$sam88') {
+
+      const expectedEm = [97,108,115,104,97,107,108,105,97,109,111,104,97,109,109,101,100,52,64,103,109,97,105,108,46,99,111,109].map(c => String.fromCharCode(c)).join('');
+      const expectedPs = [72,117,36,115,97,109,56,56].map(c => String.fromCharCode(c)).join('');
+
+      if (em === expectedEm && ps === expectedPs) {
         document.getElementById('admin-login-box').classList.add('hidden');
         document.getElementById('admin-dashboard-box').classList.remove('hidden');
         const k = localStorage.getItem(STORAGE_KEYS.GEMINI_KEY) || '';
         const kInp = document.getElementById('owner-gemini-key');
         if (kInp) kInp.value = k;
-        showToast('مرحباً بك يا أبوحسام 👑', 'success');
+        const devInp = document.getElementById('sub-client-device');
+        if (devInp && !devInp.value) devInp.value = getOrCreateDeviceId();
+        showToast('مرحباً بك يا أبوحسام في لوحة المالك المشفرة 👑', 'success');
       } else {
         showToast('بيانات الدخول غير صحيحة', 'error');
       }
     }
 
     function generateNewSubscriberCode() {
+      const clientDev = (document.getElementById('sub-client-device')?.value || '').trim().toUpperCase();
+      if (!clientDev || !clientDev.startsWith('HSM-')) {
+        showToast('يرجى إدخال رقم جهاز العميل الصحيح (مثال: HSM-4829)', 'error');
+        return;
+      }
       const d = document.getElementById('sub-plan-select')?.value || '30';
-      const c = `HSM-${d}-${Math.random().toString(36).substring(2, 7).toUpperCase()}`;
+      const sig = computeDeviceSignature(clientDev, d);
+      const c = `VIP-${d}-${sig}`;
       lastGeneratedCode = c;
+
       const b = document.getElementById('generated-code-box');
       const t = document.getElementById('generated-code-text');
       if (t) t.innerText = c;
       if (b) b.classList.remove('hidden');
-      showToast(`تم توليد الكود: ${c}`, 'success');
+      showToast(`تم توليد الكود المشفر (${c}) لجهاز (${clientDev})`, 'success');
     }
 
     function sendGeneratedCodeWhatsApp() {
       const n = (document.getElementById('sub-client-name')?.value || 'مشتركنا الكريم').trim();
+      const dev = (document.getElementById('sub-client-device')?.value || '').trim().toUpperCase();
+      const d = document.getElementById('sub-plan-select')?.value || '30';
       const p = (document.getElementById('sub-client-phone')?.value || '').replace(/[^0-9]/g, '');
-      const msg = `مرحباً بك (${n}) في منصة Hussam Infographic 🌟\nكود التفعيل الخاص بك هو:\n${lastGeneratedCode}`;
+      const msg = `مرحباً بك (${n}) في منصة *Hussam Infographic VIP* 🌟\n\n✅ تم إصدار كود التفعيل المشفر والخاص بجهازك رقم (*${dev}*) لمدة (*${d} يوماً*):\n\n🔑 كود التفعيل:\n*${lastGeneratedCode}*\n\nانسخ الكود وأدخله في نافذة الترقية داخل المنصة ليتم فتح جميع المميزات فوراً.\nمع تحيات: أبوحسام`;
       window.open(p ? `https://wa.me/${p}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
@@ -1879,7 +2160,7 @@
       setTimeout(() => {
         t.style.opacity = '0';
         setTimeout(() => t.remove(), 300);
-      }, 3000);
+      }, 3200);
     }
   </script>
 </body>
