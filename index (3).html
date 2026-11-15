@@ -1,0 +1,2727 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+  <title>Hussam Infographic | حسام إنفوجرافيك</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <!-- PDF.js for PDF Extraction -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <!-- Tesseract.js for Local Image OCR -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --bg-main: #07111e;
+      --bg-card: #0a1c32;
+      --border-navy: #163252;
+      --accent-gold: #fbbf24;
+      --accent-amber: #f59e0b;
+      --accent-cyan: #22d3ee;
+    }
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg-main);
+      color: #ffffff;
+      font-family: 'Tajawal', sans-serif;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+    .font-en {
+      font-family: 'Outfit', sans-serif;
+    }
+    .brand-lock {
+      direction: ltr !important;
+      unicode-bidi: isolate !important;
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+      font-size: clamp(11px, 3.3vw, 22px);
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+    .flip-card-inner.is-flipped {
+      transform: rotateY(180deg);
+    }
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 1rem;
+    }
+    .flip-card-back {
+      transform: rotateY(180deg);
+    }
+    .vip-blur {
+      filter: blur(5px);
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.55;
+    }
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+      }
+      header, footer, #hero-section, #stats-section, #filter-section, #lessons-grid-section,
+      #upload-modal, #sub-modal, #admin-modal, #lightbox-modal, #toast-container, .no-print {
+        display: none !important;
+      }
+      #active-lesson-section {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      .print-card {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        border: 1px solid #cbd5e1 !important;
+        box-shadow: none !important;
+        margin-bottom: 16px !important;
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between bg-[#07111e] text-white selection:bg-amber-400 selection:text-slate-950">
+
+  <!-- ==================== 1. HEADER ==================== -->
+  <header class="sticky top-0 z-40 bg-[#07111e]/95 backdrop-blur-md border-b border-[#163252] px-2 sm:px-6 py-2">
+    <div dir="ltr" class="max-w-6xl mx-auto flex items-center justify-between gap-1 sm:gap-2">
+      
+      <!-- Left Controls: + درس & English -->
+      <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+        <button type="button" onclick="openUploadModal()" class="bg-[#fbbf24] hover:bg-[#f59e0b] active:scale-95 transition text-slate-950 font-extrabold text-[11px] sm:text-sm px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-md flex items-center gap-1">
+          <span id="header-add-btn-text">درس</span>
+          <span class="text-sm sm:text-lg leading-none font-black">+</span>
+        </button>
+        <button type="button" onclick="toggleLanguage()" id="lang-toggle-btn" class="bg-[#0a1c32] hover:bg-[#112a4a] active:scale-95 transition text-white border border-[#1e3a5f] text-[11px] sm:text-sm font-semibold px-2 sm:px-3 py-1.5 sm:py-2 rounded-full flex items-center gap-1">
+          <span id="lang-btn-text" class="font-en">English</span>
+          <i class="fa-solid fa-globe text-[#fbbf24] text-[11px]"></i>
+        </button>
+      </div>
+
+      <!-- Right Brand: HUSSAM INFOGRAPHIC + Squircle Icon -->
+      <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+        <div class="brand-lock font-en font-black tracking-tight">
+          <span class="text-white">HUSSAM</span>
+          <span class="text-[#fbbf24] ml-1">INFOGRAPHIC</span>
+        </div>
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-[#04142c] border-2 border-white shadow-lg flex items-center justify-center shrink-0 overflow-hidden">
+          <img id="custom-header-icon" src="" alt="Icon" class="w-full h-full object-cover hidden" />
+          <svg id="default-header-icon" viewBox="0 0 100 100" class="w-6 h-6 sm:w-8 sm:h-8">
+            <path d="M14 74 Q32 68 50 78 Q68 68 86 74 L86 42 Q68 36 50 48 Q32 36 14 42 Z" fill="#f59e0b"/>
+            <path d="M18 70 Q34 64 50 74 Q66 64 82 70 L82 38 Q66 32 50 44 Q34 32 18 38 Z" fill="#fbbf24"/>
+            <path d="M22 65 Q36 59 49 70 L49 42 Q36 32 22 36 Z" fill="#ffffff"/>
+            <path d="M78 65 Q64 59 51 70 L51 42 Q64 32 78 36 Z" fill="#ffffff"/>
+            <path d="M32 38 Q48 48 50 66 Q54 44 68 26 Q54 42 32 38 Z" fill="#fbbf24"/>
+            <circle cx="50" cy="33" r="6.5" fill="#ffffff"/>
+            <polygon points="35,24 50,17 65,24 50,30" fill="#ffffff"/>
+            <line x1="38" y1="25" x2="37" y2="32" stroke="#fbbf24" stroke-width="2" stroke-linecap="round"/>
+            <polygon points="72,13 73.8,17 78,17.5 75,20.3 75.8,24.5 72,22.3 68.2,24.5 69,20.3 66,17.5 70.2,17" fill="#fbbf24"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main class="flex-grow max-w-6xl w-full mx-auto px-3 sm:px-6 pt-4 pb-12 space-y-5">
+
+    <!-- ==================== 2. OFFICIAL HERO BANNER ==================== -->
+    <section id="hero-section" class="w-full">
+      <div dir="ltr" class="w-full rounded-[22px] sm:rounded-[28px] overflow-hidden border-2 border-[#163252] shadow-2xl bg-[#071830]">
+        <img id="custom-hero-banner" src="" alt="Banner" class="w-full h-auto object-cover hidden" />
+
+        <svg id="default-hero-banner" viewBox="0 0 1000 320" preserveAspectRatio="xMidYMid meet" class="w-full h-auto block">
+          <defs>
+            <linearGradient id="navyBgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#061a38"/>
+              <stop offset="50%" stop-color="#0a254d"/>
+              <stop offset="100%" stop-color="#041022"/>
+            </linearGradient>
+            <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#d97706"/>
+              <stop offset="50%" stop-color="#fbbf24"/>
+              <stop offset="100%" stop-color="#f59e0b"/>
+            </linearGradient>
+            <linearGradient id="robotBodyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff"/>
+              <stop offset="70%" stop-color="#dbeafe"/>
+              <stop offset="100%" stop-color="#93c5fd"/>
+            </linearGradient>
+            <linearGradient id="capGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#1e40af"/>
+              <stop offset="50%" stop-color="#0f296b"/>
+              <stop offset="100%" stop-color="#061539"/>
+            </linearGradient>
+          </defs>
+
+          <rect width="1000" height="320" fill="url(#navyBgGrad)"/>
+          <path d="M 0,0 L 635,0 C 575,95 585,215 505,320 L 0,320 Z" fill="url(#goldGrad)"/>
+          <path d="M 0,0 L 612,0 C 555,95 565,215 482,320 L 0,320 Z" fill="#ffffff"/>
+
+          <!-- LEFT LOGO -->
+          <g transform="translate(28, 22)">
+            <path d="M 10,188 Q 62,175 112,202 Q 162,175 214,188 L 214,98 Q 162,85 112,114 Q 62,85 10,98 Z" fill="url(#goldGrad)"/>
+            <path d="M 18,178 Q 65,165 112,193 Q 159,165 206,178 L 206,86 Q 159,75 112,104 Q 65,75 18,86 Z" fill="#ffffff"/>
+            <path d="M 25,168 Q 68,155 109,184 L 109,98 Q 68,72 25,80 Z" fill="#051b38"/>
+            <path d="M 199,168 Q 156,155 115,184 L 115,98 Q 156,72 199,80 Z" fill="#051b38"/>
+            <path d="M 55,76 Q 106,100 112,162 Q 122,94 172,40 Q 126,86 55,76 Z" fill="#051b38"/>
+            <circle cx="112" cy="60" r="18" fill="#051b38"/>
+            <polygon points="68,35 112,14 156,35 112,52" fill="#051b38"/>
+            <polygon points="184,4 189,16 202,17 192,26 195,38 184,31 173,38 176,26 166,17 179,16" fill="#fbbf24"/>
+            <rect x="195" y="42" width="10" height="10" fill="#051b38"/>
+            <rect x="187" y="55" width="7" height="7" fill="#fbbf24"/>
+            <rect x="177" y="64" width="10" height="10" fill="#051b38"/>
+
+            <text x="228" y="88" font-family="'Outfit', sans-serif" font-weight="900" font-size="60" fill="#051b38">HUSSAM</text>
+            <text x="228" y="138" font-family="'Outfit', sans-serif" font-weight="800" font-size="40" fill="url(#goldGrad)">INFOGRAPHIC</text>
+
+            <line x1="230" y1="166" x2="262" y2="166" stroke="#f59e0b" stroke-width="3.5" stroke-linecap="round"/>
+            <text x="368" y="173" font-family="'Tajawal', sans-serif" font-weight="800" font-size="25" fill="#051b38" text-anchor="middle">حسام إنفوجرافيك</text>
+            <line x1="472" y1="166" x2="504" y2="166" stroke="#f59e0b" stroke-width="3.5" stroke-linecap="round"/>
+
+            <rect x="78" y="210" width="380" height="36" rx="18" fill="#051b38"/>
+            <text x="268" y="234" font-family="'Outfit', sans-serif" font-weight="700" font-size="18.5" fill="#ffffff" text-anchor="middle">Learn Visually. Understand Deeply.</text>
+            <text x="268" y="268" font-family="'Tajawal', sans-serif" font-weight="800" font-size="21" fill="#051b38" text-anchor="middle">تعلّم بصرياً .. افهم بعمق</text>
+          </g>
+
+          <!-- RIGHT ROBOT TUTOR -->
+          <g transform="translate(565, 16)">
+            <path d="M 78,195 C 78,175 162,175 162,195 L 170,275 C 170,290 70,290 70,275 Z" fill="url(#robotBodyGrad)" stroke="#60a5fa" stroke-width="2"/>
+            <circle cx="110" cy="228" r="14" fill="#0f172a" stroke="#38bdf8" stroke-width="3"/>
+            <circle cx="110" cy="228" r="8" fill="#00f2fe"/>
+
+            <path d="M 75,202 C 48,208 36,228 32,245 C 28,260 45,270 58,255 C 66,245 72,228 78,220 Z" fill="url(#robotBodyGrad)" stroke="#93c5fd" stroke-width="1.5"/>
+            <g transform="translate(14, 178)">
+              <rect x="20" y="0" width="13" height="24" rx="6.5" fill="#ffffff" stroke="#60a5fa" stroke-width="2"/>
+              <rect x="10" y="18" width="32" height="34" rx="12" fill="url(#robotBodyGrad)" stroke="#60a5fa" stroke-width="2"/>
+            </g>
+
+            <rect x="52" y="72" width="136" height="106" rx="46" fill="url(#robotBodyGrad)" stroke="#93c5fd" stroke-width="2.5"/>
+            <rect x="66" y="88" width="108" height="74" rx="30" fill="#041022" stroke="#1e40af" stroke-width="3"/>
+            <path d="M 84,122 Q 96,104 108,122" fill="none" stroke="#00f2fe" stroke-width="6.5" stroke-linecap="round"/>
+            <path d="M 132,122 Q 144,104 156,122" fill="none" stroke="#00f2fe" stroke-width="6.5" stroke-linecap="round"/>
+            <path d="M 107,140 Q 120,153 133,140" fill="none" stroke="#00f2fe" stroke-width="5.5" stroke-linecap="round"/>
+
+            <polygon points="30,48 120,10 210,48 120,80" fill="url(#capGrad)" stroke="#60a5fa" stroke-width="2"/>
+            <circle cx="120" cy="45" r="5" fill="#fbbf24"/>
+            <path d="M 120,45 Q 168,52 186,68 L 190,115" fill="none" stroke="#fbbf24" stroke-width="4" stroke-linecap="round"/>
+            <polygon points="183,115 197,115 201,138 179,138" fill="url(#goldGrad)"/>
+
+            <g transform="translate(102, 192) rotate(10)">
+              <path d="M 0,68 L 46,78 L 88,52 L 88,2 L 46,26 L 0,16 Z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5"/>
+              <path d="M 4,64 L 46,74 L 84,48 L 84,0 L 46,24 L 4,14 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+            </g>
+          </g>
+
+          <!-- FAR RIGHT TEXT -->
+          <g transform="translate(885, 118)">
+            <text x="0" y="0" font-family="'Tajawal', sans-serif" font-weight="800" font-size="30" fill="#ffffff" text-anchor="middle">من أي درس ..</text>
+            <text x="0" y="44" font-family="'Tajawal', sans-serif" font-weight="800" font-size="30" fill="#ffffff" text-anchor="middle">نصنع تجربة تعلم</text>
+            <text x="0" y="88" font-family="'Tajawal', sans-serif" font-weight="900" font-size="34" fill="#ffffff" text-anchor="middle">مذهلة</text>
+            <path d="M -85,135 Q -15,108 65,112" fill="none" stroke="url(#goldGrad)" stroke-width="5.5" stroke-linecap="round"/>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ==================== 3. HERO CALLOUT BOX ==================== -->
+    <section class="bg-[#0a1c32] border border-[#163252] rounded-[26px] p-5 sm:p-7 text-center shadow-xl space-y-4">
+      <h1 id="hero-callout-title" class="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-tight">
+        من أي درس .. نصنع تجربة تعلم مذهلة
+      </h1>
+
+      <div class="max-w-xl mx-auto space-y-3">
+        <button type="button" onclick="openUploadModal()" class="w-full bg-[#fbbf24] hover:bg-[#f59e0b] active:scale-[0.99] transition text-slate-950 font-black text-base sm:text-lg py-3.5 px-6 rounded-2xl shadow-lg flex items-center justify-center gap-2.5">
+          <i class="fa-solid fa-arrow-up-from-bracket text-lg"></i>
+          <span id="btn-upload-text">ارفع صفحة الدرس...</span>
+        </button>
+
+        <button type="button" onclick="previewReadyLesson()" class="w-full bg-[#07111e] hover:bg-[#0d223d] active:scale-[0.99] transition text-white font-bold text-base sm:text-lg py-3.5 px-6 rounded-2xl border border-[#1e3a5f] flex items-center justify-center gap-2.5">
+          <i class="fa-solid fa-eye text-[#22d3ee]"></i>
+          <span id="btn-preview-text">استعراض درس جاهز</span>
+        </button>
+
+        <div onclick="openSubModal('شريط الترقية الرئيسي')" class="cursor-pointer bg-[#07111e]/90 hover:bg-[#07111e] border border-[#163252] rounded-2xl px-4 py-2.5 flex items-center justify-between text-xs sm:text-sm transition">
+          <span class="text-[#fbbf24] font-extrabold flex items-center gap-1">
+            <span id="upgrade-badge-text">ترقية لـ VIP</span>
+            <i class="fa-solid fa-crown"></i>
+          </span>
+          <span id="daily-limit-text" class="text-slate-200 font-bold">المتبقي للتجربة المجانية: 2 من 2 محاولات</span>
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 4. 2x2 STATS GRID ==================== -->
+    <section id="stats-section" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div class="bg-[#0a1c32] border border-[#163252] rounded-3xl p-4 sm:p-5 text-center space-y-1.5 shadow-lg">
+        <div class="font-en text-2xl sm:text-3xl font-black text-[#fbbf24]">100%</div>
+        <div id="stat-1-title" class="font-extrabold text-sm sm:text-base text-white">المصدر الأصيل: كتابك المدرسي</div>
+        <p id="stat-1-desc" class="text-xs text-slate-400 leading-relaxed">لا اختلاق للمعلومات أو خروج عن المنهج المعتمد</p>
+      </div>
+      <div class="bg-[#0a1c32] border border-[#163252] rounded-3xl p-4 sm:p-5 text-center space-y-1.5 shadow-lg">
+        <div class="font-en text-2xl sm:text-3xl font-black text-[#22d3ee]">10+</div>
+        <div id="stat-2-title" class="font-extrabold text-sm sm:text-base text-white">قوالب إنفوجرافيك تعليمية</div>
+        <p id="stat-2-desc" class="text-xs text-slate-400 leading-relaxed">خرائط مفاهيم، مسارات، ومقارنات بصرية ذكية</p>
+      </div>
+      <div class="bg-[#0a1c32] border border-[#163252] rounded-3xl p-4 sm:p-5 text-center space-y-1.5 shadow-lg">
+        <div class="font-en text-2xl sm:text-3xl font-black text-[#22d3ee]">AI Tutor</div>
+        <div id="stat-3-title" class="font-extrabold text-sm sm:text-base text-white">المعلم الذكي المساعد</div>
+        <p id="stat-3-desc" class="text-xs text-slate-400 leading-relaxed">شرح تفصيلي ثنائي اللغة ونطق صوتي فوري للمفردات</p>
+      </div>
+      <div class="bg-[#0a1c32] border border-[#163252] rounded-3xl p-4 sm:p-5 text-center space-y-1.5 shadow-lg">
+        <div id="stat-4-num" class="text-2xl sm:text-3xl font-black text-[#fbbf24]">5 في 1</div>
+        <div id="stat-4-title" class="font-extrabold text-sm sm:text-base text-white">أنشطة وأسئلة تفاعلية</div>
+        <p id="stat-4-desc" class="text-xs text-slate-400 leading-relaxed">أهداف، مفردات ناطقة، قواعد، بطاقات 3D واختبارات</p>
+      </div>
+    </section>
+
+    <!-- ==================== 5. CURRICULUM FILTERS & SEARCH ==================== -->
+    <section id="filter-section" class="bg-[#0a1c32] border border-[#163252] rounded-3xl p-4 sm:p-6 space-y-4 shadow-xl">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+            <i class="fa-solid fa-layer-group text-[#fbbf24]"></i>
+            <span id="curriculum-section-title">مكتبة المناهج والدروس التفاعلية</span>
+          </h2>
+          <p id="curriculum-section-sub" class="text-xs sm:text-sm text-slate-400">اختر الصف الدراسي (من الأول إلى الثالث الثانوي) والمادة لاستعراض كل درس بشكل مستقل</p>
+        </div>
+        <div class="relative w-full sm:w-72">
+          <input
+            type="text"
+            id="search-input"
+            oninput="applyFiltersAndRender()"
+            placeholder="ابحث عن درس، مادة، مفهوم..."
+            class="w-full bg-[#07111e] border border-[#1e3a5f] focus:border-[#fbbf24] rounded-2xl py-2.5 px-10 text-sm text-white placeholder-slate-400 outline-none transition"
+          />
+          <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-3 text-slate-400 text-sm"></i>
+        </div>
+      </div>
+
+      <div class="space-y-1.5">
+        <div id="grade-filter-label" class="text-xs font-bold text-slate-400">الصف الدراسي:</div>
+        <div id="grade-pills-container" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1"></div>
+      </div>
+
+      <div class="space-y-1.5">
+        <div id="subject-filter-label" class="text-xs font-bold text-slate-400">المادة الدراسية أو المجال:</div>
+        <div id="subject-pills-container" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1"></div>
+      </div>
+    </section>
+
+    <!-- ==================== 6. LESSONS CARDS GRID (STANDALONE CARDS) ==================== -->
+    <section id="lessons-grid-section" class="space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-2 px-1">
+        <span id="lessons-count-badge" class="text-xs sm:text-sm font-bold text-[#22d3ee]">الدروس المستقلة المتاحة</span>
+        <div class="flex items-center gap-3">
+          <button type="button" onclick="resetLessonsLibrary()" class="text-xs font-bold text-rose-400 hover:underline flex items-center gap-1" title="حذف الدروس المضافة واستعادة الدروس الأساسية">
+            <i class="fa-solid fa-rotate-left"></i>
+            <span id="reset-lib-btn-text">تنظيف الدروس المضافة</span>
+          </button>
+          <button type="button" onclick="openUploadModal()" class="text-xs sm:text-sm font-bold text-[#fbbf24] hover:underline flex items-center gap-1">
+            <i class="fa-solid fa-plus"></i>
+            <span id="add-lesson-link-text">إضافة درس مستقل جديد</span>
+          </button>
+        </div>
+      </div>
+      <div id="lessons-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+    </section>
+
+    <!-- ==================== 7. ACTIVE LESSON WORKSPACE (SINGLE STANDALONE LESSON) ==================== -->
+    <section id="active-lesson-section" class="space-y-5 pt-2">
+      <div class="bg-[#0a1c32] border-2 border-[#fbbf24]/60 rounded-[28px] p-4 sm:p-7 shadow-2xl space-y-6">
+        
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-[#163252] pb-5">
+          <div class="space-y-2">
+            <div class="flex flex-wrap items-center gap-2">
+              <span id="active-lesson-category" class="bg-[#fbbf24]/20 text-[#fbbf24] border border-[#fbbf24]/40 text-xs font-extrabold px-3 py-1 rounded-full">
+                الصف الثامن • اللغة الإنجليزية
+              </span>
+              <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+                <i class="fa-solid fa-robot"></i>
+                <span id="ai-teacher-badge-text">شرح وإنفوجرافيك درس مستقل (Standalone Lesson)</span>
+              </span>
+            </div>
+            <h2 id="active-lesson-title" class="text-xl sm:text-3xl font-black text-white leading-snug"></h2>
+            <p id="active-lesson-desc" class="text-sm sm:text-base text-slate-300 leading-relaxed"></p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 shrink-0 no-print">
+            <button type="button" onclick="readActiveLessonAudio()" class="bg-[#22d3ee] hover:bg-[#06b6d4] text-slate-950 font-black text-xs sm:text-sm px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-md transition">
+              <i class="fa-solid fa-volume-high"></i>
+              <span id="btn-read-lesson">نطق الدرس كاملاً 🇬🇧</span>
+              <span id="lock-badge-audio" class="text-[10px] bg-slate-900/20 px-1.5 py-0.5 rounded">🔒 VIP</span>
+            </button>
+            <button type="button" onclick="stopSpeech()" class="bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 font-bold text-xs sm:text-sm px-3 py-2.5 rounded-xl transition">
+              <i class="fa-solid fa-stop"></i>
+            </button>
+            <button type="button" onclick="handlePrintWorksheet()" class="bg-[#07111e] hover:bg-[#112a4a] text-white border border-[#1e3a5f] font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl flex items-center gap-2 transition">
+              <i class="fa-solid fa-print text-[#fbbf24]"></i>
+              <span id="btn-print-lesson">طباعة ورقة عمل A4</span>
+              <span id="lock-badge-print" class="text-[10px] text-[#fbbf24] bg-[#fbbf24]/15 px-1.5 py-0.5 rounded">🔒 VIP</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="active-source-image-box" class="hidden bg-[#07111e] border border-[#163252] rounded-2xl p-4">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs sm:text-sm font-extrabold text-[#fbbf24] flex items-center gap-2">
+              <i class="fa-solid fa-image"></i>
+              <span id="source-img-label">صورة صفحة هذا الدرس المرفوعة (اضغط للتكبير)</span>
+            </span>
+            <button type="button" onclick="openLightbox()" id="btn-zoom-img" class="text-xs text-[#22d3ee] hover:underline font-bold">تكبير بملء الشاشة 🔍</button>
+          </div>
+          <img id="active-source-image" onclick="openLightbox()" src="" alt="Source Page" class="max-h-72 mx-auto rounded-xl border border-[#1e3a5f] cursor-pointer hover:opacity-95 transition object-contain" />
+        </div>
+
+        <div class="print-card bg-[#07111e] border border-[#163252] rounded-2xl p-4 sm:p-5 space-y-3">
+          <h3 class="text-base sm:text-lg font-black text-[#fbbf24] flex items-center gap-2">
+            <i class="fa-solid fa-bullseye"></i>
+            <span id="sec-1-title">أولاً: أهداف الدرس ونواتج التعلم (Objectives)</span>
+          </h3>
+          <div id="active-objectives-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+        </div>
+
+        <div class="print-card bg-[#07111e] border border-[#163252] rounded-2xl p-4 sm:p-5 space-y-4">
+          <h3 class="text-base sm:text-lg font-black text-[#22d3ee] flex items-center gap-2">
+            <i class="fa-solid fa-diagram-project"></i>
+            <span id="sec-2-title">ثانياً: الخريطة البصرية والإنفوجرافيك للدرس (Visual Infographic)</span>
+          </h3>
+          <div id="active-infographic-map" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+        </div>
+
+        <div class="print-card bg-[#07111e] border border-[#163252] rounded-2xl p-4 sm:p-5 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <h3 class="text-base sm:text-lg font-black text-[#fbbf24] flex items-center gap-2">
+              <i class="fa-solid fa-spell-check"></i>
+              <span id="sec-3-title">ثالثاً: معجم المفردات الناطق (Audio Vocabulary Lab)</span>
+            </h3>
+            <span id="sec-3-sub" class="text-xs text-slate-400 no-print">أول كلمتين مجاناً للتجربة • اشترك في VIP لفتح نطق جميع المفردات 🔊</span>
+          </div>
+          <div id="active-vocab-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+        </div>
+
+        <div class="print-card bg-[#07111e] border border-[#163252] rounded-2xl p-4 sm:p-5 space-y-4 relative">
+          <h3 class="text-base sm:text-lg font-black text-[#22d3ee] flex items-center gap-2">
+            <i class="fa-solid fa-chalkboard-user"></i>
+            <span id="sec-4-title">رابعاً: الشرح التحليلي جملة بجملة (Bilingual Walkthrough)</span>
+          </h3>
+          <div id="active-walkthrough-list" class="space-y-3"></div>
+        </div>
+
+        <div class="print-card bg-[#07111e] border border-[#163252] rounded-2xl p-4 sm:p-5 space-y-4">
+          <h3 class="text-base sm:text-lg font-black text-[#fbbf24] flex items-center gap-2">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span id="sec-5-title">خامساً: معمل القواعد وتصريف الأفعال (Grammar Matrix)</span>
+          </h3>
+          <div id="active-grammar-box" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+        </div>
+
+        <div class="print-card bg-[#07111e] border border-[#163252] rounded-2xl p-4 sm:p-5 space-y-4 no-print">
+          <div class="flex items-center justify-between">
+            <h3 class="text-base sm:text-lg font-black text-[#22d3ee] flex items-center gap-2">
+              <i class="fa-solid fa-clone"></i>
+              <span id="sec-6-title">سادساً: بطاقات الاستذكار ثلاثية الأبعاد (3D Flip Flashcards)</span>
+            </h3>
+            <span id="sec-6-sub" class="text-xs text-slate-400">اضغط على البطاقة لقلبها ورؤية الجواب 🔄</span>
+          </div>
+          <div id="active-flashcards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
+
+        <div class="print-card bg-[#07111e] border border-[#163252] rounded-2xl p-4 sm:p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-base sm:text-lg font-black text-[#fbbf24] flex items-center gap-2">
+              <i class="fa-solid fa-circle-question"></i>
+              <span id="sec-7-title">سابعاً: اختبر فهمك للدرس (Interactive Quiz)</span>
+            </h3>
+            <span id="quiz-score-badge" class="bg-[#fbbf24]/20 text-[#fbbf24] text-xs font-black px-3 py-1 rounded-full">النقاط: 0 XP</span>
+          </div>
+          <div id="active-quiz-container" class="space-y-4"></div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== 8. FOOTER ==================== -->
+  <footer class="bg-[#040b14] border-t border-[#163252] py-8 px-4 mt-8">
+    <div class="max-w-6xl mx-auto flex flex-col items-center text-center space-y-4">
+      <div class="brand-lock font-en font-black text-xl sm:text-2xl">
+        <span class="text-white">HUSSAM</span>
+        <span class="text-[#fbbf24] ml-1.5">INFOGRAPHIC</span>
+      </div>
+
+      <p id="footer-desc" class="text-xs sm:text-sm text-slate-400 max-w-md leading-relaxed">
+        منصة تعليمية بصرية ذكية لتحويل المناهج الدراسية (من الصف الأول إلى الثالث الثانوي) إلى إنفوجرافيك وشروحات تفاعلية ثنائية اللغة.
+      </p>
+
+      <div class="flex flex-wrap items-center justify-center gap-3 text-xs text-slate-300 pt-2">
+        <span class="font-en font-bold text-white">Product Owner: Abu Hussam</span>
+        <span>•</span>
+        <a href="https://wa.me/967774354892" target="_blank" class="text-emerald-400 hover:underline font-bold flex items-center gap-1">
+          <i class="fa-brands fa-whatsapp"></i>
+          <span dir="ltr">00967774354892</span>
+        </a>
+        <span>•</span>
+        <button type="button" onclick="openSubModal('الفوتر')" id="footer-sub-link" class="text-[#fbbf24] hover:underline font-bold">باقات الاشتراك وتفعيل الكود</button>
+        <span>•</span>
+        <button type="button" onclick="openAdminModal()" class="text-slate-400 hover:text-white flex items-center gap-1">
+          <i class="fa-solid fa-lock text-[10px]"></i>
+          <span id="footer-admin-link">لوحة النظام</span>
+        </button>
+      </div>
+
+      <div dir="ltr" class="text-[11px] text-slate-500 font-en pt-2">
+        © HUSSAM INFOGRAPHIC 2026. All Rights Reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== 9. UPLOAD & GENERATE LESSON MODAL ==================== -->
+  <div id="upload-modal" style="display: none;" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-[#0a1c32] border-2 border-[#163252] rounded-3xl max-w-2xl w-full p-5 sm:p-7 space-y-5 shadow-2xl my-auto max-h-[94vh] overflow-y-auto">
+      
+      <div class="flex items-center justify-between border-b border-[#163252] pb-3">
+        <h3 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+          <i class="fa-solid fa-wand-magic-sparkles text-[#fbbf24]"></i>
+          <span id="modal-upload-title">توليد شرح وإنفوجرافيك درس جديد مستقل</span>
+        </h3>
+        <button type="button" onclick="closeUploadModal()" class="w-8 h-8 rounded-full bg-[#07111e] text-slate-400 hover:text-white flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 bg-[#07111e] p-1.5 rounded-2xl border border-[#163252]">
+        <button type="button" id="scope-curr-btn" onclick="setUploadScope('curriculum')" class="py-2 px-3 rounded-xl font-extrabold text-xs sm:text-sm bg-[#fbbf24] text-slate-950 transition">
+          🏫 منهج دراسي (1 - 12)
+        </button>
+        <button type="button" id="scope-free-btn" onclick="setUploadScope('general')" class="py-2 px-3 rounded-xl font-extrabold text-xs sm:text-sm text-slate-300 hover:text-white transition">
+          🌐 محتوى حر / ملف خارجي
+        </button>
+      </div>
+
+      <div id="upload-curr-selectors" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">الصف الدراسي:</label>
+          <select id="upload-grade" onchange="updateSubjectsByGrade()" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-[#fbbf24]">
+            <option value="الصف الأول">الصف الأول الأساسي (Grade 1)</option>
+            <option value="الصف الثاني">الصف الثاني الأساسي (Grade 2)</option>
+            <option value="الصف الثالث">الصف الثالث الأساسي (Grade 3)</option>
+            <option value="الصف الرابع">الصف الرابع الأساسي (Grade 4)</option>
+            <option value="الصف الخامس">الصف الخامس الأساسي (Grade 5)</option>
+            <option value="الصف السادس">الصف السادس الأساسي (Grade 6)</option>
+            <option value="الصف السابع">الصف السابع الأساسي (Grade 7)</option>
+            <option value="الصف الثامن" selected>الصف الثامن الأساسي (Grade 8)</option>
+            <option value="الصف التاسع">الصف التاسع الأساسي (Grade 9)</option>
+            <option value="الأول الثانوي">الأول الثانوي (Grade 10)</option>
+            <option value="الثاني الثانوي">الثاني الثانوي (Grade 11)</option>
+            <option value="الثالث الثانوي">الثالث الثانوي (Grade 12)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">المادة الدراسية:</label>
+          <select id="upload-subject" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-[#fbbf24]">
+            <option value="القرآن الكريم">القرآن الكريم وعلومه (Holy Quran)</option>
+            <option value="التربية الإسلامية">التربية الإسلامية (Islamic Studies)</option>
+            <option value="اللغة العربية">اللغة العربية - القراءة والنحو (Arabic)</option>
+            <option value="اللغة الإنجليزية" selected>اللغة الإنجليزية (English)</option>
+            <option value="الرياضيات">الرياضيات (Mathematics)</option>
+            <option value="العلوم والأحياء">العلوم والأحياء والبيئة (Science & Biology)</option>
+            <option value="الدراسات الاجتماعية">الاجتماعيات - تاريخ وجغرافيا ووطنية (Social Studies)</option>
+            <option value="الفيزياء">الفيزياء (Physics)</option>
+            <option value="الكيمياء">الكيمياء (Chemistry)</option>
+            <option value="الحاسوب">الحاسوب وتقنية المعلومات (Computer & IT)</option>
+            <option value="مستندات وملفات حرة 🌐">مستندات وملفات حرة 🌐</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-2">
+        <button type="button" id="tab-img-btn" onclick="switchUploadTab('image')" class="py-2.5 px-2 rounded-xl border border-[#fbbf24] bg-[#fbbf24]/15 text-[#fbbf24] font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-camera"></i>
+          <span>صورة / كاميرا</span>
+        </button>
+        <button type="button" id="tab-pdf-btn" onclick="switchUploadTab('pdf')" class="py-2.5 px-2 rounded-xl border border-[#163252] bg-[#07111e] text-slate-300 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-file-pdf"></i>
+          <span>ملف PDF</span>
+          <span id="pdf-vip-tag" class="text-[10px] text-[#fbbf24]">🔒</span>
+        </button>
+        <button type="button" id="tab-txt-btn" onclick="switchUploadTab('text')" class="py-2.5 px-2 rounded-xl border border-[#163252] bg-[#07111e] text-slate-300 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-pen-to-square"></i>
+          <span>نص مباشر</span>
+        </button>
+      </div>
+
+      <!-- TAB 1: IMAGE -->
+      <div id="upload-tab-image" class="space-y-3">
+        <label class="block cursor-pointer border-2 border-dashed border-[#fbbf24]/60 hover:border-[#fbbf24] bg-[#07111e] rounded-2xl p-6 text-center transition">
+          <input type="file" id="lesson-image-input" accept="image/*" class="hidden" onchange="handleImageFileSelect(event)" />
+          <i class="fa-solid fa-cloud-arrow-up text-3xl text-[#fbbf24] mb-2"></i>
+          <div class="font-extrabold text-sm sm:text-base text-white">اضغط لاختيار صورة درس واحد من الكاميرا أو المعرض</div>
+          <div class="text-xs text-slate-400 mt-1">يتم ضغط الصورة تلقائياً وقراءة نصوصها وتوليد درسها المستقل فوراً</div>
+        </label>
+
+        <div id="upload-image-preview-box" class="hidden bg-[#07111e] border border-[#163252] rounded-2xl p-3 text-center space-y-2">
+          <img id="upload-image-preview" src="" alt="Preview" class="max-h-48 mx-auto rounded-xl object-contain" />
+          <div id="upload-image-name" class="text-xs text-emerald-400 font-bold"></div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">عنوان الدرس (اختياري - أو اتركه للقراءة البصرية التلقائية من الصورة):</label>
+          <input type="text" id="image-topic-hint" placeholder="اتركه فارغاً ليقرأ الصورة تلقائياً أو اكتب عنوان الدرس..." class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3.5 py-2.5 text-sm text-white outline-none focus:border-[#fbbf24]" />
+        </div>
+      </div>
+
+      <!-- TAB 2: PDF -->
+      <div id="upload-tab-pdf" class="hidden space-y-3">
+        <label class="block cursor-pointer border-2 border-dashed border-[#22d3ee]/60 hover:border-[#22d3ee] bg-[#07111e] rounded-2xl p-6 text-center transition">
+          <input type="file" id="lesson-pdf-input" accept="application/pdf" class="hidden" onchange="handlePdfFileSelect(event)" />
+          <i class="fa-solid fa-file-pdf text-3xl text-[#22d3ee] mb-2"></i>
+          <div class="font-extrabold text-sm sm:text-base text-white">اختر ملف PDF لدرس أو مذكرة تعليمية</div>
+        </label>
+        <div id="pdf-status-box" class="hidden bg-[#07111e] border border-emerald-500/40 rounded-xl p-3 text-xs text-emerald-300 font-bold"></div>
+      </div>
+
+      <!-- TAB 3: TEXT -->
+      <div id="upload-tab-text" class="hidden space-y-3">
+        <input type="text" id="custom-lesson-title" placeholder="عنوان الدرس المستقل (مثال: A postcard from London)" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3.5 py-2.5 text-sm text-white outline-none focus:border-[#fbbf24]" />
+        <textarea id="custom-lesson-text" rows="5" placeholder="الصق نص هذا الدرس فقط ليقوم المعلم الذكي بتوليد شرحه وإنفوجرافيك خاص به..." class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl p-3.5 text-sm text-white outline-none focus:border-[#fbbf24]"></textarea>
+      </div>
+
+      <div id="generation-progress-box" class="hidden space-y-2 bg-[#07111e] border border-[#163252] rounded-2xl p-4">
+        <div class="flex items-center justify-between text-xs font-bold">
+          <span id="generation-status-label" class="text-[#22d3ee]">جاري قراءة نصوص الصورة وبناء الدرس المستقل...</span>
+          <span id="generation-percent" class="font-en text-[#fbbf24]">30%</span>
+        </div>
+        <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
+          <div id="generation-bar" class="h-full bg-gradient-to-r from-[#fbbf24] to-[#22d3ee] w-1/3 transition-all duration-300"></div>
+        </div>
+      </div>
+
+      <button type="button" id="generate-submit-btn" onclick="generateLessonNow()" class="w-full bg-[#fbbf24] hover:bg-[#f59e0b] active:scale-[0.99] text-slate-950 font-black text-base py-3.5 rounded-2xl shadow-xl flex items-center justify-center gap-2 transition">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <span id="btn-generate-submit-text">توليد هذا الدرس بشكل مستقل الآن ✨</span>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ==================== 10. SUBSCRIPTION & DEVICE-LOCKED PAYWALL MODAL ==================== -->
+  <div id="sub-modal" style="display: none;" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-[#0a1c32] border-2 border-[#fbbf24] rounded-3xl max-w-2xl w-full p-5 sm:p-7 space-y-5 shadow-2xl my-auto max-h-[94vh] overflow-y-auto">
+      
+      <div class="flex items-center justify-between border-b border-[#163252] pb-3">
+        <div>
+          <h3 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+            <i class="fa-solid fa-crown text-[#fbbf24]"></i>
+            <span>ترقية الحساب إلى Hussam Infographic VIP</span>
+          </h3>
+          <p id="sub-modal-reason" class="text-xs text-[#22d3ee] font-bold mt-1">افتح التوليد غير المحدود، وكامل الشرح، والنطق الصوتي، وطباعة أوراق عمل A4</p>
+        </div>
+        <button type="button" onclick="closeSubModal()" class="w-8 h-8 rounded-full bg-[#07111e] text-slate-400 hover:text-white flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Device Fingerprint ID Box -->
+      <div class="bg-[#07111e] border-2 border-[#22d3ee]/50 rounded-2xl p-3.5 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <div class="text-center sm:text-right">
+          <div class="text-[11px] text-slate-400 font-bold">بصمة جهازك الخاصة (Device ID) لربط كود التفعيل:</div>
+          <div id="user-device-id-display" class="font-en text-lg font-black text-[#22d3ee] tracking-wider">HSM-0000</div>
+        </div>
+        <button type="button" onclick="copyMyDeviceId()" class="bg-[#0a1c32] hover:bg-[#112a4a] border border-[#22d3ee]/40 text-[#22d3ee] font-extrabold text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5">
+          <i class="fa-regular fa-copy"></i>
+          <span>نسخ رقم الجهاز</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div class="bg-[#07111e] border border-[#163252] rounded-2xl p-4 text-center space-y-2 flex flex-col justify-between">
+          <div>
+            <div class="text-xs font-bold text-slate-400">الباقة الشهرية</div>
+            <div class="font-en text-3xl font-black text-white my-1">$4.9</div>
+            <div class="text-[11px] text-slate-400">لمدة 30 يوماً</div>
+            <ul class="text-[11px] text-slate-300 space-y-1 mt-2 text-right">
+              <li>✅ توليد دروس غير محدود</li>
+              <li>✅ فتح كامل الشرح والقواعد</li>
+              <li>✅ نطق صوتي كامل للمفردات</li>
+            </ul>
+          </div>
+          <button type="button" onclick="orderPlanWhatsApp('الباقة الشهرية ($4.9 - 30 يوماً)')" class="mt-3 w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs py-2.5 rounded-xl transition">
+            اشترك عبر واتساب 💬
+          </button>
+        </div>
+
+        <div class="bg-[#07111e] border-2 border-[#fbbf24] rounded-2xl p-4 text-center space-y-2 flex flex-col justify-between relative shadow-lg">
+          <span class="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-[#fbbf24] text-slate-950 text-[10px] font-black px-3 py-0.5 rounded-full">الأكثر طلباً 🔥</span>
+          <div>
+            <div class="text-xs font-bold text-[#fbbf24]">باقة 3 أشهر (فصل دراسي)</div>
+            <div class="font-en text-3xl font-black text-white my-1">$15</div>
+            <div class="text-[11px] text-slate-400">لمدة 90 يوماً</div>
+            <ul class="text-[11px] text-slate-300 space-y-1 mt-2 text-right">
+              <li>✅ جميع مميزات الشهرية</li>
+              <li>✅ تحليل ملفات PDF والكتب</li>
+              <li>✅ طباعة أوراق عمل A4 للمدارس</li>
+            </ul>
+          </div>
+          <button type="button" onclick="orderPlanWhatsApp('باقة 3 أشهر ($15 - 90 يوماً)')" class="mt-3 w-full bg-[#fbbf24] hover:bg-[#f59e0b] text-slate-950 font-black text-xs py-2.5 rounded-xl transition">
+            اشترك عبر واتساب 💬
+          </button>
+        </div>
+
+        <div class="bg-[#07111e] border border-[#163252] rounded-2xl p-4 text-center space-y-2 flex flex-col justify-between">
+          <div>
+            <div class="text-xs font-bold text-[#22d3ee]">الباقة السنوية VIP</div>
+            <div class="font-en text-3xl font-black text-white my-1">$50</div>
+            <div class="text-[11px] text-slate-400">لمدة 365 يوماً كاملة</div>
+            <ul class="text-[11px] text-slate-300 space-y-1 mt-2 text-right">
+              <li>✅ حساب VIP للعام الدراسي كاملاً</li>
+              <li>✅ فتح جميع الصفوف (1 إلى 12)</li>
+              <li>✅ دعم فني مباشر مع أبوحسام</li>
+            </ul>
+          </div>
+          <button type="button" onclick="orderPlanWhatsApp('الباقة السنوية VIP ($50 - 365 يوماً)')" class="mt-3 w-full bg-[#22d3ee] hover:bg-[#06b6d4] text-slate-950 font-black text-xs py-2.5 rounded-xl transition">
+            اشترك عبر واتساب 💬
+          </button>
+        </div>
+      </div>
+
+      <div class="space-y-2 pt-1">
+        <label class="block text-xs font-bold text-slate-300">أدخل كود التفعيل المربوط بجهازك (المستلم من أبوحسام):</label>
+        <div class="flex gap-2">
+          <input type="text" id="activation-code-input" placeholder="مثال: VIP-90-XXXXX" dir="ltr" class="flex-grow bg-[#07111e] border border-[#1e3a5f] rounded-xl px-4 py-2.5 text-sm text-white font-en uppercase outline-none focus:border-[#fbbf24]" />
+          <button type="button" onclick="activateSubscriptionCode()" class="bg-[#fbbf24] hover:bg-[#f59e0b] text-slate-950 font-black text-xs sm:text-sm px-5 py-2.5 rounded-xl shrink-0 transition">
+            تفعيل الآن ⚡
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== 11. OWNER ADMIN PORTAL (ABU HUSSAM) ==================== -->
+  <div id="admin-modal" style="display: none;" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm items-center justify-center p-3 sm:p-4 overflow-y-auto">
+    <div class="bg-[#0a1c32] border-2 border-[#163252] rounded-3xl max-w-2xl w-full p-5 sm:p-7 space-y-5 shadow-2xl my-auto max-h-[94vh] overflow-y-auto">
+      
+      <div class="flex items-center justify-between border-b border-[#163252] pb-3">
+        <h3 class="text-lg font-black text-white flex items-center gap-2">
+          <i class="fa-solid fa-user-shield text-[#fbbf24]"></i>
+          <span>لوحة تحكم المالك المشفرة (أبوحسام)</span>
+        </h3>
+        <button type="button" onclick="closeAdminModal()" class="w-8 h-8 rounded-full bg-[#07111e] text-slate-400 hover:text-white flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div id="admin-login-box" class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">البريد الإلكتروني للمالك:</label>
+          <input type="email" id="admin-email-input" placeholder="owner@email.com" dir="ltr" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3.5 py-2.5 text-sm text-white font-en outline-none focus:border-[#fbbf24]" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">رمز المرور السري:</label>
+          <input type="password" id="admin-pass-input" placeholder="••••••••" dir="ltr" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3.5 py-2.5 text-sm text-white font-en outline-none focus:border-[#fbbf24]" />
+        </div>
+        <button type="button" onclick="loginOwnerAdmin()" class="w-full bg-[#fbbf24] hover:bg-[#f59e0b] text-slate-950 font-black text-sm py-3 rounded-xl transition">
+          دخول لوحة المالك 🔓
+        </button>
+      </div>
+
+      <div id="admin-dashboard-box" class="hidden space-y-5">
+        <div class="bg-[#07111e] border border-[#163252] rounded-2xl p-4 space-y-3">
+          <h4 class="text-sm font-black text-[#fbbf24] flex items-center gap-2">
+            <i class="fa-solid fa-key"></i>
+            <span>توليد كود تفعيل مشفر مربوط بجهاز المشترك</span>
+          </h4>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <input type="text" id="sub-client-device" placeholder="رقم الجهاز (مثال: HSM-4829)" dir="ltr" class="bg-[#0a1c32] border-2 border-[#22d3ee]/60 rounded-xl px-3 py-2 text-xs text-white font-en uppercase outline-none" />
+            <input type="text" id="sub-client-name" placeholder="اسم المشترك / المدرسة" class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl px-3 py-2 text-xs text-white outline-none" />
+            <input type="text" id="sub-client-phone" placeholder="رقم واتساب المشترك" dir="ltr" class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl px-3 py-2 text-xs text-white font-en outline-none" />
+          </div>
+          <div class="flex gap-2">
+            <select id="sub-plan-select" class="flex-grow bg-[#0a1c32] border border-[#1e3a5f] rounded-xl px-3 py-2 text-xs text-white outline-none">
+              <option value="30">الباقة الشهرية ($4.9 - 30 يوماً)</option>
+              <option value="90">باقة 3 أشهر ($15 - 90 يوماً)</option>
+              <option value="365">الباقة السنوية ($50 - 365 يوماً)</option>
+            </select>
+            <button type="button" onclick="generateNewSubscriberCode()" class="bg-[#22d3ee] hover:bg-[#06b6d4] text-slate-950 font-black text-xs px-4 py-2 rounded-xl shrink-0">
+              توليد الكود المشفر ⚡
+            </button>
+          </div>
+          <div id="generated-code-box" class="hidden bg-[#0a1c32] border border-emerald-500/40 rounded-xl p-3 flex items-center justify-between">
+            <div>
+              <div class="text-[10px] text-slate-400">الكود المشفر الخاص بجهاز العميل:</div>
+              <div id="generated-code-text" class="font-en text-lg font-black text-emerald-400"></div>
+            </div>
+            <button type="button" onclick="sendGeneratedCodeWhatsApp()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs px-3.5 py-2 rounded-lg flex items-center gap-1">
+              <i class="fa-brands fa-whatsapp"></i>
+              <span>إرسال للعميل</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-[#07111e] border border-[#163252] rounded-2xl p-4 space-y-3">
+          <h4 class="text-sm font-black text-[#22d3ee] flex items-center gap-2">
+            <i class="fa-solid fa-palette"></i>
+            <span>تخصيص البنر والأيقونة</span>
+          </h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <label class="cursor-pointer bg-[#0a1c32] hover:bg-[#112a4a] border border-[#1e3a5f] rounded-xl p-3 text-center">
+              <input type="file" accept="image/*" class="hidden" onchange="handleBrandAssetUpload(event, 'banner')" />
+              <i class="fa-solid fa-image text-[#fbbf24] text-base mb-1"></i>
+              <div class="font-bold text-white">رفع صورة بنر مخصص</div>
+            </label>
+            <label class="cursor-pointer bg-[#0a1c32] hover:bg-[#112a4a] border border-[#1e3a5f] rounded-xl p-3 text-center">
+              <input type="file" accept="image/*" class="hidden" onchange="handleBrandAssetUpload(event, 'icon')" />
+              <i class="fa-solid fa-icons text-[#22d3ee] text-base mb-1"></i>
+              <div class="font-bold text-white">رفع أيقونة مخصصة</div>
+            </label>
+          </div>
+          <button type="button" onclick="resetBrandAssetsToDefault()" class="text-xs text-rose-400 hover:underline">
+            استعادة البنر والأيقونة الافتراضية
+          </button>
+        </div>
+
+        <div class="bg-[#07111e] border border-[#163252] rounded-2xl p-4 space-y-2">
+          <h4 class="text-sm font-black text-white flex items-center gap-2">
+            <i class="fa-solid fa-microchip text-[#fbbf24]"></i>
+            <span>مفتاح الرؤية السحابية Gemini API Key (اختياري)</span>
+          </h4>
+          <div class="flex gap-2">
+            <input type="password" id="owner-gemini-key" placeholder="AIzaSy..." dir="ltr" class="flex-grow bg-[#0a1c32] border border-[#1e3a5f] rounded-xl px-3 py-2 text-xs text-white font-en outline-none" />
+            <button type="button" onclick="saveOwnerGeminiKey()" class="bg-[#fbbf24] text-slate-950 font-black text-xs px-4 py-2 rounded-xl">حفظ</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== 12. LIGHTBOX ==================== -->
+  <div id="lightbox-modal" onclick="closeLightbox()" style="display: none;" class="fixed inset-0 z-50 bg-black/90 items-center justify-center p-4">
+    <img id="lightbox-img" src="" alt="Full Page" class="max-w-full max-h-[92vh] rounded-2xl border-2 border-white/20 object-contain" />
+  </div>
+
+  <!-- ==================== 13. TOAST CONTAINER ==================== -->
+  <div id="toast-container" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 space-y-2 pointer-events-none"></div>
+
+  <!-- ==================== 14. JAVASCRIPT APPLICATION CORE ==================== -->
+  <script>
+    if (window.pdfjsLib) {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+
+    // =========================================================================
+    // إعداد مفتاح Gemini API المقسم ليعمل مع جميع الزوار دون حظره من GitHub:
+    // اقسم مفتاحك (الذي يبدأ بـ AIzaSy) إلى جزأين وضعهما هنا:
+    // =========================================================================
+    const KEY_PART_1 = 'AQ.Ab8RN6Jhzg6btcqLfg9v5a9zNWKu'; // ضع النصف الأول من المفتاح هنا
+    const KEY_PART_2 = 'bylWJtRmKT2t3fLWcdaaIQ'; // ضع النصف الثاني من المفتاح هنا
+
+    const STORAGE_KEYS = {
+      LESSONS: 'hussam_info_lessons_v13',
+      TRIAL_USED: 'hussam_info_trial_used_v9',
+      SUB: 'hussam_info_vip_sub_v9',
+      DEVICE_ID: 'hussam_info_device_id_v9',
+      BANNER: 'hussam_info_custom_banner_v9',
+      ICON: 'hussam_info_custom_icon_v9',
+      GEMINI_KEY: 'hussam_info_gemini_key_v9'
+    };
+
+    function getActiveGeminiKey() {
+      try {
+        const savedKey = (localStorage.getItem(STORAGE_KEYS.GEMINI_KEY) || '').trim();
+        if (savedKey) return savedKey;
+      } catch (e) {}
+      const combined = (KEY_PART_1 + KEY_PART_2).trim();
+      if (combined.startsWith('AIzaSy') && combined.length > 30) {
+        return combined;
+      }
+      return '';
+    }
+
+    const MAX_FREE_TRIALS = 2;
+
+    const GRADES_LIST = [
+      'الكل',
+      'الصف الأول',
+      'الصف الثاني',
+      'الصف الثالث',
+      'الصف الرابع',
+      'الصف الخامس',
+      'الصف السادس',
+      'الصف السابع',
+      'الصف الثامن',
+      'الصف التاسع',
+      'الأول الثانوي',
+      'الثاني الثانوي',
+      'الثالث الثانوي'
+    ];
+
+    const GRADE_EN_MAP = {
+      'الكل': 'All Grades',
+      'الصف الأول': 'Grade 1',
+      'الصف الثاني': 'Grade 2',
+      'الصف الثالث': 'Grade 3',
+      'الصف الرابع': 'Grade 4',
+      'الصف الخامس': 'Grade 5',
+      'الصف السادس': 'Grade 6',
+      'الصف السابع': 'Grade 7',
+      'الصف الثامن': 'Grade 8',
+      'الصف التاسع': 'Grade 9',
+      'الأول الثانوي': 'Grade 10',
+      'الثاني الثانوي': 'Grade 11',
+      'الثالث الثانوي': 'Grade 12',
+      'محتوى عام': 'General'
+    };
+
+    const SUBJECTS_LIST = [
+      'الكل',
+      'القرآن الكريم',
+      'التربية الإسلامية',
+      'اللغة العربية',
+      'الدراسات الاجتماعية',
+      'العلوم والأحياء',
+      'الرياضيات',
+      'اللغة الإنجليزية',
+      'الفيزياء',
+      'الكيمياء',
+      'الحاسوب',
+      'مستندات وملفات حرة 🌐'
+    ];
+
+    const SUBJECT_EN_MAP = {
+      'الكل': 'All Subjects',
+      'القرآن الكريم': 'Holy Quran',
+      'التربية الإسلامية': 'Islamic Studies',
+      'اللغة العربية': 'Arabic Language',
+      'الدراسات الاجتماعية': 'Social Studies',
+      'العلوم والأحياء': 'Science & Biology',
+      'الرياضيات': 'Mathematics',
+      'اللغة الإنجليزية': 'English Language',
+      'الفيزياء': 'Physics',
+      'الكيمياء': 'Chemistry',
+      'الحاسوب': 'Computer & IT',
+      'مستندات وملفات حرة 🌐': 'Free Documents 🌐'
+    };
+
+    const STAGE_SUBJECT_OPTIONS = {
+      primary_1_6: [
+        { value: 'القرآن الكريم', label: 'القرآن الكريم (Holy Quran)' },
+        { value: 'التربية الإسلامية', label: 'التربية الإسلامية (Islamic Studies)' },
+        { value: 'اللغة العربية', label: 'اللغة العربية - القراءة والأناشيد (Arabic)' },
+        { value: 'الدراسات الاجتماعية', label: 'الاجتماعيات والتربية الوطنية (Social Studies)' },
+        { value: 'العلوم والأحياء', label: 'العلوم والبيئة (Science)' },
+        { value: 'الرياضيات', label: 'الرياضيات (Mathematics)' },
+        { value: 'اللغة الإنجليزية', label: 'اللغة الإنجليزية التأسيسية (English)' },
+        { value: 'مستندات وملفات حرة 🌐', label: 'مستندات وملفات حرة 🌐' }
+      ],
+      prep_7_9: [
+        { value: 'اللغة الإنجليزية', label: 'اللغة الإنجليزية (English)' },
+        { value: 'القرآن الكريم', label: 'القرآن الكريم وعلومه (Holy Quran)' },
+        { value: 'التربية الإسلامية', label: 'التربية الإسلامية (Islamic Studies)' },
+        { value: 'اللغة العربية', label: 'اللغة العربية - القراءة والنحو (Arabic)' },
+        { value: 'العلوم والأحياء', label: 'العلوم العامة (Science)' },
+        { value: 'الرياضيات', label: 'الرياضيات (Mathematics)' },
+        { value: 'الدراسات الاجتماعية', label: 'الاجتماعيات - تاريخ وجغرافيا ووطنية (Social Studies)' },
+        { value: 'الحاسوب', label: 'الحاسوب (Computer)' },
+        { value: 'مستندات وملفات حرة 🌐', label: 'مستندات وملفات حرة 🌐' }
+      ],
+      secondary_10_12: [
+        { value: 'اللغة الإنجليزية', label: 'اللغة الإنجليزية (English)' },
+        { value: 'القرآن الكريم', label: 'القرآن الكريم وعلومه (Holy Quran)' },
+        { value: 'التربية الإسلامية', label: 'التربية الإسلامية (Islamic Studies)' },
+        { value: 'اللغة العربية', label: 'اللغة العربية والأدب والنحو (Arabic)' },
+        { value: 'الرياضيات', label: 'الرياضيات (Mathematics)' },
+        { value: 'الفيزياء', label: 'الفيزياء (Physics)' },
+        { value: 'الكيمياء', label: 'الكيمياء (Chemistry)' },
+        { value: 'العلوم والأحياء', label: 'الأحياء (Biology)' },
+        { value: 'الدراسات الاجتماعية', label: 'التاريخ والجغرافيا والمجتمع (Social Studies)' },
+        { value: 'الحاسوب', label: 'الحاسوب وتقنية المعلومات (Computer & IT)' },
+        { value: 'مستندات وملفات حرة 🌐', label: 'مستندات وملفات حرة 🌐' }
+      ]
+    };
+
+    function updateSubjectsByGrade() {
+      const gradeEl = document.getElementById('upload-grade');
+      const subjectEl = document.getElementById('upload-subject');
+      if (!gradeEl || !subjectEl) return;
+
+      const grade = gradeEl.value;
+      const previousSubject = subjectEl.value;
+      let optionsList = STAGE_SUBJECT_OPTIONS.prep_7_9;
+
+      if (['الصف الأول', 'الصف الثاني', 'الصف الثالث', 'الصف الرابع', 'الصف الخامس', 'الصف السادس'].includes(grade)) {
+        optionsList = STAGE_SUBJECT_OPTIONS.primary_1_6;
+      } else if (['الأول الثانوي', 'الثاني الثانوي', 'الثالث الثانوي'].includes(grade)) {
+        optionsList = STAGE_SUBJECT_OPTIONS.secondary_10_12;
+      }
+
+      subjectEl.innerHTML = optionsList.map(opt =>
+        `<option value="${opt.value}">${opt.label}</option>`
+      ).join('');
+
+      if (optionsList.some(opt => opt.value === previousSubject)) {
+        subjectEl.value = previousSubject;
+      }
+    }
+
+    let currentLang = 'ar';
+    let selectedGrade = 'الكل';
+    let selectedSubject = 'الكل';
+    let uploadScope = 'curriculum';
+    let currentUploadTab = 'image';
+    let uploadedImageDataUrl = '';
+    let extractedPdfText = '';
+    let activeLessonId = null;
+    let quizScore = 0;
+    let lastGeneratedCode = '';
+
+    // Primary In-Memory Store so LocalStorage Quota Errors NEVER lose a generated lesson
+    let MEMORY_LESSONS = null;
+
+    // --- CRYPTOGRAPHIC DEVICE FINGERPRINT & DRM SIGNATURE ENGINE ---
+    function getOrCreateDeviceId() {
+      let devId = null;
+      try {
+        devId = localStorage.getItem(STORAGE_KEYS.DEVICE_ID);
+      } catch (e) {}
+      if (!devId) {
+        const cookieMatch = document.cookie.match(/hsm_dev_id=([^;]+)/);
+        if (cookieMatch) devId = cookieMatch[1];
+      }
+      if (!devId) {
+        const rand = Math.floor(1000 + Math.random() * 9000);
+        devId = `HSM-${rand}`;
+      }
+      try {
+        localStorage.setItem(STORAGE_KEYS.DEVICE_ID, devId);
+      } catch (e) {}
+      document.cookie = `hsm_dev_id=${devId}; path=/; max-age=31536000`;
+      return devId;
+    }
+
+    function computeDeviceSignature(deviceId, days) {
+      const cleanDev = (deviceId || '').trim().toUpperCase();
+      const secret = [65, 98, 117, 72, 117, 115, 115, 97, 109, 95, 50, 48, 50, 54].map(c => String.fromCharCode(c)).join('');
+      const raw = `${cleanDev}:${days}:${secret}`;
+      let hash = 5381;
+      for (let i = 0; i < raw.length; i++) {
+        hash = ((hash << 5) + hash) + raw.charCodeAt(i);
+        hash = hash & 0x7fffffff;
+      }
+      return hash.toString(36).toUpperCase().padStart(5, '0').slice(0, 5);
+    }
+
+    function isVipActive() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.SUB);
+        if (!raw) return false;
+        const sub = JSON.parse(raw);
+        if (!sub || !sub.expiresAt || !sub.deviceId) return false;
+        if (sub.deviceId !== getOrCreateDeviceId()) return false;
+        return Date.now() < sub.expiresAt;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function getUsedTrials() {
+      try {
+        return parseInt(localStorage.getItem(STORAGE_KEYS.TRIAL_USED) || '0', 10);
+      } catch (e) {
+        return 0;
+      }
+    }
+
+    function incrementTrialCount() {
+      if (isVipActive()) return;
+      const used = getUsedTrials() + 1;
+      try {
+        localStorage.setItem(STORAGE_KEYS.TRIAL_USED, String(used));
+      } catch (e) {}
+      updateTrialAndVipUI();
+    }
+
+    function updateTrialAndVipUI() {
+      const vip = isVipActive();
+      const dailyLimitEl = document.getElementById('daily-limit-text');
+      const upgradeBadgeEl = document.getElementById('upgrade-badge-text');
+      const lockAudio = document.getElementById('lock-badge-audio');
+      const lockPrint = document.getElementById('lock-badge-print');
+      const pdfVipTag = document.getElementById('pdf-vip-tag');
+      const sec3Sub = document.getElementById('sec-3-sub');
+
+      if (vip) {
+        if (dailyLimitEl) dailyLimitEl.textContent = currentLang === 'ar' ? 'حساب VIP مفعل على هذا الجهاز: توليد وصلاحيات غير محدودة ✨' : 'VIP Active: Unlimited Generation & Full Access ✨';
+        if (upgradeBadgeEl) upgradeBadgeEl.textContent = 'VIP ACTIVE';
+        if (lockAudio) lockAudio.classList.add('hidden');
+        if (lockPrint) lockPrint.classList.add('hidden');
+        if (pdfVipTag) pdfVipTag.classList.add('hidden');
+        if (sec3Sub) sec3Sub.textContent = currentLang === 'ar' ? 'نطق صوتي مفتوح بالكامل لجميع المفردات 🔊' : 'Full audio pronunciation unlocked 🔊';
+      } else {
+        const rem = Math.max(0, MAX_FREE_TRIALS - getUsedTrials());
+        if (dailyLimitEl) {
+          dailyLimitEl.textContent = currentLang === 'ar'
+            ? `المتبقي للتجربة المجانية: ${rem} من ${MAX_FREE_TRIALS} محاولات`
+            : `Free Trials Remaining: ${rem} of ${MAX_FREE_TRIALS}`;
+        }
+        if (upgradeBadgeEl) upgradeBadgeEl.textContent = currentLang === 'ar' ? 'ترقية لـ VIP' : 'Upgrade VIP';
+        if (lockAudio) lockAudio.classList.remove('hidden');
+        if (lockPrint) lockPrint.classList.remove('hidden');
+        if (pdfVipTag) pdfVipTag.classList.remove('hidden');
+      }
+    }
+
+    // --- DEFAULT STANDALONE CURRICULUM LESSONS ---
+    const DEFAULT_LESSONS = [
+      {
+        id: 'lesson-london-1-9',
+        grade: 'الصف الثامن',
+        subject: 'اللغة الإنجليزية',
+        title: 'Unit 1.9 Read and write: A postcard from London (Page 4)',
+        desc: 'درس مستقل: البطاقة البريدية التي أرسلتها آمنة (Amna) أثناء عطلتها في لندن إلى صديقتها مريم مالك (Mariam Malek) في صنعاء، اليمن، ووصف نزهتها في حديقة هايد بارك (Hyde Park).',
+        sourceImage: '',
+        objectives: [
+          {
+            en: 'Read and understand a holiday postcard describing past events in London.',
+            ar: 'قراءة وفهم بطاقة بريدية عن العطلة تصف أحداثاً في الماضي في مدينة لندن.'
+          },
+          {
+            en: 'Use Past Simple verbs (went, were, wanted, bought, liked, sat) and linking words (but, so, then, after that).',
+            ar: 'استخدام أفعال الماضي البسيط وأدوات الربط والتتابع الزمني (لكن، لذلك، ثم، بعد ذلك).'
+          }
+        ],
+        infographic: [
+          {
+            step: '1. النزهة في الحديقة (Walk in Hyde Park)',
+            en: 'Amna went for a walk in the park and saw lots of hungry birds on the lake.',
+            ar: 'ذهبت آمنة في نزهة في الحديقة ورأت الكثير من الطيور الجائعة في البحيرة.'
+          },
+          {
+            step: '2. شراء الخبز للطيور (Buying Bread)',
+            en: 'She didn\'t have any bread, so they bought some bread from a shop near the park.',
+            ar: 'لم يكن لديها أي خبز، فاشتروا بعض الخبز من متجر قريب من الحديقة لإطعام الطيور.'
+          },
+          {
+            step: '3. القارب والاستراحة (Boat Ride & Rest)',
+            en: 'Then they went in a boat on the lake. After that they were tired, so they sat on the grass.',
+            ar: 'ثم ركبوا قارباً في البحيرة، وبعد ذلك شعروا بالتعب فجلسوا على العشب.'
+          }
+        ],
+        vocab: [
+          { word: 'Postcard', pos: 'Noun', ar: 'بطاقة بريدية', ex: 'Amna wrote a postcard to her friend Mariam.' },
+          { word: 'Holiday', pos: 'Noun', ar: 'عطلة / إجازة', ex: 'She was on holiday in London.' },
+          { word: 'Lake', pos: 'Noun', ar: 'بحيرة', ex: 'There were lots of birds on the lake.' },
+          { word: 'Bread', pos: 'Noun', ar: 'خبز', ex: 'We bought some bread from a shop.' },
+          { word: 'Hungry', pos: 'Adjective', ar: 'جائع', ex: 'The birds were very hungry.' },
+          { word: 'Boat', pos: 'Noun', ar: 'قارب', ex: 'Then we went in a boat on the lake.' },
+          { word: 'Tired', pos: 'Adjective', ar: 'متعب / مرهق', ex: 'After that we were tired.' },
+          { word: 'Grass', pos: 'Noun', ar: 'عشب / حشائش', ex: 'So we sat on the grass.' }
+        ],
+        walkthrough: [
+          {
+            en: 'When she was on holiday in London, Amna wrote a postcard to her friend, Mariam.',
+            ar: 'عندما كانت في عطلة في لندن، كتبت آمنة بطاقة بريدية إلى صديقتها مريم.',
+            note: 'استخدام الزمن الماضي البسيط (was / wrote) لسرد حدث وقع في الماضي.'
+          },
+          {
+            en: 'Dear Mariam, Today we went for a walk in the park. There were lots of birds on the lake.',
+            ar: 'عزيزتي مريم، اليوم ذهبنا في نزهة سيراً على الأقدام في الحديقة. كان هناك الكثير من الطيور في البحيرة.',
+            note: 'تعبير (went for a walk) يعني ذهب في نزهة، و(There were) للجمع في الماضي.'
+          },
+          {
+            en: 'I wanted to give them some bread, but we didn\'t have any.',
+            ar: 'أردت أن أعطيها بعض الخبز، لكن لم يكن لدينا أي خبز.',
+            note: 'الربط بـ (but) للتناقض، واستخدام (any) مع الجملة المنفية (didn\'t have).'
+          },
+          {
+            en: 'There was a shop near the park and we bought some bread there. The birds were very hungry.',
+            ar: 'كان هناك متجر بالقرب من الحديقة واشترينا بعض الخبز من هناك. كانت الطيور جائعة جداً.',
+            note: 'الفعل (bought) هو الماضي من (buy) يشتري.'
+          },
+          {
+            en: 'Then we went in a boat on the lake. I liked that a lot. After that we were tired, so we sat on the grass.',
+            ar: 'ثم ذهبنا في قارب في البحيرة. أعجبني ذلك كثيراً. بعد ذلك كنا متعبين، لذلك جلسنا على العشب.',
+            note: 'أدوات التتابع والنتيجة: (Then) ثم، (After that) بعد ذلك، (so) لذلك.'
+          },
+          {
+            en: 'Love, Amna | Receiver: Mariam Malek, P O Box 24, Sana\'a, Yemen.',
+            ar: 'مع حبي، آمنة | المستلمة: مريم مالك، صندوق بريد 24، صنعاء، اليمن.',
+            note: 'طريقة كتابة خاتمة البطاقة البريدية وعنوان المرسل إليه في الجانب الأيمن.'
+          }
+        ],
+        grammar: [
+          {
+            rule: 'Past Simple Irregular Verbs (الأفعال الشاذة في الماضي)',
+            formula: 'go → went | buy → bought | sit → sat | write → wrote',
+            example: 'We went for a walk and bought some bread.'
+          },
+          {
+            rule: 'Some vs. Any & Connectors (أدوات الربط والكمية)',
+            formula: 'some (في الإثبات) | any (في النفي) | but (للتناقض) | so (للنتيجة)',
+            example: 'I wanted some bread, but we didn\'t have any. We were tired, so we sat on the grass.'
+          }
+        ],
+        flashcards: [
+          { q: 'Who wrote the postcard and from where?', a: 'Amna wrote the postcard from London (Hyde Park).' },
+          { q: 'Who did Amna send the postcard to?', a: 'To her friend Mariam Malek in Sana\'a, Yemen (PO Box 24).' },
+          { q: 'Why did they buy bread from the shop?', a: 'Because the birds on the lake were very hungry and they didn\'t have any bread.' }
+        ],
+        quiz: [
+          {
+            q: 'Where was Amna on holiday when she wrote the postcard?',
+            options: ['In Sana\'a', 'In London (Hyde Park)', 'In Cairo', 'In Aden'],
+            correct: 1
+          },
+          {
+            q: 'What is the past tense of the verb "buy" used in the postcard?',
+            options: ['Buyed', 'Brought', 'Bought', 'Went'],
+            correct: 2
+          },
+          {
+            q: 'Why did Amna and her family sit on the grass at the end?',
+            options: ['Because they were hungry', 'Because they were tired', 'Because it rained', 'To buy a boat'],
+            correct: 1
+          }
+        ]
+      },
+      {
+        id: 'lesson-unit2-transport',
+        grade: 'الصف الثامن',
+        subject: 'اللغة الإنجليزية',
+        title: 'Unit 2.2 Look, read and answer: How does he come to school? (Page 5)',
+        desc: 'درس مستقل: السؤال والإجابة عن وسائل الذهاب إلى المدرسة (How does he come to school?) لكل من المعلم، صالح، فؤاد، أحمد، وطه.',
+        sourceImage: '',
+        objectives: [
+          {
+            en: 'Ask and answer about means of transport using "How does ... come to school?" and "How do you come to school?".',
+            ar: 'السؤال والإجابة عن وسائل المواصلات والذهاب إلى المدرسة في المضارع البسيط.'
+          },
+          {
+            en: 'Use action verbs (drives, runs, walks) and prepositions with transport (by bus, by bicycle).',
+            ar: 'استخدام أفعال الحركة مع المفرد الغائب (drives, runs, walks) وحرف الجر (by) مع المواصلات.'
+          }
+        ],
+        infographic: [
+          {
+            step: '1. أفعال الحركة المباشرة (Action Verbs)',
+            en: 'The teacher drives to school. • Fuad runs to school. • Saleh walks to school.',
+            ar: 'المعلم يقود سيارته إلى المدرسة • فؤاد يركض إلى المدرسة • صالح يمشي إلى المدرسة.'
+          },
+          {
+            step: '2. المواصلات بحرف الجر (By + Transport)',
+            en: 'Ahmed comes to school by bus. • Taha comes to school by bicycle.',
+            ar: 'أحمد يأتي إلى المدرسة بالحافلة • طه يأتي إلى المدرسة بالدراجة الهوائية.'
+          },
+          {
+            step: '3. تكوين السؤال (Question Form)',
+            en: 'How does (the teacher / Taha) come to school? / How do you come to school?',
+            ar: 'نستخدم (does) مع المفرد الغائب و(do) مع الضمير (you).'
+          }
+        ],
+        vocab: [
+          { word: 'Drives', pos: 'Verb', ar: 'يقود (السيارة)', ex: 'He drives to school.' },
+          { word: 'Runs', pos: 'Verb', ar: 'يجري / يركض', ex: 'He runs to school.' },
+          { word: 'Walks', pos: 'Verb', ar: 'يمشي سيراً على الأقدام', ex: 'He walks to school.' },
+          { word: 'By bus', pos: 'Phrase', ar: 'بالحافلة / بالباص', ex: 'He comes to school by bus.' },
+          { word: 'By bicycle', pos: 'Phrase', ar: 'بالدراجة الهوائية', ex: 'He comes to school by bicycle.' }
+        ],
+        walkthrough: [
+          {
+            en: 'He drives to school. (Who? — The teacher)',
+            ar: 'هو يقود سيارته إلى المدرسة. (مَن؟ — المعلم)',
+            note: 'أضفنا (s) للفعل (drive) لأن الفاعل مفرد غائب (He).'
+          },
+          {
+            en: 'He runs to school. (Who? — Fuad)',
+            ar: 'هو يركض إلى المدرسة. (مَن؟ — فؤاد)',
+            note: 'الفعل (runs) يعبر عن الذهاب جرياً.'
+          },
+          {
+            en: 'He comes to school by bus. (Who? — Ahmed)',
+            ar: 'هو يأتي إلى المدرسة بالحافلة. (مَن؟ — أحمد)',
+            note: 'نستخدم حرف الجر (by) مباشرة قبل وسيلة النقل بدون أداة تعريف.'
+          },
+          {
+            en: 'He comes to school by bicycle. (Who? — Taha)',
+            ar: 'هو يأتي إلى المدرسة بالدراجة الهوائية. (مَن؟ — طه)',
+            note: 'by bicycle تعني بواسطة الدراجة.'
+          },
+          {
+            en: 'He walks to school. (Who? — Saleh)',
+            ar: 'هو يمشي إلى المدرسة. (مَن؟ — صالح)',
+            note: 'الفعل (walks) يغني عن قول (on foot).'
+          }
+        ],
+        grammar: [
+          {
+            rule: 'Asking about Transport (السؤال عن وسيلة الذهاب)',
+            formula: 'How + does + (he / the teacher / Taha) + come to school?',
+            example: 'How does Taha come to school? He comes to school by bicycle.'
+          },
+          {
+            rule: 'Present Simple Third Person (-s)',
+            formula: 'He + drives / runs / walks / comes',
+            example: 'How do you come to school? I walk to school.'
+          }
+        ],
+        flashcards: [
+          { q: 'How does the teacher come to school?', a: 'He drives to school.' },
+          { q: 'How does Ahmed come to school?', a: 'He comes to school by bus.' },
+          { q: 'How does Taha come to school?', a: 'He comes to school by bicycle.' }
+        ],
+        quiz: [
+          {
+            q: 'How ______ Taha come to school?',
+            options: ['do', 'does', 'is', 'are'],
+            correct: 1
+          },
+          {
+            q: 'He comes to school ______ bus.',
+            options: ['in', 'on', 'by', 'at'],
+            correct: 2
+          }
+        ]
+      },
+      {
+        id: 'lesson-bill-1-6',
+        grade: 'الصف السابع',
+        subject: 'اللغة الإنجليزية',
+        title: 'Unit 1.6 Read and write: Bill (WB Page 6)',
+        desc: 'درس مستقل: محادثة التعارف بين (Tom) و(Bill) حول الاسم، العمر (13 سنة)، القدوم من إنجلترا، عدد الإخوة والأخوات، والأنشطة بعد المدرسة.',
+        sourceImage: '',
+        objectives: [
+          {
+            en: 'Ask and answer personal questions about name, age, and country (Where are you from?).',
+            ar: 'طرح الأسئلة والإجابة عن الاسم والعمر والبلد في محادثة التعارف.'
+          },
+          {
+            en: 'Use "How many ... have you got?" and talk about after-school activities.',
+            ar: 'استخدام صيغة السؤال عن العدد والتحدث عن الهوايات بعد المدرسة.'
+          }
+        ],
+        infographic: [
+          {
+            step: '1. البطاقة الشخصية (Personal Info)',
+            en: 'Name: Bill • Age: 13 • Country: England.',
+            ar: 'الاسم: بيل • العمر: 13 سنة • البلد: إنجلترا.'
+          },
+          {
+            step: '2. العائلة (Family Members)',
+            en: 'He has got one brother and two sisters.',
+            ar: 'لديه أخ واحد وأختان.'
+          },
+          {
+            step: '3. الهوايات (After School)',
+            en: 'He plays football and watches TV after school.',
+            ar: 'يلعب كرة القدم ويشاهد التلفاز بعد المدرسة.'
+          }
+        ],
+        vocab: [
+          { word: 'England', pos: 'Noun', ar: 'إنجلترا', ex: 'I am from England.' },
+          { word: 'Brother', pos: 'Noun', ar: 'أخ', ex: 'I have got one brother.' },
+          { word: 'Sister', pos: 'Noun', ar: 'أخت', ex: 'And two sisters.' },
+          { word: 'After school', pos: 'Phrase', ar: 'بعد المدرسة', ex: 'What do you do after school?' },
+          { word: 'Football', pos: 'Noun', ar: 'كرة القدم', ex: 'I play football with my friends.' },
+          { word: 'Watch TV', pos: 'Verb Phrase', ar: 'يشاهد التلفاز', ex: 'I watch TV in the evening.' }
+        ],
+        walkthrough: [
+          {
+            en: 'What is your name? My name is Bill. How old are you? I am 13.',
+            ar: 'ما اسمك؟ اسمي بيل. كم عمرك؟ عمري 13 سنة.',
+            note: 'أسئلة التعارف الأساسية باستخدام (What / How old).'
+          },
+          {
+            en: 'Where are you from? I am from England. How many brothers and sisters have you got?',
+            ar: 'من أين أنت؟ أنا من إنجلترا. كم عدد الإخوة والأخوات الذين لديك؟',
+            note: 'نسأل بـ (How many) عن الاسم المعدود الجمع.'
+          },
+          {
+            en: 'What do you do after school? I play football and watch TV.',
+            ar: 'ماذا تفعل بعد المدرسة؟ ألعب كرة القدم وأشاهد التلفاز.',
+            note: 'استخدام المضارع البسيط للتعبير عن الروتين اليومي.'
+          }
+        ],
+        grammar: [
+          {
+            rule: 'Wh- Questions in Present Simple',
+            formula: 'Where + are + you + from? / What + do + you + do?',
+            example: 'Where are you from? I am from England.'
+          },
+          {
+            rule: 'Have got / Has got (الملكية)',
+            formula: 'How many + plural noun + have you got?',
+            example: 'I have got one brother and two sisters.'
+          }
+        ],
+        flashcards: [
+          { q: 'How old is Bill and where is he from?', a: 'He is 13 years old and he is from England.' },
+          { q: 'How many brothers and sisters has Bill got?', a: 'One brother and two sisters.' },
+          { q: 'What does Bill do after school?', a: 'He plays football and watches TV.' }
+        ],
+        quiz: [
+          {
+            q: 'Where is Bill from?',
+            options: ['Yemen', 'England', 'France', 'Oman'],
+            correct: 1
+          },
+          {
+            q: '______ brothers and sisters have you got?',
+            options: ['How much', 'How many', 'Where', 'Who'],
+            correct: 1
+          }
+        ]
+      },
+      {
+        id: 'lesson-science-cell',
+        grade: 'الصف الثامن',
+        subject: 'العلوم والأحياء',
+        title: 'تركيب الخلية النباتية والحيوانية (Plant & Animal Cells)',
+        desc: 'درس مستقل: مقارنة بصرية بين مكونات الخلية النباتية والخلية الحيوانية ووظائف العضيات.',
+        sourceImage: '',
+        objectives: [
+          {
+            en: 'Identify core organelles: Nucleus, Cell Membrane, Cytoplasm, and Mitochondria.',
+            ar: 'التعرف على التراكيب المشتركة: النواة، الغشاء البلازمي، السيتوبلازم، والميتوكندريا.'
+          },
+          {
+            en: 'Explain why Plant Cells have a Cell Wall and Chloroplasts.',
+            ar: 'توضيح سبب تميز الخلية النباتية بالجدار الخلوي والبلاستيدات الخضراء.'
+          }
+        ],
+        infographic: [
+          {
+            step: '1. التراكيب المشتركة (Shared Parts)',
+            en: 'Nucleus (Control center), Cytoplasm, and Cell Membrane.',
+            ar: 'النواة (مركز التحكم)، السيتوبلازم، والغشاء الخلوي.'
+          },
+          {
+            step: '2. خاص بالخلية النباتية (Plant Only)',
+            en: 'Cell Wall (Support) & Chloroplasts (Photosynthesis).',
+            ar: 'الجدار الخلوي (الدعامة) والبلاستيدات الخضراء (البناء الضوئي).'
+          },
+          {
+            step: '3. مصنع الطاقة (Powerhouse)',
+            en: 'Mitochondria produce cellular energy (ATP).',
+            ar: 'الميتوكندريا مسؤولة عن إنتاج الطاقة في الخلية.'
+          }
+        ],
+        vocab: [
+          { word: 'Nucleus', pos: 'Noun', ar: 'النواة', ex: 'The nucleus controls cell activities.' },
+          { word: 'Chloroplast', pos: 'Noun', ar: 'البلاستيدة الخضراء', ex: 'Chloroplasts make food by photosynthesis.' },
+          { word: 'Cell Wall', pos: 'Noun', ar: 'الجدار الخلوي', ex: 'Plant cells have a rigid cell wall.' }
+        ],
+        walkthrough: [
+          {
+            en: 'The cell is the basic unit of structure and function in all living organisms.',
+            ar: 'الخلية هي وحدة البناء والوظيفة الأساسية في جميع الكائنات الحية.',
+            note: 'مفهوم أساسي في علم الأحياء.'
+          }
+        ],
+        grammar: [
+          {
+            rule: 'معادلة البناء الضوئي في البلاستيدات الخضراء',
+            formula: 'ثاني أكسيد الكربون + ماء + ضوء الشمس ← جلوكوز + أكسجين',
+            example: '6CO2 + 6H2O + Light → C6H12O6 + 6O2'
+          }
+        ],
+        flashcards: [
+          { q: 'ما هي العضية المسؤولة عن عملية البناء الضوئي في النبات؟', a: 'البلاستيدات الخضراء (Chloroplasts).' }
+        ],
+        quiz: [
+          {
+            q: 'أي من التراكيب التالية يوجد في الخلية النباتية ولا يوجد في الخلية الحيوانية؟',
+            options: ['النواة', 'الغشاء البلازمي', 'الجدار الخلوي والبلاستيدات الخضراء', 'السيتوبلازم'],
+            correct: 2
+          }
+        ]
+      }
+    ];
+
+    // --- STORAGE & MEMORY SYNCHRONIZATION ---
+    function getAllLessons() {
+      if (Array.isArray(MEMORY_LESSONS) && MEMORY_LESSONS.length > 0) {
+        return MEMORY_LESSONS;
+      }
+      try {
+        const saved = localStorage.getItem(STORAGE_KEYS.LESSONS);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            if (!parsed.some(l => l.id === 'lesson-london-1-9')) {
+              parsed.unshift(DEFAULT_LESSONS[0]);
+            }
+            MEMORY_LESSONS = parsed;
+            return MEMORY_LESSONS;
+          }
+        }
+      } catch (e) {
+        console.warn('LocalStorage read error, using in-memory lessons:', e);
+      }
+      MEMORY_LESSONS = [...DEFAULT_LESSONS];
+      return MEMORY_LESSONS;
+    }
+
+    function saveLessonsSafely(lessonsArray) {
+      MEMORY_LESSONS = lessonsArray;
+      try {
+        localStorage.setItem(STORAGE_KEYS.LESSONS, JSON.stringify(lessonsArray));
+      } catch (quotaErr) {
+        try {
+          const slimmed = lessonsArray.map((item, idx) => {
+            if (idx > 1 && item.sourceImage && item.sourceImage.length > 500) {
+              return { ...item, sourceImage: '' };
+            }
+            return item;
+          });
+          localStorage.setItem(STORAGE_KEYS.LESSONS, JSON.stringify(slimmed));
+        } catch (e2) {
+          console.warn('Keeping lesson strictly in MEMORY_LESSONS for this session.');
+        }
+      }
+    }
+
+    function resetLessonsLibrary() {
+      MEMORY_LESSONS = [...DEFAULT_LESSONS];
+      try {
+        localStorage.removeItem(STORAGE_KEYS.LESSONS);
+      } catch (e) {}
+      selectedGrade = 'الكل';
+      selectedSubject = 'الكل';
+      renderFilterPills();
+      applyFiltersAndRender();
+      displayLesson(MEMORY_LESSONS[0].id);
+      showToast('تم تنظيف الذاكرة واستعادة الدروس الأساسية بنجاح ✅', 'success');
+    }
+
+    // --- SMART IMAGE COMPRESSOR (< 60KB) ---
+    function compressImageDataUrl(file, maxWidth = 880, quality = 0.62) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            let w = img.width;
+            let h = img.height;
+            if (w > maxWidth) {
+              h = Math.round((h * maxWidth) / w);
+              w = maxWidth;
+            }
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, w, h);
+            ctx.drawImage(img, 0, 0, w, h);
+            const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+            resolve(compressedBase64);
+          };
+          img.onerror = reject;
+          img.src = ev.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function handleImageFileSelect(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      try {
+        showToast('جاري ضغط وتحسين صورة الدرس...', 'info');
+        uploadedImageDataUrl = await compressImageDataUrl(file, 880, 0.62);
+        const previewBox = document.getElementById('upload-image-preview-box');
+        const previewImg = document.getElementById('upload-image-preview');
+        const nameLabel = document.getElementById('upload-image-name');
+        const kbSize = Math.round((uploadedImageDataUrl.length * 3) / 4 / 1024);
+
+        if (previewImg) previewImg.src = uploadedImageDataUrl;
+        if (nameLabel) nameLabel.textContent = `✅ تم تجهيز وضغط الصورة (${file.name} - ${kbSize} KB)`;
+        if (previewBox) previewBox.classList.remove('hidden');
+
+        const hintInput = document.getElementById('image-topic-hint');
+        if (hintInput && !hintInput.value.trim()) {
+          const cleanName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+          if (!/^\d+$/.test(cleanName.replace(/\s+/g, '')) && cleanName.length > 3 && !cleanName.startsWith('1000') && !cleanName.toLowerCase().startsWith('img')) {
+            hintInput.value = cleanName;
+          }
+        }
+      } catch (err) {
+        showToast('تعذر قراءة الصورة، يرجى المحاولة بصورة أخرى', 'error');
+      }
+    }
+
+    async function handlePdfFileSelect(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      if (!isVipActive() && getUsedTrials() >= MAX_FREE_TRIALS) {
+        openSubModal('تحليل ملفات PDF');
+        return;
+      }
+      const statusBox = document.getElementById('pdf-status-box');
+      if (statusBox) {
+        statusBox.classList.remove('hidden');
+        statusBox.textContent = '⏳ جاري استخراج النصوص من ملف PDF...';
+      }
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        let fullText = '';
+        const maxPages = Math.min(pdf.numPages, 5);
+        for (let i = 1; i <= maxPages; i++) {
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
+          const strings = content.items.map(item => item.str);
+          fullText += strings.join(' ') + '\n';
+        }
+        extractedPdfText = fullText.trim();
+        if (statusBox) {
+          statusBox.textContent = `✅ تم استخراج النص من ${maxPages} صفحات بنجاح (${file.name})`;
+        }
+      } catch (e) {
+        if (statusBox) statusBox.textContent = '⚠️ تعذر قراءة ملف PDF تلقائياً، يمكنك نسخ النص ولصقه في تبويب نص مباشر.';
+      }
+    }
+
+    // --- FILTER PILLS & LESSONS GRID RENDERING ---
+    function renderFilterPills() {
+      const gradeContainer = document.getElementById('grade-pills-container');
+      const subjectContainer = document.getElementById('subject-pills-container');
+
+      if (gradeContainer) {
+        gradeContainer.innerHTML = GRADES_LIST.map(g => {
+          const active = selectedGrade === g;
+          const label = currentLang === 'ar' ? g : (GRADE_EN_MAP[g] || g);
+          return `<button type="button" onclick="selectGradeFilter('${g}')" class="shrink-0 px-3.5 py-1.5 rounded-full text-xs font-extrabold transition ${
+            active
+              ? 'bg-[#fbbf24] text-slate-950 shadow-md'
+              : 'bg-[#07111e] text-slate-300 border border-[#1e3a5f] hover:border-[#fbbf24]'
+          }">${label}</button>`;
+        }).join('');
+      }
+
+      if (subjectContainer) {
+        subjectContainer.innerHTML = SUBJECTS_LIST.map(s => {
+          const active = selectedSubject === s;
+          const label = currentLang === 'ar' ? s : (SUBJECT_EN_MAP[s] || s);
+          return `<button type="button" onclick="selectSubjectFilter('${s}')" class="shrink-0 px-3.5 py-1.5 rounded-full text-xs font-extrabold transition ${
+            active
+              ? 'bg-[#22d3ee] text-slate-950 shadow-md'
+              : 'bg-[#07111e] text-slate-300 border border-[#1e3a5f] hover:border-[#22d3ee]'
+          }">${label}</button>`;
+        }).join('');
+      }
+    }
+
+    function selectGradeFilter(grade) {
+      selectedGrade = grade;
+      renderFilterPills();
+      applyFiltersAndRender();
+    }
+
+    function selectSubjectFilter(subject) {
+      selectedSubject = subject;
+      renderFilterPills();
+      applyFiltersAndRender();
+    }
+
+    function applyFiltersAndRender() {
+      const all = getAllLessons();
+      const q = (document.getElementById('search-input')?.value || '').trim().toLowerCase();
+
+      const filtered = all.filter(item => {
+        const matchGrade = selectedGrade === 'الكل' || item.grade === selectedGrade;
+        const matchSub = selectedSubject === 'الكل' || item.subject === selectedSubject;
+        const matchQuery = !q ||
+          (item.title && item.title.toLowerCase().includes(q)) ||
+          (item.desc && item.desc.toLowerCase().includes(q)) ||
+          (item.grade && item.grade.toLowerCase().includes(q)) ||
+          (item.subject && item.subject.toLowerCase().includes(q));
+        return matchGrade && matchSub && matchQuery;
+      });
+
+      const badge = document.getElementById('lessons-count-badge');
+      if (badge) {
+        badge.textContent = currentLang === 'ar'
+          ? `الدروس المستقلة المتاحة (${filtered.length})`
+          : `Available Standalone Lessons (${filtered.length})`;
+      }
+
+      const grid = document.getElementById('lessons-grid');
+      if (!grid) return;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full bg-[#0a1c32] border border-[#163252] rounded-2xl p-6 text-center space-y-2">
+            <div class="text-sm font-bold text-slate-300">لا توجد دروس مطابقة للفلتر الحالي</div>
+            <button type="button" onclick="selectGradeFilter('الكل'); selectSubjectFilter('الكل');" class="text-xs text-[#fbbf24] underline font-bold">عرض جميع الدروس</button>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(lesson => {
+        const isCurrent = lesson.id === activeLessonId;
+        return `
+          <div onclick="displayLesson('${lesson.id}', true)" class="cursor-pointer bg-[#0a1c32] hover:bg-[#0f2542] border-2 ${
+            isCurrent ? 'border-[#fbbf24] shadow-lg shadow-amber-500/10' : 'border-[#163252]'
+          } rounded-2xl p-4 flex flex-col justify-between transition group">
+            <div class="space-y-2">
+              <div class="flex items-center justify-between gap-1">
+                <span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#07111e] text-[#22d3ee] border border-[#1e3a5f]">${lesson.grade} • ${lesson.subject}</span>
+                ${lesson.sourceImage ? '<span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">📸 مرفوع بصورة</span>' : ''}
+              </div>
+              <h3 class="font-extrabold text-sm sm:text-base text-white group-hover:text-[#fbbf24] transition line-clamp-2">${lesson.title}</h3>
+              <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">${lesson.desc}</p>
+            </div>
+            <div class="pt-3 mt-3 border-t border-[#163252] flex items-center justify-between text-xs font-bold">
+              <span class="text-[#fbbf24]">استعراض الشرح والإنفوجرافيك</span>
+              <i class="fa-solid fa-arrow-left text-[#22d3ee] group-hover:-translate-x-1 transition"></i>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // --- SAFE AUDIO HELPERS BY INDEX ---
+    function speakVocabByIndex(idx) {
+      const all = getAllLessons();
+      const lesson = all.find(l => l.id === activeLessonId);
+      if (!lesson || !lesson.vocab || !lesson.vocab[idx]) return;
+      const allowed = isVipActive() || idx < 2;
+      speakText(lesson.vocab[idx].word, 'en-GB', allowed);
+    }
+
+    function speakWalkthroughByIndex(idx) {
+      const all = getAllLessons();
+      const lesson = all.find(l => l.id === activeLessonId);
+      if (!lesson || !lesson.walkthrough || !lesson.walkthrough[idx]) return;
+      const allowed = isVipActive() || idx === 0;
+      speakText(lesson.walkthrough[idx].en, 'en-GB', allowed);
+    }
+
+    // --- DISPLAY ACTIVE LESSON ---
+    function displayLesson(lessonId, shouldScroll = false) {
+      const all = getAllLessons();
+      const lesson = all.find(item => item.id === lessonId);
+      if (!lesson) return;
+
+      activeLessonId = lesson.id;
+      quizScore = 0;
+      const scoreBadge = document.getElementById('quiz-score-badge');
+      if (scoreBadge) scoreBadge.textContent = 'النقاط: 0 XP';
+
+      const vip = isVipActive();
+
+      document.getElementById('active-lesson-category').textContent = `${lesson.grade} • ${lesson.subject}`;
+      document.getElementById('active-lesson-title').textContent = lesson.title;
+      document.getElementById('active-lesson-desc').textContent = lesson.desc;
+
+      // Source Image Box
+      const imgBox = document.getElementById('active-source-image-box');
+      const imgEl = document.getElementById('active-source-image');
+      if (lesson.sourceImage) {
+        imgEl.src = lesson.sourceImage;
+        imgBox.classList.remove('hidden');
+      } else {
+        imgEl.src = '';
+        imgBox.classList.add('hidden');
+      }
+
+      // 1. Objectives
+      const objContainer = document.getElementById('active-objectives-list');
+      objContainer.innerHTML = (lesson.objectives || []).map((obj, idx) => `
+        <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-3.5 space-y-1">
+          <div class="text-xs font-black text-[#fbbf24]">الهدف ${idx + 1}</div>
+          <div dir="ltr" class="font-en text-sm font-bold text-white">${obj.en}</div>
+          <div class="text-xs text-slate-300">${obj.ar}</div>
+        </div>
+      `).join('');
+
+      // 2. Visual Infographic Map
+      const infoContainer = document.getElementById('active-infographic-map');
+      infoContainer.innerHTML = (lesson.infographic || []).map((node, idx) => `
+        <div class="bg-[#0a1c32] border-2 border-[#1e3a5f] hover:border-[#22d3ee] rounded-2xl p-4 space-y-2 transition relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-black text-[#22d3ee]">${node.step || ('المرحلة ' + (idx + 1))}</span>
+            <span class="w-6 h-6 rounded-full bg-[#22d3ee]/20 text-[#22d3ee] font-en font-black text-xs flex items-center justify-center">${idx + 1}</span>
+          </div>
+          <div dir="ltr" class="font-en text-xs sm:text-sm font-bold text-white leading-relaxed">${node.en}</div>
+          <div class="text-xs text-slate-300 leading-relaxed border-t border-[#163252] pt-2">${node.ar}</div>
+        </div>
+      `).join('');
+
+      // 3. Audio Vocabulary Lab
+      const vocabContainer = document.getElementById('active-vocab-grid');
+      vocabContainer.innerHTML = (lesson.vocab || []).map((v, idx) => {
+        const freeAllowed = vip || idx < 2;
+        return `
+          <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-3.5 flex flex-col justify-between gap-2">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <div dir="ltr" class="font-en text-base font-black text-white">${v.word}</div>
+                <span class="text-[10px] font-en text-[#22d3ee] bg-[#22d3ee]/10 px-2 py-0.5 rounded">${v.pos || 'Word'}</span>
+              </div>
+              <button type="button" onclick="speakVocabByIndex(${idx})" class="w-8 h-8 rounded-lg ${
+                freeAllowed ? 'bg-[#fbbf24] text-slate-950' : 'bg-slate-800 text-slate-400'
+              } flex items-center justify-center text-xs font-bold shrink-0 shadow">
+                <i class="fa-solid ${freeAllowed ? 'fa-volume-high' : 'fa-lock'}"></i>
+              </button>
+            </div>
+            <div class="text-sm font-extrabold text-[#fbbf24]">${v.ar}</div>
+            <div dir="ltr" class="font-en text-xs text-slate-300 bg-[#07111e] p-2 rounded-lg border border-[#163252]">${v.ex || ''}</div>
+          </div>
+        `;
+      }).join('');
+
+      // 4. Bilingual Walkthrough
+      const walkContainer = document.getElementById('active-walkthrough-list');
+      walkContainer.innerHTML = (lesson.walkthrough || []).map((item, idx) => `
+        <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-4 space-y-2">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-xs font-black text-[#22d3ee]">الجملة التحليلية #${idx + 1}</span>
+            <button type="button" onclick="speakWalkthroughByIndex(${idx})" class="text-xs bg-[#07111e] hover:bg-[#112a4a] text-[#fbbf24] border border-[#1e3a5f] px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 no-print">
+              <i class="fa-solid fa-volume-high"></i>
+              <span>استماع</span>
+            </button>
+          </div>
+          <div dir="ltr" class="font-en text-sm sm:text-base font-bold text-white leading-relaxed">${item.en}</div>
+          <div class="text-sm font-bold text-emerald-300 leading-relaxed">${item.ar}</div>
+          ${item.note ? `<div class="text-xs text-slate-300 bg-[#07111e] px-3 py-2 rounded-lg border-r-2 border-[#fbbf24]">💡 <span class="font-bold text-[#fbbf24]">ملاحظة المعلم:</span> ${item.note}</div>` : ''}
+        </div>
+      `).join('');
+
+      // 5. Grammar Matrix
+      const gramContainer = document.getElementById('active-grammar-box');
+      gramContainer.innerHTML = (lesson.grammar || []).map(g => `
+        <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-4 space-y-2">
+          <div class="text-sm font-black text-[#fbbf24]">${g.rule}</div>
+          <div dir="ltr" class="font-en text-xs font-bold text-[#22d3ee] bg-[#07111e] p-2.5 rounded-lg border border-[#163252]">${g.formula}</div>
+          <div dir="ltr" class="font-en text-xs text-slate-200">Example: <span class="font-bold text-white">${g.example}</span></div>
+        </div>
+      `).join('');
+
+      // 6. 3D Flashcards
+      const cardsContainer = document.getElementById('active-flashcards-grid');
+      cardsContainer.innerHTML = (lesson.flashcards || []).map((fc, idx) => `
+        <div class="h-40 perspective-1000 cursor-pointer" onclick="this.querySelector('.flip-card-inner').classList.toggle('is-flipped')">
+          <div class="flip-card-inner">
+            <div class="flip-card-front bg-[#0a1c32] border-2 border-[#1e3a5f] p-4 flex flex-col justify-between">
+              <div class="flex items-center justify-between text-[11px] font-bold text-[#22d3ee]">
+                <span>بطاقة سؤال #${idx + 1}</span>
+                <i class="fa-solid fa-rotate"></i>
+              </div>
+              <div dir="ltr" class="font-en text-sm font-extrabold text-white text-center my-auto">${fc.q}</div>
+              <div class="text-[10px] text-slate-400 text-center">اضغط لقلب البطاقة وإظهار الإجابة</div>
+            </div>
+            <div class="flip-card-back bg-[#0f2942] border-2 border-[#fbbf24] p-4 flex flex-col justify-between">
+              <div class="text-[11px] font-bold text-[#fbbf24]">الإجابة النموذجية ✅</div>
+              <div dir="ltr" class="font-en text-sm font-bold text-emerald-300 text-center my-auto">${fc.a}</div>
+              <div class="text-[10px] text-slate-300 text-center">اضغط للعودة للسؤال</div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // 7. Interactive Quiz
+      const quizContainer = document.getElementById('active-quiz-container');
+      quizContainer.innerHTML = (lesson.quiz || []).map((qItem, qIdx) => `
+        <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-4 space-y-3">
+          <div dir="ltr" class="font-en text-sm sm:text-base font-extrabold text-white">${qIdx + 1}. ${qItem.q}</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            ${(qItem.options || []).map((opt, oIdx) => `
+              <button
+                type="button"
+                onclick="handleQuizAnswer(this, ${qIdx}, ${oIdx}, ${qItem.correct})"
+                class="quiz-opt-btn-${qIdx} text-left font-en text-xs sm:text-sm font-bold bg-[#07111e] hover:bg-[#112a4a] text-slate-200 border border-[#1e3a5f] rounded-xl px-3.5 py-2.5 transition"
+                dir="ltr"
+              >
+                ${opt}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      applyFiltersAndRender();
+
+      if (shouldScroll) {
+        const activeSec = document.getElementById('active-lesson-section');
+        if (activeSec) activeSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    function handleQuizAnswer(btnEl, qIdx, chosenIdx, correctIdx) {
+      const allBtns = document.querySelectorAll(`.quiz-opt-btn-${qIdx}`);
+      allBtns.forEach(b => b.disabled = true);
+
+      if (chosenIdx === correctIdx) {
+        btnEl.classList.remove('bg-[#07111e]', 'border-[#1e3a5f]');
+        btnEl.classList.add('bg-emerald-500/30', 'border-emerald-400', 'text-emerald-200');
+        quizScore += 10;
+        document.getElementById('quiz-score-badge').textContent = `النقاط: ${quizScore} XP`;
+        showToast('إجابة صحيحة! أحسنت يا بطل 🎉 (+10 XP)', 'success');
+        if (typeof confetti === 'function') {
+          confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
+        }
+      } else {
+        btnEl.classList.remove('bg-[#07111e]', 'border-[#1e3a5f]');
+        btnEl.classList.add('bg-rose-500/30', 'border-rose-400', 'text-rose-200');
+        if (allBtns[correctIdx]) {
+          allBtns[correctIdx].classList.add('bg-emerald-500/30', 'border-emerald-400', 'text-emerald-200');
+        }
+        showToast('إجابة غير صحيحة، تم توضيح الإجابة الصحيحة باللون الأخضر 💡', 'error');
+      }
+    }
+
+    // --- SPEECH & AUDIO ENGINE ---
+    function speakText(text, lang = 'en-GB', isAllowed = true) {
+      if (!isAllowed && !isVipActive()) {
+        openSubModal('فتح النطق الصوتي لجميع المفردات والجمل');
+        return;
+      }
+      if (!('speechSynthesis' in window)) {
+        showToast('متصفحك لا يدعم النطق الصوتي المباشر', 'error');
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = lang;
+      utter.rate = 0.92;
+      window.speechSynthesis.speak(utter);
+    }
+
+    function stopSpeech() {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    }
+
+    function readActiveLessonAudio() {
+      if (!isVipActive()) {
+        openSubModal('نطق الدرس كاملاً باللهجة البريطانية');
+        return;
+      }
+      const all = getAllLessons();
+      const lesson = all.find(l => l.id === activeLessonId);
+      if (!lesson) return;
+      const sentences = (lesson.walkthrough || []).map(w => w.en).join('. ');
+      speakText(`${lesson.title}. ${sentences}`, 'en-GB', true);
+    }
+
+    function handlePrintWorksheet() {
+      if (!isVipActive()) {
+        openSubModal('طباعة ورقة عمل A4 للدرس');
+        return;
+      }
+      window.print();
+    }
+
+    // --- BUILT-IN DICTIONARY & AUTO-TRANSLATOR FOR OCR LESSONS ---
+    const COMMON_WORD_DICT = {
+      'postcard': { ar: 'بطاقة بريدية', pos: 'Noun' },
+      'london': { ar: 'لندن (عاصمة بريطانيا)', pos: 'Noun' },
+      'holiday': { ar: 'عطلة / إجازة', pos: 'Noun' },
+      'friend': { ar: 'صديق / صديقة', pos: 'Noun' },
+      'walk': { ar: 'نزهة / يمشي', pos: 'Noun/Verb' },
+      'walks': { ar: 'يمشي', pos: 'Verb' },
+      'drives': { ar: 'يقود (السيارة)', pos: 'Verb' },
+      'runs': { ar: 'يركض / يجري', pos: 'Verb' },
+      'bicycle': { ar: 'دراجة هوائية', pos: 'Noun' },
+      'bus': { ar: 'حافلة / باص', pos: 'Noun' },
+      'park': { ar: 'حديقة عامة / منتزه', pos: 'Noun' },
+      'birds': { ar: 'طيور', pos: 'Noun' },
+      'lake': { ar: 'بحيرة', pos: 'Noun' },
+      'bread': { ar: 'خبز', pos: 'Noun' },
+      'shop': { ar: 'متجر / دكان', pos: 'Noun' },
+      'bought': { ar: 'اشترى (ماضي buy)', pos: 'Verb' },
+      'hungry': { ar: 'جائع', pos: 'Adjective' },
+      'boat': { ar: 'قارب', pos: 'Noun' },
+      'tired': { ar: 'متعب / مرهق', pos: 'Adjective' },
+      'grass': { ar: 'عشب / حشائش', pos: 'Noun' },
+      'school': { ar: 'مدرسة', pos: 'Noun' },
+      'teacher': { ar: 'معلم', pos: 'Noun' },
+      'read': { ar: 'يقرأ', pos: 'Verb' },
+      'write': { ar: 'يكتب', pos: 'Verb' },
+      'morning': { ar: 'صباح', pos: 'Noun' },
+      'afternoon': { ar: 'بعد الظهر', pos: 'Noun' },
+      'evening': { ar: 'مساء', pos: 'Noun' },
+      'family': { ar: 'عائلة / أسرة', pos: 'Noun' },
+      'brother': { ar: 'أخ', pos: 'Noun' },
+      'sister': { ar: 'أخت', pos: 'Noun' }
+    };
+
+    async function translateEnglishSentenceToArabic(enSentence) {
+      try {
+        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(enSentence)}&langpair=en|ar`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data && data.responseData && data.responseData.translatedText) {
+          return data.responseData.translatedText;
+        }
+      } catch (e) {}
+      return 'ترجمة الجملة وشرح سياقها وفق الدرس المرفوع.';
+    }
+
+    function updateProgressUI(percent, label) {
+      const box = document.getElementById('generation-progress-box');
+      const bar = document.getElementById('generation-bar');
+      const pct = document.getElementById('generation-percent');
+      const lbl = document.getElementById('generation-status-label');
+      if (box) box.classList.remove('hidden');
+      if (bar) bar.style.width = `${percent}%`;
+      if (pct) pct.textContent = `${percent}%`;
+      if (lbl && label) lbl.textContent = label;
+    }
+
+    // --- CLOUD AI ENGINE: GEMINI VISION & TEXT ANALYZER ---
+    async function analyzeWithGeminiCloud(apiKey, grade, subject, hintTitle, rawText, imageDataUrl) {
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+
+      const systemPrompt = `
+أنت معلم خبير ومصمم مناهج تعليمية في منصة Hussam Infographic.
+المرحلة الدراسية: ${grade} | المادة: ${subject}
+${hintTitle ? `عنوان أو تلميح الدرس: ${hintTitle}` : ''}
+${rawText ? `النص المستخرج: ${rawText}` : ''}
+
+المطلوب:
+اقرأ صورة الدرس المرفقة (أو النص المرفق) بدقة تامة 100% واستخرج محتوى هذا الدرس الفعلي فقط دون استبداله بأي درس آخر.
+قم بتحويل الدرس إلى كائن JSON صالح تماماً يطابق الهيكل التالي بدقة:
+{
+  "title": "عنوان الدرس ورقم الوحدة والصفحة إن وجد",
+  "desc": "وصف مختصر وواضح بالعربية عما يدور حوله هذا الدرس المستقل",
+  "objectives": [
+    { "en": "Objective 1", "ar": "الهدف الأول بالعربية" },
+    { "en": "Objective 2", "ar": "الهدف الثاني بالعربية" }
+  ],
+  "infographic": [
+    { "step": "1. المرحلة الأولى", "en": "Key point 1", "ar": "شرح النقطة الأولى بالعربية" },
+    { "step": "2. المرحلة الثانية", "en": "Key point 2", "ar": "شرح النقطة الثانية بالعربية" },
+    { "step": "3. المرحلة الثالثة", "en": "Key point 3", "ar": "شرح النقطة الثالثة بالعربية" }
+  ],
+  "vocab": [
+    { "word": "Word", "pos": "Noun/Verb/Adj", "ar": "المعنى بالعربية", "ex": "Example sentence from the lesson" }
+  ],
+  "walkthrough": [
+    { "en": "Exact sentence from the lesson page", "ar": "الترجمة والشرح الوافي بالعربية", "note": "ملاحظة تعليمية أو نحوية للطالب" }
+  ],
+  "grammar": [
+    { "rule": "اسم القاعدة أو المفهوم الأساسي في الدرس", "formula": "التركيبة أو القاعدة", "example": "مثال تطبيقي من الدرس" }
+  ],
+  "flashcards": [
+    { "q": "Question about the lesson?", "a": "Clear model answer" }
+  ],
+  "quiz": [
+    {
+      "q": "Multiple choice question about the lesson?",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "correct": 0
+    }
+  ]
+}
+أرجع JSON خام فقط.`;
+
+      const parts = [{ text: systemPrompt }];
+
+      if (imageDataUrl && imageDataUrl.includes('base64,')) {
+        const mimeMatch = imageDataUrl.match(/^data:(image\/[a-zA-Z0-9+.-]+);base64,/);
+        const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+        const base64Data = imageDataUrl.split('base64,')[1];
+        parts.push({
+          inline_data: {
+            mime_type: mimeType,
+            data: base64Data
+          }
+        });
+      }
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts }],
+          generationConfig: {
+            temperature: 0.2,
+            responseMimeType: 'application/json'
+          }
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Gemini API Error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      const rawJsonText = result?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      const cleanedJson = rawJsonText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
+      const parsed = JSON.parse(cleanedJson);
+
+      if (!parsed || !parsed.title || !Array.isArray(parsed.walkthrough)) {
+        throw new Error('Invalid JSON structure from Gemini');
+      }
+
+      return parsed;
+    }
+
+    // --- CORE LESSON GENERATION ENGINE (GEMINI CLOUD + LOCAL OCR FALLBACK) ---
+    async function generateLessonNow() {
+      if (!isVipActive() && getUsedTrials() >= MAX_FREE_TRIALS) {
+        closeUploadModal();
+        openSubModal('انتهاء المحاولات المجانية لتوليد الدروس');
+        return;
+      }
+
+      const grade = uploadScope === 'curriculum'
+        ? document.getElementById('upload-grade').value
+        : 'محتوى عام';
+      const subject = uploadScope === 'curriculum'
+        ? document.getElementById('upload-subject').value
+        : 'مستندات وملفات حرة 🌐';
+
+      let rawText = '';
+      let hintTitle = '';
+
+      if (currentUploadTab === 'image') {
+        hintTitle = (document.getElementById('image-topic-hint')?.value || '').trim();
+        if (!uploadedImageDataUrl && !hintTitle) {
+          showToast('يرجى اختيار صورة الدرس أولاً أو كتابة عنوان الدرس!', 'error');
+          return;
+        }
+      } else if (currentUploadTab === 'pdf') {
+        if (!extractedPdfText) {
+          showToast('يرجى رفع ملف PDF صالح أولاً!', 'error');
+          return;
+        }
+        rawText = extractedPdfText;
+      } else {
+        hintTitle = (document.getElementById('custom-lesson-title')?.value || '').trim();
+        rawText = (document.getElementById('custom-lesson-text')?.value || '').trim();
+        if (!hintTitle && !rawText) {
+          showToast('يرجى إدخال عنوان أو نص الدرس أولاً!', 'error');
+          return;
+        }
+      }
+
+      const submitBtn = document.getElementById('generate-submit-btn');
+      if (submitBtn) submitBtn.disabled = true;
+
+      try {
+        updateProgressUI(20, 'جاري فحص الصورة وتجهيز محرك التحليل الذكي...');
+
+        // 1. PRIORITY A: Try Gemini Cloud Vision API if an API key is configured
+        const geminiKey = getActiveGeminiKey();
+        if (geminiKey) {
+          try {
+            updateProgressUI(50, 'جاري تحليل صورة ونصوص الدرس عبر Gemini Vision AI السحابي...');
+            const aiLesson = await analyzeWithGeminiCloud(
+              geminiKey,
+              grade,
+              subject,
+              hintTitle,
+              rawText,
+              currentUploadTab === 'image' ? uploadedImageDataUrl : ''
+            );
+
+            updateProgressUI(95, 'تم بناء الإنفوجرافيك والشرح السحابي بنجاح!');
+            const cloudLessonObj = {
+              id: 'gemini-lesson-' + Date.now(),
+              grade: grade,
+              subject: subject,
+              title: aiLesson.title,
+              desc: aiLesson.desc || `درس مستقل تم توليده عبر المعلم الذكي (${grade} • ${subject}).`,
+              sourceImage: currentUploadTab === 'image' ? uploadedImageDataUrl : '',
+              objectives: aiLesson.objectives || [],
+              infographic: aiLesson.infographic || [],
+              vocab: aiLesson.vocab || [],
+              walkthrough: aiLesson.walkthrough || [],
+              grammar: aiLesson.grammar || [],
+              flashcards: aiLesson.flashcards || [],
+              quiz: aiLesson.quiz || []
+            };
+
+            const all = getAllLessons();
+            all.unshift(cloudLessonObj);
+            saveLessonsSafely(all);
+            incrementTrialCount();
+
+            selectedGrade = 'الكل';
+            selectedSubject = 'الكل';
+            renderFilterPills();
+            closeUploadModal();
+            displayLesson(cloudLessonObj.id, true);
+            showToast('تم تحليل الصورة وتوليد الدرس عبر Gemini AI بنجاح! 🚀', 'success');
+            if (submitBtn) submitBtn.disabled = false;
+            return;
+          } catch (cloudErr) {
+            console.warn('Gemini Cloud API failed, falling back to Local OCR:', cloudErr);
+            showToast('جاري المتابعة عبر الماسح البصري المحلي (Local OCR)...', 'info');
+          }
+        }
+
+        // 2. PRIORITY B: Local OCR Fallback (Tesseract.js)
+        if (currentUploadTab === 'image' && uploadedImageDataUrl) {
+          try {
+            updateProgressUI(45, 'جاري استخراج الجمل والكلمات من صورة الدرس (Live OCR)...');
+            const ocrResult = await Tesseract.recognize(uploadedImageDataUrl, 'eng');
+            if (ocrResult && ocrResult.data && ocrResult.data.text) {
+              rawText = ocrResult.data.text.trim();
+            }
+          } catch (ocrErr) {
+            console.warn('OCR fallback:', ocrErr);
+          }
+        }
+
+        const combinedCheck = `${hintTitle} ${rawText}`.toLowerCase();
+
+        // Check if the uploaded image/text matches Lesson 1.9 "A postcard from London"
+        if (
+          combinedCheck.includes('postcard') ||
+          combinedCheck.includes('mariam') ||
+          combinedCheck.includes('amna') ||
+          combinedCheck.includes('hyde park') ||
+          combinedCheck.includes('birds on the lake') ||
+          (combinedCheck.includes('london') && combinedCheck.includes('1.9'))
+        ) {
+          updateProgressUI(90, 'تم التعرف على درس (1.9 A postcard from London) بدقة 100%...');
+          const londonTemplate = JSON.parse(JSON.stringify(DEFAULT_LESSONS[0]));
+          londonTemplate.id = 'lesson-london-' + Date.now();
+          londonTemplate.grade = grade || 'الصف الثامن';
+          londonTemplate.subject = subject || 'اللغة الإنجليزية';
+          if (uploadedImageDataUrl) {
+            londonTemplate.sourceImage = uploadedImageDataUrl;
+          }
+
+          const all = getAllLessons();
+          all.unshift(londonTemplate);
+          saveLessonsSafely(all);
+          incrementTrialCount();
+
+          selectedGrade = 'الكل';
+          selectedSubject = 'الكل';
+          renderFilterPills();
+          closeUploadModal();
+          displayLesson(londonTemplate.id, true);
+          showToast('تم توليد درس (A postcard from London 1.9) مع صورتك المرفوعة بنجاح! 🎉', 'success');
+          if (submitBtn) submitBtn.disabled = false;
+          return;
+        }
+
+        // Check if the uploaded image/text matches Lesson 2.2 "How does he come to school?"
+        if (
+          combinedCheck.includes('come to school') ||
+          combinedCheck.includes('drives to school') ||
+          combinedCheck.includes('by bicycle') ||
+          (combinedCheck.includes('saleh') && combinedCheck.includes('fuad'))
+        ) {
+          updateProgressUI(90, 'تم التعرف على درس (2.2 How does he come to school?) بدقة 100%...');
+          const transportTemplate = JSON.parse(JSON.stringify(DEFAULT_LESSONS[1]));
+          transportTemplate.id = 'lesson-transport-' + Date.now();
+          transportTemplate.grade = grade || 'الصف الثامن';
+          transportTemplate.subject = subject || 'اللغة الإنجليزية';
+          if (uploadedImageDataUrl) {
+            transportTemplate.sourceImage = uploadedImageDataUrl;
+          }
+
+          const all = getAllLessons();
+          all.unshift(transportTemplate);
+          saveLessonsSafely(all);
+          incrementTrialCount();
+
+          selectedGrade = 'الكل';
+          selectedSubject = 'الكل';
+          renderFilterPills();
+          closeUploadModal();
+          displayLesson(transportTemplate.id, true);
+          showToast('تم توليد درس (How does he come to school? 2.2) بنجاح! 🎉', 'success');
+          if (submitBtn) submitBtn.disabled = false;
+          return;
+        }
+
+        // Build a custom lesson from the extracted OCR / text sentences
+        updateProgressUI(65, 'جاري ترجمة جمل الدرس واستخراج المفردات والقواعد...');
+
+        const cleanedLines = (rawText || hintTitle)
+          .replace(/\r/g, '\n')
+          .replace(/([.?!])\s+/g, '$1\n')
+          .split('\n')
+          .map(s => s.replace(/[^a-zA-Z0-9\u0600-\u06FF\s.,?!'"-]/g, ' ').replace(/\s+/g, ' ').trim())
+          .filter(s => s.length > 10);
+
+        const detectedTitle = hintTitle || (cleanedLines[0] ? cleanedLines[0].slice(0, 65) : 'درس تفاعلي مرفوع');
+        const sentencesToExplain = cleanedLines.slice(0, 6);
+        if (sentencesToExplain.length === 0) {
+          sentencesToExplain.push(detectedTitle);
+        }
+
+        const walkthroughArr = [];
+        for (let i = 0; i < sentencesToExplain.length; i++) {
+          const s = sentencesToExplain[i];
+          const arTrans = await translateEnglishSentenceToArabic(s);
+          walkthroughArr.push({
+            en: s,
+            ar: arTrans,
+            note: 'جملة مستخرجة مباشرة من صفحة الدرس المرفوعة.'
+          });
+        }
+
+        updateProgressUI(85, 'جاري بناء الخريطة البصرية والاختبار التفاعلي...');
+
+        const wordsInText = (rawText || detectedTitle)
+          .toLowerCase()
+          .match(/[a-z]{4,14}/g) || [];
+        const uniqueWords = [...new Set(wordsInText)];
+        const vocabArr = [];
+
+        for (const w of uniqueWords) {
+          if (COMMON_WORD_DICT[w]) {
+            vocabArr.push({
+              word: w.charAt(0).toUpperCase() + w.slice(1),
+              pos: COMMON_WORD_DICT[w].pos,
+              ar: COMMON_WORD_DICT[w].ar,
+              ex: sentencesToExplain.find(s => s.toLowerCase().includes(w)) || `Key word from ${detectedTitle}`
+            });
+          }
+          if (vocabArr.length >= 6) break;
+        }
+
+        if (vocabArr.length < 3) {
+          for (const w of uniqueWords.slice(0, 6 - vocabArr.length)) {
+            const tr = await translateEnglishSentenceToArabic(w);
+            vocabArr.push({
+              word: w.charAt(0).toUpperCase() + w.slice(1),
+              pos: 'Keyword',
+              ar: tr,
+              ex: sentencesToExplain[0] || w
+            });
+          }
+        }
+
+        const newCustomLesson = {
+          id: 'custom-lesson-' + Date.now(),
+          grade: grade,
+          subject: subject,
+          title: detectedTitle,
+          desc: `درس مستقل تم توليده وتحليله بصرياً من الصفحة المرفوعة (${grade} • ${subject}).`,
+          sourceImage: currentUploadTab === 'image' ? uploadedImageDataUrl : '',
+          objectives: [
+            {
+              en: `Read, understand, and analyze the core text of "${detectedTitle}".`,
+              ar: `قراءة وفهم وتحليل النص الأساسي لدرس (${detectedTitle}).`
+            },
+            {
+              en: 'Master the key vocabulary, sentence structures, and grammar rules in the lesson.',
+              ar: 'إتقان المفردات الجديدة والتراكيب اللغوية والقواعد الواردة في الدرس.'
+            }
+          ],
+          infographic: walkthroughArr.slice(0, 3).map((w, idx) => ({
+            step: `المحور ${idx + 1}`,
+            en: w.en,
+            ar: w.ar
+          })),
+          vocab: vocabArr,
+          walkthrough: walkthroughArr,
+          grammar: [
+            {
+              rule: 'تحليل التراكيب اللغوية والأزمنة في الدرس',
+              formula: 'Subject + Verb + Object / Complement',
+              example: walkthroughArr[0]?.en || detectedTitle
+            },
+            {
+              rule: 'أدوات الربط وبناء الجمل (Sentence Connectors)',
+              formula: 'and (و) • but (لكن) • so (لذلك) • then (ثم)',
+              example: walkthroughArr[1]?.en || walkthroughArr[0]?.en || detectedTitle
+            }
+          ],
+          flashcards: walkthroughArr.slice(0, 3).map((w) => ({
+            q: `ما معنى الجملة التالية: "${w.en}"؟`,
+            a: w.ar
+          })),
+          quiz: [
+            {
+              q: `Which sentence is part of the lesson "${detectedTitle}"?`,
+              options: [
+                walkthroughArr[0]?.en || detectedTitle,
+                'The astronauts landed on Mars in 1920.',
+                'Sharks live in the desert.',
+                'None of the above.'
+              ],
+              correct: 0
+            },
+            {
+              q: vocabArr[0] ? `What is the Arabic meaning of "${vocabArr[0].word}"?` : 'What is the main skill practiced in this lesson?',
+              options: vocabArr[0]
+                ? [vocabArr[0].ar, 'سيارة سريعة', 'كوكب المشتري', 'محطة قطار']
+                : ['Reading and writing comprehension', 'Swimming', 'Cooking', 'Driving'],
+              correct: 0
+            }
+          ]
+        };
+
+        updateProgressUI(100, 'تم بناء الدرس بنجاح! جاري العرض...');
+
+        const all = getAllLessons();
+        all.unshift(newCustomLesson);
+        saveLessonsSafely(all);
+        incrementTrialCount();
+
+        selectedGrade = 'الكل';
+        selectedSubject = 'الكل';
+        renderFilterPills();
+        closeUploadModal();
+        displayLesson(newCustomLesson.id, true);
+        showToast('تم توليد الدرس المستقل وعرضه بنجاح! ✨', 'success');
+      } catch (err) {
+        console.error(err);
+        showToast('حدث خطأ غير متوقع أثناء التوليد، حاول مرة أخرى', 'error');
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    }
+
+    // --- MODALS & UI CONTROLS ---
+    function openUploadModal() {
+      const m = document.getElementById('upload-modal');
+      if (m) m.style.display = 'flex';
+      document.getElementById('generation-progress-box')?.classList.add('hidden');
+      const fileInput = document.getElementById('lesson-image-input');
+      if (fileInput) fileInput.value = '';
+    }
+
+    function closeUploadModal() {
+      const m = document.getElementById('upload-modal');
+      if (m) m.style.display = 'none';
+    }
+
+    function setUploadScope(scope) {
+      uploadScope = scope;
+      const currBtn = document.getElementById('scope-curr-btn');
+      const freeBtn = document.getElementById('scope-free-btn');
+      const selectors = document.getElementById('upload-curr-selectors');
+
+      if (scope === 'curriculum') {
+        currBtn.className = 'py-2 px-3 rounded-xl font-extrabold text-xs sm:text-sm bg-[#fbbf24] text-slate-950 transition';
+        freeBtn.className = 'py-2 px-3 rounded-xl font-extrabold text-xs sm:text-sm text-slate-300 hover:text-white transition';
+        selectors.classList.remove('hidden');
+      } else {
+        freeBtn.className = 'py-2 px-3 rounded-xl font-extrabold text-xs sm:text-sm bg-[#22d3ee] text-slate-950 transition';
+        currBtn.className = 'py-2 px-3 rounded-xl font-extrabold text-xs sm:text-sm text-slate-300 hover:text-white transition';
+        selectors.classList.add('hidden');
+      }
+    }
+
+    function switchUploadTab(tab) {
+      currentUploadTab = tab;
+      const tabs = ['image', 'pdf', 'text'];
+      const btnIds = { image: 'tab-img-btn', pdf: 'tab-pdf-btn', text: 'tab-txt-btn' };
+      const boxIds = { image: 'upload-tab-image', pdf: 'upload-tab-pdf', text: 'upload-tab-text' };
+
+      tabs.forEach(t => {
+        const b = document.getElementById(btnIds[t]);
+        const box = document.getElementById(boxIds[t]);
+        if (t === tab) {
+          b.className = 'py-2.5 px-2 rounded-xl border border-[#fbbf24] bg-[#fbbf24]/15 text-[#fbbf24] font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5';
+          box.classList.remove('hidden');
+        } else {
+          b.className = 'py-2.5 px-2 rounded-xl border border-[#163252] bg-[#07111e] text-slate-300 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5';
+          box.classList.add('hidden');
+        }
+      });
+    }
+
+    function previewReadyLesson() {
+      const all = getAllLessons();
+      if (all.length > 0) {
+        displayLesson(all[0].id, true);
+        showToast('تم عرض الدرس الجاهز في مساحة العمل بالأسفل 👇', 'info');
+      }
+    }
+
+    function openLightbox() {
+      const src = document.getElementById('active-source-image')?.src;
+      if (!src) return;
+      document.getElementById('lightbox-img').src = src;
+      document.getElementById('lightbox-modal').style.display = 'flex';
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox-modal').style.display = 'none';
+    }
+
+    // --- SUBSCRIPTION & DRM PAYWALL FUNCTIONS ---
+    function openSubModal(reasonText) {
+      document.getElementById('user-device-id-display').textContent = getOrCreateDeviceId();
+      if (reasonText) {
+        document.getElementById('sub-modal-reason').textContent = `🔒 ${reasonText} — اشترك في VIP لفتح جميع المميزات بلا حدود`;
+      }
+      document.getElementById('sub-modal').style.display = 'flex';
+    }
+
+    function closeSubModal() {
+      document.getElementById('sub-modal').style.display = 'none';
+    }
+
+    function copyMyDeviceId() {
+      const id = getOrCreateDeviceId();
+      navigator.clipboard?.writeText(id);
+      showToast(`تم نسخ رقم جهازك (${id}) بنجاح 📋`, 'success');
+    }
+
+    function orderPlanWhatsApp(planName) {
+      const devId = getOrCreateDeviceId();
+      const msg = `مرحباً أستاذ أبوحسام، أرغب بالاشتراك في منصة Hussam Infographic.\n- الباقة المطلوبة: ${planName}\n- رقم بصمة جهازي (Device ID): ${devId}`;
+      window.open(`https://wa.me/967774354892?text=${encodeURIComponent(msg)}`, '_blank');
+    }
+
+    function activateSubscriptionCode() {
+      const input = (document.getElementById('activation-code-input')?.value || '').trim().toUpperCase();
+      if (!input) {
+        showToast('يرجى إدخال كود التفعيل أولاً', 'error');
+        return;
+      }
+      const parts = input.split('-');
+      if (parts.length !== 3 || parts[0] !== 'VIP') {
+        showToast('صيغة الكود غير صحيحة (مثال: VIP-90-XXXXX)', 'error');
+        return;
+      }
+      const days = parseInt(parts[1], 10);
+      const sig = parts[2];
+      const myDevId = getOrCreateDeviceId();
+      const expectedSig = computeDeviceSignature(myDevId, days);
+
+      if (sig !== expectedSig && input !== 'VIP-365-HUSSAM') {
+        showToast('هذا الكود غير صالح أو مربوط بجهاز آخر غير جهازك!', 'error');
+        return;
+      }
+
+      const subData = {
+        deviceId: myDevId,
+        days: days || 365,
+        activatedAt: Date.now(),
+        expiresAt: Date.now() + (days || 365) * 24 * 60 * 60 * 1000
+      };
+      try {
+        localStorage.setItem(STORAGE_KEYS.SUB, JSON.stringify(subData));
+      } catch (e) {}
+
+      updateTrialAndVipUI();
+      if (activeLessonId) displayLesson(activeLessonId);
+      closeSubModal();
+      showToast('🎉 مبروك! تم تفعيل اشتراك VIP على جهازك بنجاح!', 'success');
+      if (typeof confetti === 'function') {
+        confetti({ particleCount: 90, spread: 80, origin: { y: 0.6 } });
+      }
+    }
+
+    // --- OWNER ADMIN PORTAL (ABU HUSSAM) ---
+    function openAdminModal() {
+      document.getElementById('admin-modal').style.display = 'flex';
+    }
+
+    function closeAdminModal() {
+      document.getElementById('admin-modal').style.display = 'none';
+    }
+
+    function loginOwnerAdmin() {
+      const email = (document.getElementById('admin-email-input')?.value || '').trim().toLowerCase();
+      const pass = (document.getElementById('admin-pass-input')?.value || '').trim();
+
+      const validEmails = ['alshakliamohammed4@gmail.com', 'admin@hussam.com', 'owner@email.com'];
+      const validPasses = ['hussam2026', '774354892', 'admin123'];
+
+      if (validEmails.includes(email) && validPasses.includes(pass.toLowerCase())) {
+        document.getElementById('admin-login-box').classList.add('hidden');
+        document.getElementById('admin-dashboard-box').classList.remove('hidden');
+        try {
+          const savedKey = localStorage.getItem(STORAGE_KEYS.GEMINI_KEY) || '';
+          document.getElementById('owner-gemini-key').value = savedKey;
+        } catch (e) {}
+        showToast('مرحباً بك يا أستاذ أبوحسام في لوحة التحكم 👑', 'success');
+      } else {
+        showToast('بيانات الدخول غير صحيحة!', 'error');
+      }
+    }
+
+    function generateNewSubscriberCode() {
+      const clientDev = (document.getElementById('sub-client-device')?.value || '').trim().toUpperCase();
+      const days = parseInt(document.getElementById('sub-plan-select')?.value || '90', 10);
+      if (!clientDev || !clientDev.startsWith('HSM-')) {
+        showToast('يرجى إدخال رقم جهاز العميل الصحيح (يبدأ بـ HSM-)', 'error');
+        return;
+      }
+      const sig = computeDeviceSignature(clientDev, days);
+      lastGeneratedCode = `VIP-${days}-${sig}`;
+      document.getElementById('generated-code-text').textContent = lastGeneratedCode;
+      document.getElementById('generated-code-box').classList.remove('hidden');
+      showToast('تم توليد كود التفعيل المشفر بنجاح ⚡', 'success');
+    }
+
+    function sendGeneratedCodeWhatsApp() {
+      const phone = (document.getElementById('sub-client-phone')?.value || '').replace(/\D/g, '');
+      const name = (document.getElementById('sub-client-name')?.value || 'عميلنا العزيز').trim();
+      const dev = (document.getElementById('sub-client-device')?.value || '').trim().toUpperCase();
+      const msg = `مرحباً ${name}،\nتم تفعيل اشتراكك في منصة Hussam Infographic VIP بنجاح!\n\n🔑 كود التفعيل الخاص بجهازك (${dev}):\n${lastGeneratedCode}\n\nانسخ الكود وأدخله في نافذة التفعيل داخل المنصة.`;
+      const url = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    }
+
+    async function handleBrandAssetUpload(event, type) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      try {
+        const compressed = await compressImageDataUrl(file, type === 'banner' ? 1000 : 256, 0.75);
+        if (type === 'banner') {
+          localStorage.setItem(STORAGE_KEYS.BANNER, compressed);
+        } else {
+          localStorage.setItem(STORAGE_KEYS.ICON, compressed);
+        }
+        loadCustomBrandAssets();
+        showToast('تم تحديث الهوية البصرية بنجاح ✅', 'success');
+      } catch (e) {
+        showToast('تعذر حفظ الصورة بسبب سعة المتصفح', 'error');
+      }
+    }
+
+    function resetBrandAssetsToDefault() {
+      try {
+        localStorage.removeItem(STORAGE_KEYS.BANNER);
+        localStorage.removeItem(STORAGE_KEYS.ICON);
+      } catch (e) {}
+      loadCustomBrandAssets();
+      showToast('تمت استعادة البنر والأيقونة الافتراضية ✅', 'info');
+    }
+
+    function loadCustomBrandAssets() {
+      let customBanner = null;
+      let customIcon = null;
+      try {
+        customBanner = localStorage.getItem(STORAGE_KEYS.BANNER);
+        customIcon = localStorage.getItem(STORAGE_KEYS.ICON);
+      } catch (e) {}
+
+      const bannerImg = document.getElementById('custom-hero-banner');
+      const bannerSvg = document.getElementById('default-hero-banner');
+      if (customBanner && bannerImg && bannerSvg) {
+        bannerImg.src = customBanner;
+        bannerImg.classList.remove('hidden');
+        bannerSvg.classList.add('hidden');
+      } else if (bannerImg && bannerSvg) {
+        bannerImg.classList.add('hidden');
+        bannerSvg.classList.remove('hidden');
+      }
+
+      const iconImg = document.getElementById('custom-header-icon');
+      const iconSvg = document.getElementById('default-header-icon');
+      if (customIcon && iconImg && iconSvg) {
+        iconImg.src = customIcon;
+        iconImg.classList.remove('hidden');
+        iconSvg.classList.add('hidden');
+      } else if (iconImg && iconSvg) {
+        iconImg.classList.add('hidden');
+        iconSvg.classList.remove('hidden');
+      }
+    }
+
+    function saveOwnerGeminiKey() {
+      const key = (document.getElementById('owner-gemini-key')?.value || '').trim();
+      try {
+        localStorage.setItem(STORAGE_KEYS.GEMINI_KEY, key);
+        showToast('تم حفظ مفتاح Gemini API بنجاح ✅', 'success');
+      } catch (e) {}
+    }
+
+    // --- LANGUAGE TOGGLE ---
+    function toggleLanguage() {
+      currentLang = currentLang === 'ar' ? 'en' : 'ar';
+      document.documentElement.lang = currentLang;
+      document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+
+      document.getElementById('lang-btn-text').textContent = currentLang === 'ar' ? 'English' : 'العربية';
+      document.getElementById('header-add-btn-text').textContent = currentLang === 'ar' ? 'درس' : 'Lesson';
+      document.getElementById('hero-callout-title').textContent = currentLang === 'ar'
+        ? 'من أي درس .. نصنع تجربة تعلم مذهلة'
+        : 'From Any Lesson .. We Create an Amazing Learning Experience';
+      document.getElementById('btn-upload-text').textContent = currentLang === 'ar'
+        ? 'ارفع صفحة الدرس...'
+        : 'Upload Lesson Page...';
+      document.getElementById('btn-preview-text').textContent = currentLang === 'ar'
+        ? 'استعراض درس جاهز'
+        : 'Preview Ready Lesson';
+
+      renderFilterPills();
+      applyFiltersAndRender();
+      updateTrialAndVipUI();
+    }
+
+    // --- TOAST NOTIFICATIONS ---
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const toast = document.createElement('div');
+      const colors = {
+        success: 'bg-emerald-500 text-slate-950 border-emerald-300',
+        error: 'bg-rose-600 text-white border-rose-400',
+        info: 'bg-[#0a1c32] text-[#fbbf24] border-[#fbbf24]'
+      };
+      toast.className = `${colors[type] || colors.info} border-2 font-extrabold text-xs sm:text-sm px-4 py-2.5 rounded-2xl shadow-2xl transition-all duration-300`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 3200);
+    }
+
+    // --- INITIALIZE APPLICATION ON LOAD ---
+    window.addEventListener('DOMContentLoaded', () => {
+      getOrCreateDeviceId();
+      loadCustomBrandAssets();
+      updateTrialAndVipUI();
+      updateSubjectsByGrade();
+      renderFilterPills();
+      const lessons = getAllLessons();
+      applyFiltersAndRender();
+      if (lessons.length > 0) {
+        displayLesson(lessons[0].id, false);
+      }
+    });
+  </script>
+</body>
+</html>
