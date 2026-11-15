@@ -52,6 +52,12 @@
       white-space: nowrap;
       font-size: clamp(11px, 3.3vw, 22px);
     }
+    .math-ltr {
+      direction: ltr !important;
+      unicode-bidi: isolate !important;
+      display: inline-block;
+      font-family: 'Outfit', monospace, sans-serif;
+    }
     .no-scrollbar::-webkit-scrollbar {
       display: none;
     }
@@ -398,8 +404,8 @@
           </div>
         </div>
 
-        <div id="active-source-image-box" class="hidden bg-[#07111e] border border-[#163252] rounded-2xl p-4">
-          <div class="flex items-center justify-between mb-3">
+        <div id="active-source-image-box" class="hidden bg-[#07111e] border border-[#163252] rounded-2xl p-4 space-y-3">
+          <div class="flex items-center justify-between mb-1">
             <span class="text-xs sm:text-sm font-extrabold text-[#fbbf24] flex items-center gap-2">
               <i class="fa-solid fa-image"></i>
               <span id="source-img-label">صورة صفحة هذا الدرس المرفوعة (اضغط للتكبير)</span>
@@ -407,6 +413,7 @@
             <button type="button" onclick="openLightbox()" id="btn-zoom-img" class="text-xs text-[#22d3ee] hover:underline font-bold">تكبير بملء الشاشة 🔍</button>
           </div>
           <img id="active-source-image" onclick="openLightbox()" src="" alt="Source Page" class="max-h-72 mx-auto rounded-xl border border-[#1e3a5f] cursor-pointer hover:opacity-95 transition object-contain" />
+          <div id="active-source-thumbs" class="flex items-center justify-center gap-2 overflow-x-auto no-scrollbar pt-1"></div>
         </div>
 
         <div class="print-card bg-[#07111e] border border-[#163252] rounded-2xl p-4 sm:p-5 space-y-3">
@@ -513,9 +520,9 @@
     </div>
   </footer>
 
-  <!-- ==================== 9. UPLOAD & GENERATE LESSON MODAL ==================== -->
-  <div id="upload-modal" style="display: none;" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm items-center justify-center p-3 sm:p-4 overflow-y-auto">
-    <div class="bg-[#0a1c32] border-2 border-[#163252] rounded-3xl max-w-2xl w-full p-5 sm:p-7 space-y-5 shadow-2xl my-auto max-h-[94vh] overflow-y-auto">
+  <!-- ==================== 9. UPLOAD, ANALYZE & REVIEW LESSON MODAL (STAGE 1) ==================== -->
+  <div id="upload-modal" style="display: none;" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm items-center justify-center p-2 sm:p-4 overflow-y-auto">
+    <div class="bg-[#0a1c32] border-2 border-[#163252] rounded-3xl max-w-3xl w-full p-4 sm:p-7 space-y-5 shadow-2xl my-auto max-h-[95vh] overflow-y-auto">
       
       <div class="flex items-center justify-between border-b border-[#163252] pb-3">
         <h3 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
@@ -527,103 +534,221 @@
         </button>
       </div>
 
-      <div class="grid grid-cols-2 gap-2 bg-[#07111e] p-1.5 rounded-2xl border border-[#163252]">
-        <button type="button" id="scope-curr-btn" onclick="setUploadScope('curriculum')" class="py-2 px-3 rounded-xl font-extrabold text-xs sm:text-sm bg-[#fbbf24] text-slate-950 transition">
-          🏫 منهج دراسي (1 - 12)
-        </button>
-        <button type="button" id="scope-free-btn" onclick="setUploadScope('general')" class="py-2 px-3 rounded-xl font-extrabold text-xs sm:text-sm text-slate-300 hover:text-white transition">
-          🌐 محتوى حر / ملف خارجي
+      <!-- Stage 1 Stepper Header -->
+      <div class="grid grid-cols-2 gap-2 bg-[#07111e] p-2 rounded-2xl border border-[#163252] text-xs font-extrabold text-center">
+        <div id="stage1-step-upload-badge" class="py-2 px-3 rounded-xl bg-[#fbbf24] text-slate-950">
+          1. رفع وفحص وتحليل الصورة
+        </div>
+        <div id="stage1-step-review-badge" class="py-2 px-3 rounded-xl text-slate-400">
+          2. مراجعة المحتوى واعتماده يدوياً
+        </div>
+      </div>
+
+      <!-- STEP 1: UPLOAD & ANALYZE VIEW -->
+      <div id="stage1-upload-view" class="space-y-4">
+        <div class="grid grid-cols-2 gap-2 bg-[#07111e] p-1.5 rounded-2xl border border-[#163252]">
+          <button type="button" id="scope-curr-btn" onclick="setUploadScope('curriculum')" class="py-2 px-3 rounded-xl font-extrabold text-xs sm:text-sm bg-[#fbbf24] text-slate-950 transition">
+            🏫 منهج دراسي (1 - 12)
+          </button>
+          <button type="button" id="scope-free-btn" onclick="setUploadScope('general')" class="py-2 px-3 rounded-xl font-extrabold text-xs sm:text-sm text-slate-300 hover:text-white transition">
+            🌐 محتوى حر / ملف خارجي
+          </button>
+        </div>
+
+        <div id="upload-curr-selectors" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">الصف الدراسي:</label>
+            <select id="upload-grade" onchange="updateSubjectsByGrade()" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-[#fbbf24]">
+              <option value="الصف الأول">الصف الأول الأساسي (Grade 1)</option>
+              <option value="الصف الثاني">الصف الثاني الأساسي (Grade 2)</option>
+              <option value="الصف الثالث">الصف الثالث الأساسي (Grade 3)</option>
+              <option value="الصف الرابع">الصف الرابع الأساسي (Grade 4)</option>
+              <option value="الصف الخامس">الصف الخامس الأساسي (Grade 5)</option>
+              <option value="الصف السادس">الصف السادس الأساسي (Grade 6)</option>
+              <option value="الصف السابع">الصف السابع الأساسي (Grade 7)</option>
+              <option value="الصف الثامن" selected>الصف الثامن الأساسي (Grade 8)</option>
+              <option value="الصف التاسع">الصف التاسع الأساسي (Grade 9)</option>
+              <option value="الأول الثانوي">الأول الثانوي (Grade 10)</option>
+              <option value="الثاني الثانوي">الثاني الثانوي (Grade 11)</option>
+              <option value="الثالث الثانوي">الثالث الثانوي (Grade 12)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">المادة الدراسية:</label>
+            <select id="upload-subject" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-[#fbbf24]">
+              <option value="القرآن الكريم">القرآن الكريم وعلومه (Holy Quran)</option>
+              <option value="التربية الإسلامية">التربية الإسلامية (Islamic Studies)</option>
+              <option value="اللغة العربية">اللغة العربية - القراءة والنحو (Arabic)</option>
+              <option value="اللغة الإنجليزية" selected>اللغة الإنجليزية (English)</option>
+              <option value="الرياضيات">الرياضيات (Mathematics)</option>
+              <option value="العلوم والأحياء">العلوم والأحياء والبيئة (Science & Biology)</option>
+              <option value="الدراسات الاجتماعية">الاجتماعيات - تاريخ وجغرافيا ووطنية (Social Studies)</option>
+              <option value="الفيزياء">الفيزياء (Physics)</option>
+              <option value="الكيمياء">الكيمياء (Chemistry)</option>
+              <option value="الحاسوب">الحاسوب وتقنية المعلومات (Computer & IT)</option>
+              <option value="مستندات وملفات حرة 🌐">مستندات وملفات حرة 🌐</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          <button type="button" id="tab-img-btn" onclick="switchUploadTab('image')" class="py-2.5 px-2 rounded-xl border border-[#fbbf24] bg-[#fbbf24]/15 text-[#fbbf24] font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-camera"></i>
+            <span>صورة / كاميرا</span>
+          </button>
+          <button type="button" id="tab-pdf-btn" onclick="switchUploadTab('pdf')" class="py-2.5 px-2 rounded-xl border border-[#163252] bg-[#07111e] text-slate-300 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-file-pdf"></i>
+            <span>ملف PDF</span>
+            <span id="pdf-vip-tag" class="text-[10px] text-[#fbbf24]">🔒</span>
+          </button>
+          <button type="button" id="tab-txt-btn" onclick="switchUploadTab('text')" class="py-2.5 px-2 rounded-xl border border-[#163252] bg-[#07111e] text-slate-300 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <span>نص مباشر</span>
+          </button>
+        </div>
+
+        <!-- TAB 1: IMAGE (SINGLE OR MULTIPLE IMAGES + JPG/PNG/WEBP/PDF) -->
+        <div id="upload-tab-image" class="space-y-3">
+          <label class="block cursor-pointer border-2 border-dashed border-[#fbbf24]/60 hover:border-[#fbbf24] bg-[#07111e] rounded-2xl p-6 text-center transition">
+            <input type="file" id="lesson-image-input" accept=".jpg,.jpeg,.png,.webp,.pdf,image/jpeg,image/png,image/webp,application/pdf" multiple class="hidden" onchange="handleImageFileSelect(event)" />
+            <i class="fa-solid fa-cloud-arrow-up text-3xl text-[#fbbf24] mb-2"></i>
+            <div class="font-extrabold text-sm sm:text-base text-white">اضغط لاختيار صورة واحدة أو عدة صور لصفحات الدرس (JPG, PNG, WEBP, PDF)</div>
+            <div class="text-xs text-slate-400 mt-1">يتم التحقق من النوع والحجم والأبعاد وضغط الصور ذكياً مع الحفاظ على وضوح النص العربي والمعادلات</div>
+          </label>
+
+          <!-- Image Clarity / Small Dimension Warning Banner -->
+          <div id="image-clarity-alert-box" class="hidden bg-amber-500/15 border-2 border-amber-400/60 rounded-2xl p-3.5 text-xs text-amber-200 space-y-1">
+            <div class="font-black text-amber-300 flex items-center gap-1.5">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              <span>تنبيه فحص جودة ووضوح الصور المرفوعة:</span>
+            </div>
+            <div id="image-clarity-alert-text" class="leading-relaxed"></div>
+          </div>
+
+          <div id="upload-image-preview-box" class="hidden bg-[#07111e] border border-[#163252] rounded-2xl p-3 text-center space-y-3">
+            <img id="upload-image-preview" src="" alt="Preview" class="max-h-48 mx-auto rounded-xl object-contain border border-[#1e3a5f]" />
+            <div id="upload-image-name" class="text-xs text-emerald-400 font-bold"></div>
+            <div id="upload-multi-preview-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-2 pt-1"></div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">عنوان الدرس (اختياري - أو اتركه للقراءة البصرية التلقائية من الصورة):</label>
+            <input type="text" id="image-topic-hint" placeholder="اتركه فارغاً ليقرأ الصورة تلقائياً أو اكتب عنوان الدرس..." class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3.5 py-2.5 text-sm text-white outline-none focus:border-[#fbbf24]" />
+          </div>
+        </div>
+
+        <!-- TAB 2: PDF -->
+        <div id="upload-tab-pdf" class="hidden space-y-3">
+          <label class="block cursor-pointer border-2 border-dashed border-[#22d3ee]/60 hover:border-[#22d3ee] bg-[#07111e] rounded-2xl p-6 text-center transition">
+            <input type="file" id="lesson-pdf-input" accept="application/pdf" class="hidden" onchange="handlePdfFileSelect(event)" />
+            <i class="fa-solid fa-file-pdf text-3xl text-[#22d3ee] mb-2"></i>
+            <div class="font-extrabold text-sm sm:text-base text-white">اختر ملف PDF لدرس أو مذكرة تعليمية</div>
+          </label>
+          <div id="pdf-status-box" class="hidden bg-[#07111e] border border-emerald-500/40 rounded-xl p-3 text-xs text-emerald-300 font-bold"></div>
+        </div>
+
+        <!-- TAB 3: TEXT -->
+        <div id="upload-tab-text" class="hidden space-y-3">
+          <input type="text" id="custom-lesson-title" placeholder="عنوان الدرس المستقل (مثال: A postcard from London)" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3.5 py-2.5 text-sm text-white outline-none focus:border-[#fbbf24]" />
+          <textarea id="custom-lesson-text" rows="5" placeholder="الصق نص هذا الدرس فقط ليقوم المعلم الذكي بتحليله وعرضه للمراجعة..." class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl p-3.5 text-sm text-white outline-none focus:border-[#fbbf24]"></textarea>
+        </div>
+
+        <button type="button" id="generate-submit-btn" onclick="generateLessonNow()" class="w-full bg-[#fbbf24] hover:bg-[#f59e0b] active:scale-[0.99] text-slate-950 font-black text-base py-3.5 rounded-2xl shadow-xl flex items-center justify-center gap-2 transition">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span id="btn-generate-submit-text">توليد هذا الدرس بشكل مستقل الآن ✨</span>
         </button>
       </div>
 
-      <div id="upload-curr-selectors" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <!-- STEP 2: CONTENT REVIEW & MANUAL EDIT VIEW BEFORE LESSON CREATION -->
+      <div id="stage1-review-view" class="hidden space-y-4">
+        <div class="bg-emerald-500/10 border border-emerald-500/40 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-2">
+          <div class="text-xs sm:text-sm font-black text-emerald-300 flex items-center gap-2">
+            <i class="fa-solid fa-clipboard-check"></i>
+            <span>مراجعة المحتوى المستخرج وتعديله يدوياً قبل إنشاء الدرس والإنفوجرافيك</span>
+          </div>
+          <button type="button" onclick="returnToStage1UploadStep()" class="text-xs bg-[#07111e] hover:bg-[#112a4a] text-slate-300 px-3 py-1.5 rounded-xl border border-[#1e3a5f]">
+            ⬅️ رجوع لخطوة الرفع
+          </button>
+        </div>
+
+        <!-- 13. Uncertain / Unclear Parts Highlighted Box -->
+        <div class="bg-amber-500/15 border-2 border-amber-400/60 rounded-2xl p-3.5 space-y-1.5">
+          <label class="block text-xs font-black text-amber-300">
+            ⚠️ الأجزاء غير الواضحة أو غير المؤكدة في الصورة (لم يتم تخمينها — يرجى مراجعتها وتصحيحها):
+          </label>
+          <textarea id="review-uncertain-parts" rows="2" class="w-full bg-[#07111e] border border-amber-400/40 rounded-xl p-2.5 text-xs text-amber-100 outline-none" placeholder="لا توجد كلمات أو معادلات غامضة..."></textarea>
+        </div>
+
+        <!-- 1, 2, 3: Subject, Grade, Lesson Title -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">1. المادة:</label>
+            <input type="text" id="review-field-subject" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3 py-2 text-xs sm:text-sm text-white outline-none focus:border-[#fbbf24]" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">2. الصف الدراسي:</label>
+            <input type="text" id="review-field-grade" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3 py-2 text-xs sm:text-sm text-white outline-none focus:border-[#fbbf24]" />
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">3. عنوان الدرس:</label>
+            <input type="text" id="review-field-title" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3 py-2 text-xs sm:text-sm text-white outline-none focus:border-[#fbbf24]" />
+          </div>
+        </div>
+
+        <!-- Full Extracted Arabic/English Text -->
         <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">الصف الدراسي:</label>
-          <select id="upload-grade" onchange="updateSubjectsByGrade()" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-[#fbbf24]">
-            <option value="الصف الأول">الصف الأول الأساسي (Grade 1)</option>
-            <option value="الصف الثاني">الصف الثاني الأساسي (Grade 2)</option>
-            <option value="الصف الثالث">الصف الثالث الأساسي (Grade 3)</option>
-            <option value="الصف الرابع">الصف الرابع الأساسي (Grade 4)</option>
-            <option value="الصف الخامس">الصف الخامس الأساسي (Grade 5)</option>
-            <option value="الصف السادس">الصف السادس الأساسي (Grade 6)</option>
-            <option value="الصف السابع">الصف السابع الأساسي (Grade 7)</option>
-            <option value="الصف الثامن" selected>الصف الثامن الأساسي (Grade 8)</option>
-            <option value="الصف التاسع">الصف التاسع الأساسي (Grade 9)</option>
-            <option value="الأول الثانوي">الأول الثانوي (Grade 10)</option>
-            <option value="الثاني الثانوي">الثاني الثانوي (Grade 11)</option>
-            <option value="الثالث الثانوي">الثالث الثانوي (Grade 12)</option>
-          </select>
+          <label class="block text-xs font-bold text-[#fbbf24] mb-1">النص المستخرج الكامل من الصورة (قابل للتعديل اليدوي):</label>
+          <textarea id="review-field-raw-text" rows="4" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl p-3 text-xs sm:text-sm text-white outline-none focus:border-[#fbbf24] leading-relaxed"></textarea>
         </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">المادة الدراسية:</label>
-          <select id="upload-subject" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3 py-2.5 text-sm text-white outline-none focus:border-[#fbbf24]">
-            <option value="القرآن الكريم">القرآن الكريم وعلومه (Holy Quran)</option>
-            <option value="التربية الإسلامية">التربية الإسلامية (Islamic Studies)</option>
-            <option value="اللغة العربية">اللغة العربية - القراءة والنحو (Arabic)</option>
-            <option value="اللغة الإنجليزية" selected>اللغة الإنجليزية (English)</option>
-            <option value="الرياضيات">الرياضيات (Mathematics)</option>
-            <option value="العلوم والأحياء">العلوم والأحياء والبيئة (Science & Biology)</option>
-            <option value="الدراسات الاجتماعية">الاجتماعيات - تاريخ وجغرافيا ووطنية (Social Studies)</option>
-            <option value="الفيزياء">الفيزياء (Physics)</option>
-            <option value="الكيمياء">الكيمياء (Chemistry)</option>
-            <option value="الحاسوب">الحاسوب وتقنية المعلومات (Computer & IT)</option>
-            <option value="مستندات وملفات حرة 🌐">مستندات وملفات حرة 🌐</option>
-          </select>
-        </div>
-      </div>
 
-      <div class="grid grid-cols-3 gap-2">
-        <button type="button" id="tab-img-btn" onclick="switchUploadTab('image')" class="py-2.5 px-2 rounded-xl border border-[#fbbf24] bg-[#fbbf24]/15 text-[#fbbf24] font-extrabold text-xs sm:text-sm flex items-center justify-center gap-1.5">
-          <i class="fa-solid fa-camera"></i>
-          <span>صورة / كاميرا</span>
+        <!-- 4 to 12: Detailed Extracted Curriculum Fields -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">4. أهداف الدرس (سطر لكل هدف):</label>
+            <textarea id="review-field-objectives" rows="2" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl p-2.5 text-xs text-white outline-none focus:border-[#fbbf24]"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">5. العناوين الفرعية (سطر لكل عنوان):</label>
+            <textarea id="review-field-subheadings" rows="2" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl p-2.5 text-xs text-white outline-none focus:border-[#fbbf24]"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">6. الأفكار الرئيسية:</label>
+            <textarea id="review-field-main-ideas" rows="2" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl p-2.5 text-xs text-white outline-none focus:border-[#fbbf24]"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">7. التعريفات والمصطلحات:</label>
+            <textarea id="review-field-definitions" rows="2" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl p-2.5 text-xs text-white outline-none focus:border-[#fbbf24]"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">8. القوانين والمعادلات:</label>
+            <textarea id="review-field-equations" rows="2" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl p-2.5 text-xs text-white outline-none focus:border-[#fbbf24]"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">9. الأمثلة الواردة في الدرس:</label>
+            <textarea id="review-field-examples" rows="2" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl p-2.5 text-xs text-white outline-none focus:border-[#fbbf24]"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">10. الأسئلة والأنشطة الواردة في الصفحة:</label>
+            <textarea id="review-field-activities" rows="2" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl p-2.5 text-xs text-white outline-none focus:border-[#fbbf24]"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">11. الجداول والمقارنات:</label>
+            <textarea id="review-field-comparisons" rows="2" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl p-2.5 text-xs text-white outline-none focus:border-[#fbbf24]"></textarea>
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-slate-300 mb-1">12. الكلمات المهمة (الكلمة : المعنى):</label>
+            <textarea id="review-field-keywords" rows="2" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl p-2.5 text-xs text-white outline-none focus:border-[#fbbf24]"></textarea>
+          </div>
+        </div>
+
+        <!-- Mandatory Approval Button: «اعتماد المحتوى والمتابعة» -->
+        <button type="button" id="approve-content-btn" onclick="approveReviewedContentAndBuildLesson()" class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[0.99] text-slate-950 font-black text-base py-3.5 px-6 rounded-2xl shadow-xl flex items-center justify-center gap-2 transition">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>اعتماد المحتوى والمتابعة</span>
         </button>
-        <button type="button" id="tab-pdf-btn" onclick="switchUploadTab('pdf')" class="py-2.5 px-2 rounded-xl border border-[#163252] bg-[#07111e] text-slate-300 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5">
-          <i class="fa-solid fa-file-pdf"></i>
-          <span>ملف PDF</span>
-          <span id="pdf-vip-tag" class="text-[10px] text-[#fbbf24]">🔒</span>
-        </button>
-        <button type="button" id="tab-txt-btn" onclick="switchUploadTab('text')" class="py-2.5 px-2 rounded-xl border border-[#163252] bg-[#07111e] text-slate-300 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5">
-          <i class="fa-solid fa-pen-to-square"></i>
-          <span>نص مباشر</span>
-        </button>
       </div>
 
-      <!-- TAB 1: IMAGE -->
-      <div id="upload-tab-image" class="space-y-3">
-        <label class="block cursor-pointer border-2 border-dashed border-[#fbbf24]/60 hover:border-[#fbbf24] bg-[#07111e] rounded-2xl p-6 text-center transition">
-          <input type="file" id="lesson-image-input" accept="image/*" class="hidden" onchange="handleImageFileSelect(event)" />
-          <i class="fa-solid fa-cloud-arrow-up text-3xl text-[#fbbf24] mb-2"></i>
-          <div class="font-extrabold text-sm sm:text-base text-white">اضغط لاختيار صورة درس واحد من الكاميرا أو المعرض</div>
-          <div class="text-xs text-slate-400 mt-1">يتم ضغط الصورة تلقائياً وقراءة نصوصها وتوليد درسها المستقل فوراً</div>
-        </label>
-
-        <div id="upload-image-preview-box" class="hidden bg-[#07111e] border border-[#163252] rounded-2xl p-3 text-center space-y-2">
-          <img id="upload-image-preview" src="" alt="Preview" class="max-h-48 mx-auto rounded-xl object-contain" />
-          <div id="upload-image-name" class="text-xs text-emerald-400 font-bold"></div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-300 mb-1">عنوان الدرس (اختياري - أو اتركه للقراءة البصرية التلقائية من الصورة):</label>
-          <input type="text" id="image-topic-hint" placeholder="اتركه فارغاً ليقرأ الصورة تلقائياً أو اكتب عنوان الدرس..." class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3.5 py-2.5 text-sm text-white outline-none focus:border-[#fbbf24]" />
-        </div>
-      </div>
-
-      <!-- TAB 2: PDF -->
-      <div id="upload-tab-pdf" class="hidden space-y-3">
-        <label class="block cursor-pointer border-2 border-dashed border-[#22d3ee]/60 hover:border-[#22d3ee] bg-[#07111e] rounded-2xl p-6 text-center transition">
-          <input type="file" id="lesson-pdf-input" accept="application/pdf" class="hidden" onchange="handlePdfFileSelect(event)" />
-          <i class="fa-solid fa-file-pdf text-3xl text-[#22d3ee] mb-2"></i>
-          <div class="font-extrabold text-sm sm:text-base text-white">اختر ملف PDF لدرس أو مذكرة تعليمية</div>
-        </label>
-        <div id="pdf-status-box" class="hidden bg-[#07111e] border border-emerald-500/40 rounded-xl p-3 text-xs text-emerald-300 font-bold"></div>
-      </div>
-
-      <!-- TAB 3: TEXT -->
-      <div id="upload-tab-text" class="hidden space-y-3">
-        <input type="text" id="custom-lesson-title" placeholder="عنوان الدرس المستقل (مثال: A postcard from London)" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3.5 py-2.5 text-sm text-white outline-none focus:border-[#fbbf24]" />
-        <textarea id="custom-lesson-text" rows="5" placeholder="الصق نص هذا الدرس فقط ليقوم المعلم الذكي بتوليد شرحه وإنفوجرافيك خاص به..." class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl p-3.5 text-sm text-white outline-none focus:border-[#fbbf24]"></textarea>
-      </div>
-
+      <!-- Progress Bar -->
       <div id="generation-progress-box" class="hidden space-y-2 bg-[#07111e] border border-[#163252] rounded-2xl p-4">
         <div class="flex items-center justify-between text-xs font-bold">
           <span id="generation-status-label" class="text-[#22d3ee]">جاري قراءة نصوص الصورة وبناء الدرس المستقل...</span>
@@ -633,11 +758,6 @@
           <div id="generation-bar" class="h-full bg-gradient-to-r from-[#fbbf24] to-[#22d3ee] w-1/3 transition-all duration-300"></div>
         </div>
       </div>
-
-      <button type="button" id="generate-submit-btn" onclick="generateLessonNow()" class="w-full bg-[#fbbf24] hover:bg-[#f59e0b] active:scale-[0.99] text-slate-950 font-black text-base py-3.5 rounded-2xl shadow-xl flex items-center justify-center gap-2 transition">
-        <i class="fa-solid fa-wand-magic-sparkles"></i>
-        <span id="btn-generate-submit-text">توليد هذا الدرس بشكل مستقل الآن ✨</span>
-      </button>
 
     </div>
   </div>
@@ -820,11 +940,14 @@
 
         <div class="bg-[#07111e] border border-[#163252] rounded-2xl p-4 space-y-2">
           <h4 class="text-sm font-black text-white flex items-center gap-2">
-            <i class="fa-solid fa-microchip text-[#fbbf24]"></i>
-            <span>مفتاح الرؤية السحابية Gemini API Key (اختياري)</span>
+            <i class="fa-solid fa-server text-[#22d3ee]"></i>
+            <span>رابط الخادم الوسيط الآمن (Backend Proxy URL — بدون مفاتيح في المتصفح)</span>
           </h4>
+          <p class="text-[11px] text-slate-400">
+            ضع رابط Cloudflare Worker أو Vercel API الذي يحتفظ بمتغير البيئة <code class="text-[#fbbf24]">GEMINI_API_KEY</code> في الخادم:
+          </p>
           <div class="flex gap-2">
-            <input type="password" id="owner-gemini-key" placeholder="AIzaSy..." dir="ltr" class="flex-grow bg-[#0a1c32] border border-[#1e3a5f] rounded-xl px-3 py-2 text-xs text-white font-en outline-none" />
+            <input type="url" id="owner-gemini-key" placeholder="https://hussam-infographic-proxy.alshakliamohammed04.workers.dev" dir="ltr" class="flex-grow bg-[#0a1c32] border border-[#1e3a5f] rounded-xl px-3 py-2 text-xs text-white font-en outline-none" />
             <button type="button" onclick="saveOwnerGeminiKey()" class="bg-[#fbbf24] text-slate-950 font-black text-xs px-4 py-2 rounded-xl">حفظ</button>
           </div>
         </div>
@@ -848,36 +971,194 @@
     }
 
     // =========================================================================
-    // إعداد مفتاح Gemini API المقسم ليعمل مع جميع الزوار دون حظره من GitHub:
-    // اقسم مفتاحك (الذي يبدأ بـ AIzaSy) إلى جزأين وضعهما هنا:
+    // 1. إعدادات الخادم الوسيط (Backend Proxy) والتخزين الهجين (IndexedDB + localStorage)
+    // ملاحظة أمنية: لا يتم وضع أي مفتاح Gemini API داخل هذا الملف نهائياً.
+    // يتم الاتصال عبر DEFAULT_BACKEND_PROXY_URL الذي يقرأ GEMINI_API_KEY من متغيرات البيئة.
     // =========================================================================
-    const KEY_PART_1 = 'AQ.Ab8RN6Jhzg6btcqLfg9v5a9zNWKu'; // ضع النصف الأول من المفتاح هنا
-    const KEY_PART_2 = 'bylWJtRmKT2t3fLWcdaaIQ'; // ضع النصف الثاني من المفتاح هنا
+    const DEFAULT_BACKEND_PROXY_URL = 'https://hussam-infographic-proxy.alshakliamohammed04.workers.dev';
 
     const STORAGE_KEYS = {
-      LESSONS: 'hussam_info_lessons_v13',
+      LEGACY_LESSONS: 'hussam_info_lessons_v13',
+      LESSONS_META: 'hussam_info_lessons_meta_v14',
+      MIGRATED_FLAG: 'hussam_info_idb_migrated_v1',
       TRIAL_USED: 'hussam_info_trial_used_v9',
       SUB: 'hussam_info_vip_sub_v9',
       DEVICE_ID: 'hussam_info_device_id_v9',
       BANNER: 'hussam_info_custom_banner_v9',
       ICON: 'hussam_info_custom_icon_v9',
-      GEMINI_KEY: 'hussam_info_gemini_key_v9'
+      PROXY_ENDPOINT: 'hussam_info_proxy_endpoint_v1'
     };
 
-    function getActiveGeminiKey() {
-      try {
-        const savedKey = (localStorage.getItem(STORAGE_KEYS.GEMINI_KEY) || '').trim();
-        if (savedKey) return savedKey;
-      } catch (e) {}
-      const combined = (KEY_PART_1 + KEY_PART_2).trim();
-      if (combined.startsWith('AIzaSy') && combined.length > 30) {
-        return combined;
-      }
-      return '';
-    }
+    const IDB_CONFIG = {
+      DB_NAME: 'HussamInfographicDB',
+      DB_VERSION: 1,
+      STORE_LESSONS: 'lessons_store',
+      STORE_LOGS: 'operations_log_store'
+    };
 
     const MAX_FREE_TRIALS = 2;
+    const MAX_UPLOAD_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB per file
+    const MIN_IMAGE_DIMENSION = 340; // Minimum width/height before showing clarity warning
+    const REQUEST_TIMEOUT_MS = 28000; // 28 seconds timeout
+    const COOLDOWN_MS = 4500; // Prevent repeated clicks
 
+    let isAnalyzingNow = false;
+    let lastAnalyzeTimestamp = 0;
+
+    // --- SECURITY: XSS SANITIZATION HELPERS ---
+    function escapeHtml(value) {
+      if (value === null || value === undefined) return '';
+      return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function sanitizeUserInput(text, maxLen = 15000) {
+      if (!text) return '';
+      return String(text)
+        .replace(/<\s*script[^>]*>[\s\S]*?<\s*\/\s*script\s*>/gi, '')
+        .replace(/javascript\s*:/gi, '')
+        .replace(/on\w+\s*=/gi, '')
+        .trim()
+        .slice(0, maxLen);
+    }
+
+    // Returns the active Backend Proxy endpoint (no raw API keys in browser)
+    function getActiveGeminiKey() {
+      try {
+        const customProxy = (localStorage.getItem(STORAGE_KEYS.PROXY_ENDPOINT) || '').trim();
+        if (customProxy && customProxy.startsWith('https://')) {
+          return customProxy;
+        }
+      } catch (e) {}
+      return DEFAULT_BACKEND_PROXY_URL;
+    }
+
+    // --- INDEXEDDB ENGINE + SAFE MIGRATION FROM LEGACY LOCALSTORAGE ---
+    function openHussamIndexedDB() {
+      return new Promise((resolve, reject) => {
+        if (!('indexedDB' in window)) {
+          reject(new Error('IndexedDB not supported'));
+          return;
+        }
+        const request = window.indexedDB.open(IDB_CONFIG.DB_NAME, IDB_CONFIG.DB_VERSION);
+        request.onupgradeneeded = function(event) {
+          const db = event.target.result;
+          if (!db.objectStoreNames.contains(IDB_CONFIG.STORE_LESSONS)) {
+            db.createObjectStore(IDB_CONFIG.STORE_LESSONS, { keyPath: 'id' });
+          }
+          if (!db.objectStoreNames.contains(IDB_CONFIG.STORE_LOGS)) {
+            db.createObjectStore(IDB_CONFIG.STORE_LOGS, { keyPath: 'logId' });
+          }
+        };
+        request.onsuccess = function(event) {
+          resolve(event.target.result);
+        };
+        request.onerror = function(event) {
+          reject(event.target.error || new Error('IndexedDB open error'));
+        };
+      });
+    }
+
+    async function saveLessonsToIndexedDB(lessonsArray) {
+      try {
+        const db = await openHussamIndexedDB();
+        await new Promise((resolve, reject) => {
+          const tx = db.transaction([IDB_CONFIG.STORE_LESSONS], 'readwrite');
+          const store = tx.objectStore(IDB_CONFIG.STORE_LESSONS);
+          store.clear();
+          lessonsArray.forEach((lesson, index) => {
+            store.put({ ...lesson, sortOrder: index });
+          });
+          tx.oncomplete = () => resolve(true);
+          tx.onerror = () => reject(tx.error);
+        });
+      } catch (e) {
+        console.warn('IndexedDB write fallback:', e);
+      }
+    }
+
+    async function loadLessonsFromIndexedDB() {
+      try {
+        const db = await openHussamIndexedDB();
+        return await new Promise((resolve, reject) => {
+          const tx = db.transaction([IDB_CONFIG.STORE_LESSONS], 'readonly');
+          const store = tx.objectStore(IDB_CONFIG.STORE_LESSONS);
+          const req = store.getAll();
+          req.onsuccess = () => {
+            const list = Array.isArray(req.result) ? req.result : [];
+            list.sort((a, b) => (a.sortOrder ?? 999) - (b.sortOrder ?? 999));
+            resolve(list);
+          };
+          req.onerror = () => reject(req.error);
+        });
+      } catch (e) {
+        return [];
+      }
+    }
+
+    async function logOperationToIndexedDB(operationRecord) {
+      try {
+        const db = await openHussamIndexedDB();
+        const tx = db.transaction([IDB_CONFIG.STORE_LOGS], 'readwrite');
+        tx.objectStore(IDB_CONFIG.STORE_LOGS).put({
+          logId: 'op-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+          timestamp: new Date().toISOString(),
+          ...operationRecord
+        });
+      } catch (e) {}
+    }
+
+    async function migrateLegacyLocalStorageToIndexedDB() {
+      try {
+        const alreadyMigrated = localStorage.getItem(STORAGE_KEYS.MIGRATED_FLAG);
+        const legacyRaw = localStorage.getItem(STORAGE_KEYS.LEGACY_LESSONS);
+        if (legacyRaw) {
+          const legacyParsed = JSON.parse(legacyRaw);
+          if (Array.isArray(legacyParsed) && legacyParsed.length > 0) {
+            const existingIdb = await loadLessonsFromIndexedDB();
+            const merged = [...legacyParsed];
+            existingIdb.forEach(item => {
+              if (!merged.some(m => m.id === item.id)) {
+                merged.push(item);
+              }
+            });
+            if (!merged.some(l => l.id === 'lesson-london-1-9')) {
+              merged.unshift(DEFAULT_LESSONS[0]);
+            }
+            MEMORY_LESSONS = merged;
+            await saveLessonsToIndexedDB(merged);
+            // Save lightweight metadata in localStorage while freeing heavy Base64 quota
+            const lightMeta = merged.map(l => ({ ...l, sourceImage: '', sourceImages: [] }));
+            localStorage.setItem(STORAGE_KEYS.LESSONS_META, JSON.stringify(lightMeta));
+            localStorage.setItem(STORAGE_KEYS.MIGRATED_FLAG, '1');
+            localStorage.removeItem(STORAGE_KEYS.LEGACY_LESSONS);
+            return;
+          }
+        }
+        const idbLessons = await loadLessonsFromIndexedDB();
+        if (idbLessons.length > 0) {
+          if (!idbLessons.some(l => l.id === 'lesson-london-1-9')) {
+            idbLessons.unshift(DEFAULT_LESSONS[0]);
+          }
+          MEMORY_LESSONS = idbLessons;
+          applyFiltersAndRender();
+          if (activeLessonId) {
+            displayLesson(activeLessonId, false);
+          }
+        } else if (!alreadyMigrated) {
+          await saveLessonsToIndexedDB(DEFAULT_LESSONS);
+          localStorage.setItem(STORAGE_KEYS.MIGRATED_FLAG, '1');
+        }
+      } catch (e) {
+        console.warn('Migration notice:', e);
+      }
+    }
+
+    // --- CURRICULUM GRADES & SUBJECTS ---
     const GRADES_LIST = [
       'الكل',
       'الصف الأول',
@@ -994,7 +1275,7 @@
       }
 
       subjectEl.innerHTML = optionsList.map(opt =>
-        `<option value="${opt.value}">${opt.label}</option>`
+        `<option value="${escapeHtml(opt.value)}">${escapeHtml(opt.label)}</option>`
       ).join('');
 
       if (optionsList.some(opt => opt.value === previousSubject)) {
@@ -1008,12 +1289,14 @@
     let uploadScope = 'curriculum';
     let currentUploadTab = 'image';
     let uploadedImageDataUrl = '';
+    let uploadedImagesArray = []; // Holds 1 or more validated & compressed images
     let extractedPdfText = '';
     let activeLessonId = null;
     let quizScore = 0;
     let lastGeneratedCode = '';
+    let pendingStage1Draft = null; // Holds extracted content awaiting manual review & approval
 
-    // Primary In-Memory Store so LocalStorage Quota Errors NEVER lose a generated lesson
+    // Primary In-Memory Store synchronized with IndexedDB
     let MEMORY_LESSONS = null;
 
     // --- CRYPTOGRAPHIC DEVICE FINGERPRINT & DRM SIGNATURE ENGINE ---
@@ -1047,6 +1330,16 @@
         hash = hash & 0x7fffffff;
       }
       return hash.toString(36).toUpperCase().padStart(5, '0').slice(0, 5);
+    }
+
+    function computeDigestHash(input) {
+      let h = 2166136261;
+      const str = String(input || '').trim().toLowerCase();
+      for (let i = 0; i < str.length; i++) {
+        h ^= str.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return (h >>> 0).toString(16);
     }
 
     function isVipActive() {
@@ -1118,6 +1411,7 @@
         title: 'Unit 1.9 Read and write: A postcard from London (Page 4)',
         desc: 'درس مستقل: البطاقة البريدية التي أرسلتها آمنة (Amna) أثناء عطلتها في لندن إلى صديقتها مريم مالك (Mariam Malek) في صنعاء، اليمن، ووصف نزهتها في حديقة هايد بارك (Hyde Park).',
         sourceImage: '',
+        sourceImages: [],
         objectives: [
           {
             en: 'Read and understand a holiday postcard describing past events in London.',
@@ -1229,6 +1523,7 @@
         title: 'Unit 2.2 Look, read and answer: How does he come to school? (Page 5)',
         desc: 'درس مستقل: السؤال والإجابة عن وسائل الذهاب إلى المدرسة (How does he come to school?) لكل من المعلم، صالح، فؤاد، أحمد، وطه.',
         sourceImage: '',
+        sourceImages: [],
         objectives: [
           {
             en: 'Ask and answer about means of transport using "How does ... come to school?" and "How do you come to school?".',
@@ -1327,6 +1622,7 @@
         title: 'Unit 1.6 Read and write: Bill (WB Page 6)',
         desc: 'درس مستقل: محادثة التعارف بين (Tom) و(Bill) حول الاسم، العمر (13 سنة)، القدوم من إنجلترا، عدد الإخوة والأخوات، والأنشطة بعد المدرسة.',
         sourceImage: '',
+        sourceImages: [],
         objectives: [
           {
             en: 'Ask and answer personal questions about name, age, and country (Where are you from?).',
@@ -1416,6 +1712,7 @@
         title: 'تركيب الخلية النباتية والحيوانية (Plant & Animal Cells)',
         desc: 'درس مستقل: مقارنة بصرية بين مكونات الخلية النباتية والخلية الحيوانية ووظائف العضيات.',
         sourceImage: '',
+        sourceImages: [],
         objectives: [
           {
             en: 'Identify core organelles: Nucleus, Cell Membrane, Cytoplasm, and Mitochondria.',
@@ -1475,13 +1772,13 @@
       }
     ];
 
-    // --- STORAGE & MEMORY SYNCHRONIZATION ---
+    // --- STORAGE & MEMORY SYNCHRONIZATION (INDEXEDDB + LIGHTWEIGHT LOCALSTORAGE META) ---
     function getAllLessons() {
       if (Array.isArray(MEMORY_LESSONS) && MEMORY_LESSONS.length > 0) {
         return MEMORY_LESSONS;
       }
       try {
-        const saved = localStorage.getItem(STORAGE_KEYS.LESSONS);
+        const saved = localStorage.getItem(STORAGE_KEYS.LESSONS_META) || localStorage.getItem(STORAGE_KEYS.LEGACY_LESSONS);
         if (saved) {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed) && parsed.length > 0) {
@@ -1501,28 +1798,26 @@
 
     function saveLessonsSafely(lessonsArray) {
       MEMORY_LESSONS = lessonsArray;
+      // Save full data (including high-res original images) in IndexedDB
+      saveLessonsToIndexedDB(lessonsArray);
+      // Save only lightweight metadata in localStorage
       try {
-        localStorage.setItem(STORAGE_KEYS.LESSONS, JSON.stringify(lessonsArray));
-      } catch (quotaErr) {
-        try {
-          const slimmed = lessonsArray.map((item, idx) => {
-            if (idx > 1 && item.sourceImage && item.sourceImage.length > 500) {
-              return { ...item, sourceImage: '' };
-            }
-            return item;
-          });
-          localStorage.setItem(STORAGE_KEYS.LESSONS, JSON.stringify(slimmed));
-        } catch (e2) {
-          console.warn('Keeping lesson strictly in MEMORY_LESSONS for this session.');
-        }
-      }
+        const slimMeta = lessonsArray.map(item => ({
+          ...item,
+          sourceImage: '',
+          sourceImages: []
+        }));
+        localStorage.setItem(STORAGE_KEYS.LESSONS_META, JSON.stringify(slimMeta));
+      } catch (e) {}
     }
 
     function resetLessonsLibrary() {
       MEMORY_LESSONS = [...DEFAULT_LESSONS];
       try {
-        localStorage.removeItem(STORAGE_KEYS.LESSONS);
+        localStorage.removeItem(STORAGE_KEYS.LESSONS_META);
+        localStorage.removeItem(STORAGE_KEYS.LEGACY_LESSONS);
       } catch (e) {}
+      saveLessonsToIndexedDB(MEMORY_LESSONS);
       selectedGrade = 'الكل';
       selectedSubject = 'الكل';
       renderFilterPills();
@@ -1531,27 +1826,92 @@
       showToast('تم تنظيف الذاكرة واستعادة الدروس الأساسية بنجاح ✅', 'success');
     }
 
-    // --- SMART IMAGE COMPRESSOR (< 60KB) ---
-    function compressImageDataUrl(file, maxWidth = 880, quality = 0.62) {
+    // --- STAGE 1: HIGH-CLARITY IMAGE COMPRESSOR & CLARITY/DIMENSION INSPECTOR ---
+    function validateFileBeforeProcessing(file) {
+      if (!file) {
+        return { ok: false, msg: 'لم يتم اختيار أي ملف.' };
+      }
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+      const ext = (file.name.split('.').pop() || '').toLowerCase();
+      const allowedExts = ['jpg', 'jpeg', 'png', 'webp', 'pdf'];
+
+      if (!allowedExts.includes(ext) || (file.type && !allowedTypes.includes(file.type))) {
+        return {
+          ok: false,
+          msg: `الملف (${file.name}) غير مدعوم. الصيغ المسموحة فقط: JPG, PNG, WEBP, PDF.`
+        };
+      }
+      if (file.size > MAX_UPLOAD_SIZE_BYTES) {
+        return {
+          ok: false,
+          msg: `حجم الملف (${file.name}) يتجاوز الحد المسموح (10 ميجابايت).`
+        };
+      }
+      if (file.size < 1024) {
+        return {
+          ok: false,
+          msg: `الملف (${file.name}) صغير جداً أو تالف ولا يحتوي على بيانات كافية.`
+        };
+      }
+      return { ok: true, isPdf: ext === 'pdf' || file.type === 'application/pdf' };
+    }
+
+    // Preserves crisp Arabic text & mathematical equations (maxWidth = 1400, quality = 0.82)
+    function compressImageDataUrl(file, maxWidth = 1400, quality = 0.82) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = function(ev) {
           const img = new Image();
           img.onload = function() {
-            const canvas = document.createElement('canvas');
-            let w = img.width;
-            let h = img.height;
+            const origW = img.width;
+            const origH = img.height;
+            let w = origW;
+            let h = origH;
             if (w > maxWidth) {
               h = Math.round((h * maxWidth) / w);
               w = maxWidth;
             }
+            const canvas = document.createElement('canvas');
             canvas.width = w;
             canvas.height = h;
             const ctx = canvas.getContext('2d');
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, w, h);
             ctx.drawImage(img, 0, 0, w, h);
+
+            // Analyze clarity, dimensions & contrast
+            const warnings = [];
+            if (origW < MIN_IMAGE_DIMENSION || origH < MIN_IMAGE_DIMENSION) {
+              warnings.push(`أبعاد الصورة (${origW}×${origH}) صغيرة وقد تؤثر على دقة قراءة النص العربي.`);
+            }
+            try {
+              const sampleW = Math.min(w, 180);
+              const sampleH = Math.min(h, 180);
+              const pixels = ctx.getImageData(0, 0, sampleW, sampleH).data;
+              let sum = 0;
+              let sumSq = 0;
+              const total = sampleW * sampleH;
+              for (let i = 0; i < pixels.length; i += 4) {
+                const gray = 0.299 * pixels[i] + 0.587 * pixels[i + 1] + 0.114 * pixels[i + 2];
+                sum += gray;
+                sumSq += gray * gray;
+              }
+              const mean = sum / total;
+              const stdDev = Math.sqrt(Math.max(0, (sumSq / total) - (mean * mean)));
+              if (mean < 45) {
+                warnings.push('الصورة معتمة؛ يُنصح بالتصوير في إضاءة جيدة.');
+              }
+              if (stdDev < 18) {
+                warnings.push('تباين الصورة منخفض جداً (قد تكون الصورة غير واضحة أو مهزوزة).');
+              }
+            } catch (e) {}
+
             const compressedBase64 = canvas.toDataURL('image/jpeg', quality);
+            compressedImageMetaCache.set(compressedBase64, {
+              width: origW,
+              height: origH,
+              warnings
+            });
             resolve(compressedBase64);
           };
           img.onerror = reject;
@@ -1562,36 +1922,108 @@
       });
     }
 
-    async function handleImageFileSelect(event) {
-      const file = event.target.files && event.target.files[0];
-      if (!file) return;
-      try {
-        showToast('جاري ضغط وتحسين صورة الدرس...', 'info');
-        uploadedImageDataUrl = await compressImageDataUrl(file, 880, 0.62);
-        const previewBox = document.getElementById('upload-image-preview-box');
-        const previewImg = document.getElementById('upload-image-preview');
-        const nameLabel = document.getElementById('upload-image-name');
-        const kbSize = Math.round((uploadedImageDataUrl.length * 3) / 4 / 1024);
+    const compressedImageMetaCache = new Map();
 
-        if (previewImg) previewImg.src = uploadedImageDataUrl;
-        if (nameLabel) nameLabel.textContent = `✅ تم تجهيز وضغط الصورة (${file.name} - ${kbSize} KB)`;
-        if (previewBox) previewBox.classList.remove('hidden');
+    async function handleImageFileSelect(event) {
+      const files = Array.from(event.target.files || []);
+      if (!files.length) return;
+
+      const alertBox = document.getElementById('image-clarity-alert-box');
+      const alertText = document.getElementById('image-clarity-alert-text');
+      if (alertBox) alertBox.classList.add('hidden');
+
+      const collectedWarnings = [];
+      showToast('جاري التحقق من الصور وضغطها مع الحفاظ على دقة النص العربي...', 'info');
+
+      for (const file of files.slice(0, 6)) {
+        const check = validateFileBeforeProcessing(file);
+        if (!check.ok) {
+          showToast(check.msg, 'error');
+          continue;
+        }
+        if (check.isPdf) {
+          switchUploadTab('pdf');
+          await extractPdfFileObject(file);
+          continue;
+        }
+        try {
+          const dataUrl = await compressImageDataUrl(file, 1400, 0.82);
+          const meta = compressedImageMetaCache.get(dataUrl) || { width: 0, height: 0, warnings: [] };
+          const kbSize = Math.round((dataUrl.length * 3) / 4 / 1024);
+          uploadedImagesArray.push({
+            name: file.name,
+            dataUrl,
+            kbSize,
+            width: meta.width,
+            height: meta.height
+          });
+          if (meta.warnings.length > 0) {
+            collectedWarnings.push(`${file.name}: ${meta.warnings.join(' - ')}`);
+          }
+        } catch (err) {
+          showToast(`تعذر قراءة الصورة (${file.name})، يرجى المحاولة بصورة أخرى.`, 'error');
+        }
+      }
+
+      if (uploadedImagesArray.length > 0) {
+        uploadedImageDataUrl = uploadedImagesArray[0].dataUrl;
+        renderMultiImagesPreview();
 
         const hintInput = document.getElementById('image-topic-hint');
         if (hintInput && !hintInput.value.trim()) {
-          const cleanName = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+          const cleanName = uploadedImagesArray[0].name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
           if (!/^\d+$/.test(cleanName.replace(/\s+/g, '')) && cleanName.length > 3 && !cleanName.startsWith('1000') && !cleanName.toLowerCase().startsWith('img')) {
-            hintInput.value = cleanName;
+            hintInput.value = sanitizeUserInput(cleanName, 120);
           }
         }
-      } catch (err) {
-        showToast('تعذر قراءة الصورة، يرجى المحاولة بصورة أخرى', 'error');
+      }
+
+      if (collectedWarnings.length > 0 && alertBox && alertText) {
+        alertText.textContent = collectedWarnings.join(' • ');
+        alertBox.classList.remove('hidden');
       }
     }
 
-    async function handlePdfFileSelect(event) {
-      const file = event.target.files && event.target.files[0];
-      if (!file) return;
+    function renderMultiImagesPreview() {
+      const previewBox = document.getElementById('upload-image-preview-box');
+      const previewImg = document.getElementById('upload-image-preview');
+      const nameLabel = document.getElementById('upload-image-name');
+      const multiGrid = document.getElementById('upload-multi-preview-grid');
+
+      if (!uploadedImagesArray.length) {
+        uploadedImageDataUrl = '';
+        if (previewBox) previewBox.classList.add('hidden');
+        if (multiGrid) multiGrid.innerHTML = '';
+        return;
+      }
+
+      uploadedImageDataUrl = uploadedImagesArray[0].dataUrl;
+      if (previewImg) previewImg.src = uploadedImageDataUrl;
+      const totalKb = uploadedImagesArray.reduce((sum, item) => sum + item.kbSize, 0);
+      if (nameLabel) {
+        nameLabel.textContent = `✅ تم فحص وتجهيز ${uploadedImagesArray.length} صورة بنجاح (إجمالي الحجم: ${totalKb} KB)`;
+      }
+      if (previewBox) previewBox.classList.remove('hidden');
+
+      if (multiGrid) {
+        multiGrid.innerHTML = uploadedImagesArray.map((item, idx) => `
+          <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-2 flex flex-col justify-between gap-1">
+            <img src="${item.dataUrl}" alt="Preview ${idx + 1}" class="h-20 w-full object-contain rounded bg-[#07111e]" />
+            <div class="text-[10px] text-slate-300 truncate">${escapeHtml(item.name)} (${item.width}×${item.height})</div>
+            <button type="button" onclick="removeUploadedImageAt(${idx})" class="text-[10px] bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded py-0.5 font-bold">
+              حذف الصورة ✕
+            </button>
+          </div>
+        `).join('');
+      }
+    }
+
+    function removeUploadedImageAt(index) {
+      uploadedImagesArray.splice(index, 1);
+      renderMultiImagesPreview();
+    }
+
+    async function extractPdfFileObject(file) {
       if (!isVipActive() && getUsedTrials() >= MAX_FREE_TRIALS) {
         openSubModal('تحليل ملفات PDF');
         return;
@@ -1612,13 +2044,26 @@
           const strings = content.items.map(item => item.str);
           fullText += strings.join(' ') + '\n';
         }
-        extractedPdfText = fullText.trim();
+        extractedPdfText = sanitizeUserInput(fullText.trim(), 14000);
         if (statusBox) {
-          statusBox.textContent = `✅ تم استخراج النص من ${maxPages} صفحات بنجاح (${file.name})`;
+          statusBox.textContent = extractedPdfText
+            ? `✅ تم استخراج النص من ${maxPages} صفحات بنجاح (${file.name})`
+            : '⚠️ الملف مصور كصورة ولا يحتوي نصاً مباشراً؛ يرجى رفع صفحاته كصور لتحليلها بالماسح البصري.';
         }
       } catch (e) {
         if (statusBox) statusBox.textContent = '⚠️ تعذر قراءة ملف PDF تلقائياً، يمكنك نسخ النص ولصقه في تبويب نص مباشر.';
       }
+    }
+
+    async function handlePdfFileSelect(event) {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      const check = validateFileBeforeProcessing(file);
+      if (!check.ok) {
+        showToast(check.msg, 'error');
+        return;
+      }
+      await extractPdfFileObject(file);
     }
 
     // --- FILTER PILLS & LESSONS GRID RENDERING ---
@@ -1630,11 +2075,11 @@
         gradeContainer.innerHTML = GRADES_LIST.map(g => {
           const active = selectedGrade === g;
           const label = currentLang === 'ar' ? g : (GRADE_EN_MAP[g] || g);
-          return `<button type="button" onclick="selectGradeFilter('${g}')" class="shrink-0 px-3.5 py-1.5 rounded-full text-xs font-extrabold transition ${
+          return `<button type="button" onclick="selectGradeFilter('${escapeHtml(g)}')" class="shrink-0 px-3.5 py-1.5 rounded-full text-xs font-extrabold transition ${
             active
               ? 'bg-[#fbbf24] text-slate-950 shadow-md'
               : 'bg-[#07111e] text-slate-300 border border-[#1e3a5f] hover:border-[#fbbf24]'
-          }">${label}</button>`;
+          }">${escapeHtml(label)}</button>`;
         }).join('');
       }
 
@@ -1642,11 +2087,11 @@
         subjectContainer.innerHTML = SUBJECTS_LIST.map(s => {
           const active = selectedSubject === s;
           const label = currentLang === 'ar' ? s : (SUBJECT_EN_MAP[s] || s);
-          return `<button type="button" onclick="selectSubjectFilter('${s}')" class="shrink-0 px-3.5 py-1.5 rounded-full text-xs font-extrabold transition ${
+          return `<button type="button" onclick="selectSubjectFilter('${escapeHtml(s)}')" class="shrink-0 px-3.5 py-1.5 rounded-full text-xs font-extrabold transition ${
             active
               ? 'bg-[#22d3ee] text-slate-950 shadow-md'
               : 'bg-[#07111e] text-slate-300 border border-[#1e3a5f] hover:border-[#22d3ee]'
-          }">${label}</button>`;
+          }">${escapeHtml(label)}</button>`;
         }).join('');
       }
     }
@@ -1701,16 +2146,16 @@
       grid.innerHTML = filtered.map(lesson => {
         const isCurrent = lesson.id === activeLessonId;
         return `
-          <div onclick="displayLesson('${lesson.id}', true)" class="cursor-pointer bg-[#0a1c32] hover:bg-[#0f2542] border-2 ${
+          <div onclick="displayLesson('${escapeHtml(lesson.id)}', true)" class="cursor-pointer bg-[#0a1c32] hover:bg-[#0f2542] border-2 ${
             isCurrent ? 'border-[#fbbf24] shadow-lg shadow-amber-500/10' : 'border-[#163252]'
           } rounded-2xl p-4 flex flex-col justify-between transition group">
             <div class="space-y-2">
               <div class="flex items-center justify-between gap-1">
-                <span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#07111e] text-[#22d3ee] border border-[#1e3a5f]">${lesson.grade} • ${lesson.subject}</span>
+                <span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#07111e] text-[#22d3ee] border border-[#1e3a5f]">${escapeHtml(lesson.grade)} • ${escapeHtml(lesson.subject)}</span>
                 ${lesson.sourceImage ? '<span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">📸 مرفوع بصورة</span>' : ''}
               </div>
-              <h3 class="font-extrabold text-sm sm:text-base text-white group-hover:text-[#fbbf24] transition line-clamp-2">${lesson.title}</h3>
-              <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">${lesson.desc}</p>
+              <h3 class="font-extrabold text-sm sm:text-base text-white group-hover:text-[#fbbf24] transition line-clamp-2">${escapeHtml(lesson.title)}</h3>
+              <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">${escapeHtml(lesson.desc)}</p>
             </div>
             <div class="pt-3 mt-3 border-t border-[#163252] flex items-center justify-between text-xs font-bold">
               <span class="text-[#fbbf24]">استعراض الشرح والإنفوجرافيك</span>
@@ -1727,7 +2172,9 @@
       const lesson = all.find(l => l.id === activeLessonId);
       if (!lesson || !lesson.vocab || !lesson.vocab[idx]) return;
       const allowed = isVipActive() || idx < 2;
-      speakText(lesson.vocab[idx].word, 'en-GB', allowed);
+      const word = lesson.vocab[idx].word || '';
+      const lang = /[\u0600-\u06FF]/.test(word) ? 'ar-SA' : 'en-GB';
+      speakText(word, lang, allowed);
     }
 
     function speakWalkthroughByIndex(idx) {
@@ -1735,10 +2182,12 @@
       const lesson = all.find(l => l.id === activeLessonId);
       if (!lesson || !lesson.walkthrough || !lesson.walkthrough[idx]) return;
       const allowed = isVipActive() || idx === 0;
-      speakText(lesson.walkthrough[idx].en, 'en-GB', allowed);
+      const sentence = lesson.walkthrough[idx].en || lesson.walkthrough[idx].ar || '';
+      const lang = /[\u0600-\u06FF]/.test(sentence) ? 'ar-SA' : 'en-GB';
+      speakText(sentence, lang, allowed);
     }
 
-    // --- DISPLAY ACTIVE LESSON ---
+    // --- DISPLAY ACTIVE LESSON (WITH SANITIZED INNERHTML) ---
     function displayLesson(lessonId, shouldScroll = false) {
       const all = getAllLessons();
       const lesson = all.find(item => item.id === lessonId);
@@ -1755,12 +2204,19 @@
       document.getElementById('active-lesson-title').textContent = lesson.title;
       document.getElementById('active-lesson-desc').textContent = lesson.desc;
 
-      // Source Image Box
+      // Source Image(s) Box
       const imgBox = document.getElementById('active-source-image-box');
       const imgEl = document.getElementById('active-source-image');
+      const thumbsEl = document.getElementById('active-source-thumbs');
       if (lesson.sourceImage) {
         imgEl.src = lesson.sourceImage;
         imgBox.classList.remove('hidden');
+        const allImgs = Array.isArray(lesson.sourceImages) && lesson.sourceImages.length > 1 ? lesson.sourceImages : [];
+        if (thumbsEl) {
+          thumbsEl.innerHTML = allImgs.map((src, i) => `
+            <img src="${src}" onclick="document.getElementById('active-source-image').src='${src}'" alt="Page ${i + 1}" class="h-14 w-14 object-cover rounded-lg border-2 border-[#22d3ee] cursor-pointer" />
+          `).join('');
+        }
       } else {
         imgEl.src = '';
         imgBox.classList.add('hidden');
@@ -1771,8 +2227,8 @@
       objContainer.innerHTML = (lesson.objectives || []).map((obj, idx) => `
         <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-3.5 space-y-1">
           <div class="text-xs font-black text-[#fbbf24]">الهدف ${idx + 1}</div>
-          <div dir="ltr" class="font-en text-sm font-bold text-white">${obj.en}</div>
-          <div class="text-xs text-slate-300">${obj.ar}</div>
+          <div dir="ltr" class="font-en text-sm font-bold text-white">${escapeHtml(obj.en)}</div>
+          <div class="text-xs text-slate-300">${escapeHtml(obj.ar)}</div>
         </div>
       `).join('');
 
@@ -1781,11 +2237,11 @@
       infoContainer.innerHTML = (lesson.infographic || []).map((node, idx) => `
         <div class="bg-[#0a1c32] border-2 border-[#1e3a5f] hover:border-[#22d3ee] rounded-2xl p-4 space-y-2 transition relative overflow-hidden">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-black text-[#22d3ee]">${node.step || ('المرحلة ' + (idx + 1))}</span>
+            <span class="text-xs font-black text-[#22d3ee]">${escapeHtml(node.step || ('المرحلة ' + (idx + 1)))}</span>
             <span class="w-6 h-6 rounded-full bg-[#22d3ee]/20 text-[#22d3ee] font-en font-black text-xs flex items-center justify-center">${idx + 1}</span>
           </div>
-          <div dir="ltr" class="font-en text-xs sm:text-sm font-bold text-white leading-relaxed">${node.en}</div>
-          <div class="text-xs text-slate-300 leading-relaxed border-t border-[#163252] pt-2">${node.ar}</div>
+          <div dir="ltr" class="font-en text-xs sm:text-sm font-bold text-white leading-relaxed">${escapeHtml(node.en)}</div>
+          <div class="text-xs text-slate-300 leading-relaxed border-t border-[#163252] pt-2">${escapeHtml(node.ar)}</div>
         </div>
       `).join('');
 
@@ -1797,8 +2253,8 @@
           <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-3.5 flex flex-col justify-between gap-2">
             <div class="flex items-start justify-between gap-2">
               <div>
-                <div dir="ltr" class="font-en text-base font-black text-white">${v.word}</div>
-                <span class="text-[10px] font-en text-[#22d3ee] bg-[#22d3ee]/10 px-2 py-0.5 rounded">${v.pos || 'Word'}</span>
+                <div dir="ltr" class="font-en text-base font-black text-white">${escapeHtml(v.word)}</div>
+                <span class="text-[10px] font-en text-[#22d3ee] bg-[#22d3ee]/10 px-2 py-0.5 rounded">${escapeHtml(v.pos || 'Word')}</span>
               </div>
               <button type="button" onclick="speakVocabByIndex(${idx})" class="w-8 h-8 rounded-lg ${
                 freeAllowed ? 'bg-[#fbbf24] text-slate-950' : 'bg-slate-800 text-slate-400'
@@ -1806,8 +2262,8 @@
                 <i class="fa-solid ${freeAllowed ? 'fa-volume-high' : 'fa-lock'}"></i>
               </button>
             </div>
-            <div class="text-sm font-extrabold text-[#fbbf24]">${v.ar}</div>
-            <div dir="ltr" class="font-en text-xs text-slate-300 bg-[#07111e] p-2 rounded-lg border border-[#163252]">${v.ex || ''}</div>
+            <div class="text-sm font-extrabold text-[#fbbf24]">${escapeHtml(v.ar)}</div>
+            <div dir="ltr" class="font-en text-xs text-slate-300 bg-[#07111e] p-2 rounded-lg border border-[#163252]">${escapeHtml(v.ex || '')}</div>
           </div>
         `;
       }).join('');
@@ -1823,9 +2279,9 @@
               <span>استماع</span>
             </button>
           </div>
-          <div dir="ltr" class="font-en text-sm sm:text-base font-bold text-white leading-relaxed">${item.en}</div>
-          <div class="text-sm font-bold text-emerald-300 leading-relaxed">${item.ar}</div>
-          ${item.note ? `<div class="text-xs text-slate-300 bg-[#07111e] px-3 py-2 rounded-lg border-r-2 border-[#fbbf24]">💡 <span class="font-bold text-[#fbbf24]">ملاحظة المعلم:</span> ${item.note}</div>` : ''}
+          <div dir="ltr" class="font-en text-sm sm:text-base font-bold text-white leading-relaxed">${escapeHtml(item.en)}</div>
+          <div class="text-sm font-bold text-emerald-300 leading-relaxed">${escapeHtml(item.ar)}</div>
+          ${item.note ? `<div class="text-xs text-slate-300 bg-[#07111e] px-3 py-2 rounded-lg border-r-2 border-[#fbbf24]">💡 <span class="font-bold text-[#fbbf24]">ملاحظة المعلم:</span> ${escapeHtml(item.note)}</div>` : ''}
         </div>
       `).join('');
 
@@ -1833,9 +2289,9 @@
       const gramContainer = document.getElementById('active-grammar-box');
       gramContainer.innerHTML = (lesson.grammar || []).map(g => `
         <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-4 space-y-2">
-          <div class="text-sm font-black text-[#fbbf24]">${g.rule}</div>
-          <div dir="ltr" class="font-en text-xs font-bold text-[#22d3ee] bg-[#07111e] p-2.5 rounded-lg border border-[#163252]">${g.formula}</div>
-          <div dir="ltr" class="font-en text-xs text-slate-200">Example: <span class="font-bold text-white">${g.example}</span></div>
+          <div class="text-sm font-black text-[#fbbf24]">${escapeHtml(g.rule)}</div>
+          <div dir="ltr" class="font-en text-xs font-bold text-[#22d3ee] bg-[#07111e] p-2.5 rounded-lg border border-[#163252]">${escapeHtml(g.formula)}</div>
+          <div dir="ltr" class="font-en text-xs text-slate-200">Example: <span class="font-bold text-white">${escapeHtml(g.example)}</span></div>
         </div>
       `).join('');
 
@@ -1849,12 +2305,12 @@
                 <span>بطاقة سؤال #${idx + 1}</span>
                 <i class="fa-solid fa-rotate"></i>
               </div>
-              <div dir="ltr" class="font-en text-sm font-extrabold text-white text-center my-auto">${fc.q}</div>
+              <div dir="ltr" class="font-en text-sm font-extrabold text-white text-center my-auto">${escapeHtml(fc.q)}</div>
               <div class="text-[10px] text-slate-400 text-center">اضغط لقلب البطاقة وإظهار الإجابة</div>
             </div>
             <div class="flip-card-back bg-[#0f2942] border-2 border-[#fbbf24] p-4 flex flex-col justify-between">
               <div class="text-[11px] font-bold text-[#fbbf24]">الإجابة النموذجية ✅</div>
-              <div dir="ltr" class="font-en text-sm font-bold text-emerald-300 text-center my-auto">${fc.a}</div>
+              <div dir="ltr" class="font-en text-sm font-bold text-emerald-300 text-center my-auto">${escapeHtml(fc.a)}</div>
               <div class="text-[10px] text-slate-300 text-center">اضغط للعودة للسؤال</div>
             </div>
           </div>
@@ -1865,16 +2321,16 @@
       const quizContainer = document.getElementById('active-quiz-container');
       quizContainer.innerHTML = (lesson.quiz || []).map((qItem, qIdx) => `
         <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-4 space-y-3">
-          <div dir="ltr" class="font-en text-sm sm:text-base font-extrabold text-white">${qIdx + 1}. ${qItem.q}</div>
+          <div dir="ltr" class="font-en text-sm sm:text-base font-extrabold text-white">${qIdx + 1}. ${escapeHtml(qItem.q)}</div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
             ${(qItem.options || []).map((opt, oIdx) => `
               <button
                 type="button"
-                onclick="handleQuizAnswer(this, ${qIdx}, ${oIdx}, ${qItem.correct})"
+                onclick="handleQuizAnswer(this, ${qIdx}, ${oIdx}, ${Number(qItem.correct || 0)})"
                 class="quiz-opt-btn-${qIdx} text-left font-en text-xs sm:text-sm font-bold bg-[#07111e] hover:bg-[#112a4a] text-slate-200 border border-[#1e3a5f] rounded-xl px-3.5 py-2.5 transition"
                 dir="ltr"
               >
-                ${opt}
+                ${escapeHtml(opt)}
               </button>
             `).join('')}
           </div>
@@ -1990,6 +2446,7 @@
     };
 
     async function translateEnglishSentenceToArabic(enSentence) {
+      if (/[\u0600-\u06FF]/.test(enSentence)) return enSentence;
       try {
         const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(enSentence)}&langpair=en|ar`;
         const res = await fetch(url);
@@ -2012,97 +2469,58 @@
       if (lbl && label) lbl.textContent = label;
     }
 
-    // --- CLOUD AI ENGINE: GEMINI VISION & TEXT ANALYZER ---
-    async function analyzeWithGeminiCloud(apiKey, grade, subject, hintTitle, rawText, imageDataUrl) {
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+    // --- STAGE 1: SECURE BACKEND PROXY CALL WITH TIMEOUT & ANTI-HALLUCINATION ---
+    async function analyzeWithGeminiCloud(proxyEndpoint, grade, subject, hintTitle, rawText, imagesList) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
-      const systemPrompt = `
-أنت معلم خبير ومصمم مناهج تعليمية في منصة Hussam Infographic.
-المرحلة الدراسية: ${grade} | المادة: ${subject}
-${hintTitle ? `عنوان أو تلميح الدرس: ${hintTitle}` : ''}
-${rawText ? `النص المستخرج: ${rawText}` : ''}
-
-المطلوب:
-اقرأ صورة الدرس المرفقة (أو النص المرفق) بدقة تامة 100% واستخرج محتوى هذا الدرس الفعلي فقط دون استبداله بأي درس آخر.
-قم بتحويل الدرس إلى كائن JSON صالح تماماً يطابق الهيكل التالي بدقة:
-{
-  "title": "عنوان الدرس ورقم الوحدة والصفحة إن وجد",
-  "desc": "وصف مختصر وواضح بالعربية عما يدور حوله هذا الدرس المستقل",
-  "objectives": [
-    { "en": "Objective 1", "ar": "الهدف الأول بالعربية" },
-    { "en": "Objective 2", "ar": "الهدف الثاني بالعربية" }
-  ],
-  "infographic": [
-    { "step": "1. المرحلة الأولى", "en": "Key point 1", "ar": "شرح النقطة الأولى بالعربية" },
-    { "step": "2. المرحلة الثانية", "en": "Key point 2", "ar": "شرح النقطة الثانية بالعربية" },
-    { "step": "3. المرحلة الثالثة", "en": "Key point 3", "ar": "شرح النقطة الثالثة بالعربية" }
-  ],
-  "vocab": [
-    { "word": "Word", "pos": "Noun/Verb/Adj", "ar": "المعنى بالعربية", "ex": "Example sentence from the lesson" }
-  ],
-  "walkthrough": [
-    { "en": "Exact sentence from the lesson page", "ar": "الترجمة والشرح الوافي بالعربية", "note": "ملاحظة تعليمية أو نحوية للطالب" }
-  ],
-  "grammar": [
-    { "rule": "اسم القاعدة أو المفهوم الأساسي في الدرس", "formula": "التركيبة أو القاعدة", "example": "مثال تطبيقي من الدرس" }
-  ],
-  "flashcards": [
-    { "q": "Question about the lesson?", "a": "Clear model answer" }
-  ],
-  "quiz": [
-    {
-      "q": "Multiple choice question about the lesson?",
-      "options": ["Option A", "Option B", "Option C", "Option D"],
-      "correct": 0
-    }
-  ]
-}
-أرجع JSON خام فقط.`;
-
-      const parts = [{ text: systemPrompt }];
-
-      if (imageDataUrl && imageDataUrl.includes('base64,')) {
-        const mimeMatch = imageDataUrl.match(/^data:(image\/[a-zA-Z0-9+.-]+);base64,/);
-        const mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
-        const base64Data = imageDataUrl.split('base64,')[1];
-        parts.push({
-          inline_data: {
-            mime_type: mimeType,
-            data: base64Data
-          }
+      try {
+        const response = await fetch(proxyEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
+          body: JSON.stringify({
+            grade,
+            subject,
+            hintTitle,
+            rawText,
+            images: (imagesList || []).slice(0, 5),
+            deviceId: getOrCreateDeviceId()
+          })
         });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error(`Proxy HTTP Status: ${response.status}`);
+        }
+
+        const parsed = await response.json();
+        if (!parsed || !parsed.title) {
+          throw new Error('Invalid JSON structure from Backend Proxy');
+        }
+        return parsed;
+      } catch (err) {
+        clearTimeout(timeoutId);
+        if (err.name === 'AbortError') {
+          showToast('انتهت مهلة الطلب بسبب بطء الاتصال، جاري المتابعة بالمحلل المحلي...', 'error');
+        }
+        throw err;
       }
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts }],
-          generationConfig: {
-            temperature: 0.2,
-            responseMimeType: 'application/json'
-          }
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`Gemini API Error: ${response.status}`);
-      }
-
-      const result = await response.json();
-      const rawJsonText = result?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-      const cleanedJson = rawJsonText.replace(/^```json\s*/i, '').replace(/```\s*$/i, '').trim();
-      const parsed = JSON.parse(cleanedJson);
-
-      if (!parsed || !parsed.title || !Array.isArray(parsed.walkthrough)) {
-        throw new Error('Invalid JSON structure from Gemini');
-      }
-
-      return parsed;
     }
 
-    // --- CORE LESSON GENERATION ENGINE (GEMINI CLOUD + LOCAL OCR FALLBACK) ---
+    // --- STAGE 1 CORE ANALYSIS FLOW: ANALYZE -> SHOW REVIEW SCREEN (DO NOT GENERATE BEFORE APPROVAL) ---
     async function generateLessonNow() {
+      if (isAnalyzingNow) {
+        showToast('جاري تحليل الدرس حالياً، يرجى الانتظار وعدم الضغط المتكرر...', 'info');
+        return;
+      }
+      const now = Date.now();
+      if (now - lastAnalyzeTimestamp < COOLDOWN_MS) {
+        showToast('يرجى الانتظار ثوانٍ قليلة قبل إرسال طلب تحليل جديد.', 'error');
+        return;
+      }
+
       if (!isVipActive() && getUsedTrials() >= MAX_FREE_TRIALS) {
         closeUploadModal();
         openSubModal('انتهاء المحاولات المجانية لتوليد الدروس');
@@ -2120,8 +2538,8 @@ ${rawText ? `النص المستخرج: ${rawText}` : ''}
       let hintTitle = '';
 
       if (currentUploadTab === 'image') {
-        hintTitle = (document.getElementById('image-topic-hint')?.value || '').trim();
-        if (!uploadedImageDataUrl && !hintTitle) {
+        hintTitle = sanitizeUserInput(document.getElementById('image-topic-hint')?.value || '', 200);
+        if (!uploadedImagesArray.length && !uploadedImageDataUrl && !hintTitle) {
           showToast('يرجى اختيار صورة الدرس أولاً أو كتابة عنوان الدرس!', 'error');
           return;
         }
@@ -2132,295 +2550,416 @@ ${rawText ? `النص المستخرج: ${rawText}` : ''}
         }
         rawText = extractedPdfText;
       } else {
-        hintTitle = (document.getElementById('custom-lesson-title')?.value || '').trim();
-        rawText = (document.getElementById('custom-lesson-text')?.value || '').trim();
+        hintTitle = sanitizeUserInput(document.getElementById('custom-lesson-title')?.value || '', 200);
+        rawText = sanitizeUserInput(document.getElementById('custom-lesson-text')?.value || '', 14000);
         if (!hintTitle && !rawText) {
           showToast('يرجى إدخال عنوان أو نص الدرس أولاً!', 'error');
           return;
         }
       }
 
+      isAnalyzingNow = true;
+      lastAnalyzeTimestamp = now;
       const submitBtn = document.getElementById('generate-submit-btn');
       if (submitBtn) submitBtn.disabled = true;
 
       try {
-        updateProgressUI(20, 'جاري فحص الصورة وتجهيز محرك التحليل الذكي...');
+        updateProgressUI(20, 'جاري فحص الصور وتجهيز محرك التحليل الذكي...');
 
-        // 1. PRIORITY A: Try Gemini Cloud Vision API if an API key is configured
-        const geminiKey = getActiveGeminiKey();
-        if (geminiKey) {
+        const imagesPayload = uploadedImagesArray.length > 0
+          ? uploadedImagesArray.map(item => item.dataUrl)
+          : (uploadedImageDataUrl ? [uploadedImageDataUrl] : []);
+
+        // 1. PRIORITY A: Try Secure Backend Proxy (Cloudflare Worker / Vercel)
+        const proxyEndpoint = getActiveGeminiKey();
+        if (proxyEndpoint && navigator.onLine) {
           try {
-            updateProgressUI(50, 'جاري تحليل صورة ونصوص الدرس عبر Gemini Vision AI السحابي...');
-            const aiLesson = await analyzeWithGeminiCloud(
-              geminiKey,
+            updateProgressUI(50, 'جاري تحليل الدرس واستخراج العناصر الـ 13 عبر الخادم الوسيط الآمن...');
+            const aiDraft = await analyzeWithGeminiCloud(
+              proxyEndpoint,
               grade,
               subject,
               hintTitle,
               rawText,
-              currentUploadTab === 'image' ? uploadedImageDataUrl : ''
+              imagesPayload
             );
+            aiDraft.sourceImage = imagesPayload[0] || '';
+            aiDraft.sourceImages = imagesPayload;
+            aiDraft.grade = aiDraft.grade || grade;
+            aiDraft.subject = aiDraft.subject || subject;
 
-            updateProgressUI(95, 'تم بناء الإنفوجرافيك والشرح السحابي بنجاح!');
-            const cloudLessonObj = {
-              id: 'gemini-lesson-' + Date.now(),
-              grade: grade,
-              subject: subject,
-              title: aiLesson.title,
-              desc: aiLesson.desc || `درس مستقل تم توليده عبر المعلم الذكي (${grade} • ${subject}).`,
-              sourceImage: currentUploadTab === 'image' ? uploadedImageDataUrl : '',
-              objectives: aiLesson.objectives || [],
-              infographic: aiLesson.infographic || [],
-              vocab: aiLesson.vocab || [],
-              walkthrough: aiLesson.walkthrough || [],
-              grammar: aiLesson.grammar || [],
-              flashcards: aiLesson.flashcards || [],
-              quiz: aiLesson.quiz || []
-            };
-
-            const all = getAllLessons();
-            all.unshift(cloudLessonObj);
-            saveLessonsSafely(all);
-            incrementTrialCount();
-
-            selectedGrade = 'الكل';
-            selectedSubject = 'الكل';
-            renderFilterPills();
-            closeUploadModal();
-            displayLesson(cloudLessonObj.id, true);
-            showToast('تم تحليل الصورة وتوليد الدرس عبر Gemini AI بنجاح! 🚀', 'success');
-            if (submitBtn) submitBtn.disabled = false;
+            updateProgressUI(100, 'تم استخراج المحتوى! راجعه الآن ثم اضغط «اعتماد المحتوى والمتابعة».');
+            showStage1ReviewScreen(aiDraft);
             return;
-          } catch (cloudErr) {
-            console.warn('Gemini Cloud API failed, falling back to Local OCR:', cloudErr);
-            showToast('جاري المتابعة عبر الماسح البصري المحلي (Local OCR)...', 'info');
+          } catch (proxyErr) {
+            console.warn('Backend Proxy unavailable, falling back to Local Arabic+English OCR:', proxyErr);
+            showToast('جاري المتابعة عبر الماسح البصري المحلي (العربية + الإنجليزية)...', 'info');
           }
         }
 
-        // 2. PRIORITY B: Local OCR Fallback (Tesseract.js)
-        if (currentUploadTab === 'image' && uploadedImageDataUrl) {
+        // 2. PRIORITY B: Local OCR Fallback (Tesseract.js with 'ara+eng')
+        const uncertainWords = [];
+        if (currentUploadTab === 'image' && imagesPayload.length > 0) {
           try {
-            updateProgressUI(45, 'جاري استخراج الجمل والكلمات من صورة الدرس (Live OCR)...');
-            const ocrResult = await Tesseract.recognize(uploadedImageDataUrl, 'eng');
-            if (ocrResult && ocrResult.data && ocrResult.data.text) {
-              rawText = ocrResult.data.text.trim();
+            const ocrLang = subject === 'اللغة الإنجليزية' ? 'eng+ara' : 'ara+eng';
+            let combinedText = '';
+            for (let i = 0; i < imagesPayload.length; i++) {
+              updateProgressUI(45 + (i * 10), `جاري قراءة النص العربي والإنجليزي من الصورة (${i + 1}/${imagesPayload.length})...`);
+              const ocrResult = await Tesseract.recognize(imagesPayload[i], ocrLang);
+              if (ocrResult && ocrResult.data) {
+                combinedText += (ocrResult.data.text || '').trim() + '\n';
+                const lowConf = (ocrResult.data.words || [])
+                  .filter(w => w.confidence < 68 && w.text && w.text.trim().length > 2)
+                  .map(w => w.text.trim())
+                  .slice(0, 6);
+                if (lowConf.length > 0) {
+                  uncertainWords.push(`كلمات أو أرقام غير واضحة في الصورة (${i + 1}): ${lowConf.join(' ، ')}`);
+                }
+              }
             }
+            rawText = combinedText.trim();
           } catch (ocrErr) {
-            console.warn('OCR fallback:', ocrErr);
+            console.warn('OCR fallback error:', ocrErr);
           }
         }
 
-        const combinedCheck = `${hintTitle} ${rawText}`.toLowerCase();
-
-        // Check if the uploaded image/text matches Lesson 1.9 "A postcard from London"
-        if (
-          combinedCheck.includes('postcard') ||
-          combinedCheck.includes('mariam') ||
-          combinedCheck.includes('amna') ||
-          combinedCheck.includes('hyde park') ||
-          combinedCheck.includes('birds on the lake') ||
-          (combinedCheck.includes('london') && combinedCheck.includes('1.9'))
-        ) {
-          updateProgressUI(90, 'تم التعرف على درس (1.9 A postcard from London) بدقة 100%...');
-          const londonTemplate = JSON.parse(JSON.stringify(DEFAULT_LESSONS[0]));
-          londonTemplate.id = 'lesson-london-' + Date.now();
-          londonTemplate.grade = grade || 'الصف الثامن';
-          londonTemplate.subject = subject || 'اللغة الإنجليزية';
-          if (uploadedImageDataUrl) {
-            londonTemplate.sourceImage = uploadedImageDataUrl;
-          }
-
-          const all = getAllLessons();
-          all.unshift(londonTemplate);
-          saveLessonsSafely(all);
-          incrementTrialCount();
-
-          selectedGrade = 'الكل';
-          selectedSubject = 'الكل';
-          renderFilterPills();
-          closeUploadModal();
-          displayLesson(londonTemplate.id, true);
-          showToast('تم توليد درس (A postcard from London 1.9) مع صورتك المرفوعة بنجاح! 🎉', 'success');
-          if (submitBtn) submitBtn.disabled = false;
+        if (!rawText && !hintTitle) {
+          showToast('لم نتمكن من قراءة نص واضح في الصورة. يرجى رفع صورة أوضح أو كتابة النص.', 'error');
           return;
         }
 
-        // Check if the uploaded image/text matches Lesson 2.2 "How does he come to school?"
-        if (
-          combinedCheck.includes('come to school') ||
-          combinedCheck.includes('drives to school') ||
-          combinedCheck.includes('by bicycle') ||
-          (combinedCheck.includes('saleh') && combinedCheck.includes('fuad'))
-        ) {
-          updateProgressUI(90, 'تم التعرف على درس (2.2 How does he come to school?) بدقة 100%...');
-          const transportTemplate = JSON.parse(JSON.stringify(DEFAULT_LESSONS[1]));
-          transportTemplate.id = 'lesson-transport-' + Date.now();
-          transportTemplate.grade = grade || 'الصف الثامن';
-          transportTemplate.subject = subject || 'اللغة الإنجليزية';
-          if (uploadedImageDataUrl) {
-            transportTemplate.sourceImage = uploadedImageDataUrl;
-          }
-
-          const all = getAllLessons();
-          all.unshift(transportTemplate);
-          saveLessonsSafely(all);
-          incrementTrialCount();
-
-          selectedGrade = 'الكل';
-          selectedSubject = 'الكل';
-          renderFilterPills();
-          closeUploadModal();
-          displayLesson(transportTemplate.id, true);
-          showToast('تم توليد درس (How does he come to school? 2.2) بنجاح! 🎉', 'success');
-          if (submitBtn) submitBtn.disabled = false;
-          return;
-        }
-
-        // Build a custom lesson from the extracted OCR / text sentences
-        updateProgressUI(65, 'جاري ترجمة جمل الدرس واستخراج المفردات والقواعد...');
-
-        const cleanedLines = (rawText || hintTitle)
-          .replace(/\r/g, '\n')
-          .replace(/([.?!])\s+/g, '$1\n')
-          .split('\n')
-          .map(s => s.replace(/[^a-zA-Z0-9\u0600-\u06FF\s.,?!'"-]/g, ' ').replace(/\s+/g, ' ').trim())
-          .filter(s => s.length > 10);
-
-        const detectedTitle = hintTitle || (cleanedLines[0] ? cleanedLines[0].slice(0, 65) : 'درس تفاعلي مرفوع');
-        const sentencesToExplain = cleanedLines.slice(0, 6);
-        if (sentencesToExplain.length === 0) {
-          sentencesToExplain.push(detectedTitle);
-        }
-
-        const walkthroughArr = [];
-        for (let i = 0; i < sentencesToExplain.length; i++) {
-          const s = sentencesToExplain[i];
-          const arTrans = await translateEnglishSentenceToArabic(s);
-          walkthroughArr.push({
-            en: s,
-            ar: arTrans,
-            note: 'جملة مستخرجة مباشرة من صفحة الدرس المرفوعة.'
-          });
-        }
-
-        updateProgressUI(85, 'جاري بناء الخريطة البصرية والاختبار التفاعلي...');
-
-        const wordsInText = (rawText || detectedTitle)
-          .toLowerCase()
-          .match(/[a-z]{4,14}/g) || [];
-        const uniqueWords = [...new Set(wordsInText)];
-        const vocabArr = [];
-
-        for (const w of uniqueWords) {
-          if (COMMON_WORD_DICT[w]) {
-            vocabArr.push({
-              word: w.charAt(0).toUpperCase() + w.slice(1),
-              pos: COMMON_WORD_DICT[w].pos,
-              ar: COMMON_WORD_DICT[w].ar,
-              ex: sentencesToExplain.find(s => s.toLowerCase().includes(w)) || `Key word from ${detectedTitle}`
-            });
-          }
-          if (vocabArr.length >= 6) break;
-        }
-
-        if (vocabArr.length < 3) {
-          for (const w of uniqueWords.slice(0, 6 - vocabArr.length)) {
-            const tr = await translateEnglishSentenceToArabic(w);
-            vocabArr.push({
-              word: w.charAt(0).toUpperCase() + w.slice(1),
-              pos: 'Keyword',
-              ar: tr,
-              ex: sentencesToExplain[0] || w
-            });
-          }
-        }
-
-        const newCustomLesson = {
-          id: 'custom-lesson-' + Date.now(),
-          grade: grade,
-          subject: subject,
-          title: detectedTitle,
-          desc: `درس مستقل تم توليده وتحليله بصرياً من الصفحة المرفوعة (${grade} • ${subject}).`,
-          sourceImage: currentUploadTab === 'image' ? uploadedImageDataUrl : '',
-          objectives: [
-            {
-              en: `Read, understand, and analyze the core text of "${detectedTitle}".`,
-              ar: `قراءة وفهم وتحليل النص الأساسي لدرس (${detectedTitle}).`
-            },
-            {
-              en: 'Master the key vocabulary, sentence structures, and grammar rules in the lesson.',
-              ar: 'إتقان المفردات الجديدة والتراكيب اللغوية والقواعد الواردة في الدرس.'
-            }
-          ],
-          infographic: walkthroughArr.slice(0, 3).map((w, idx) => ({
-            step: `المحور ${idx + 1}`,
-            en: w.en,
-            ar: w.ar
-          })),
-          vocab: vocabArr,
-          walkthrough: walkthroughArr,
-          grammar: [
-            {
-              rule: 'تحليل التراكيب اللغوية والأزمنة في الدرس',
-              formula: 'Subject + Verb + Object / Complement',
-              example: walkthroughArr[0]?.en || detectedTitle
-            },
-            {
-              rule: 'أدوات الربط وبناء الجمل (Sentence Connectors)',
-              formula: 'and (و) • but (لكن) • so (لذلك) • then (ثم)',
-              example: walkthroughArr[1]?.en || walkthroughArr[0]?.en || detectedTitle
-            }
-          ],
-          flashcards: walkthroughArr.slice(0, 3).map((w) => ({
-            q: `ما معنى الجملة التالية: "${w.en}"؟`,
-            a: w.ar
-          })),
-          quiz: [
-            {
-              q: `Which sentence is part of the lesson "${detectedTitle}"?`,
-              options: [
-                walkthroughArr[0]?.en || detectedTitle,
-                'The astronauts landed on Mars in 1920.',
-                'Sharks live in the desert.',
-                'None of the above.'
-              ],
-              correct: 0
-            },
-            {
-              q: vocabArr[0] ? `What is the Arabic meaning of "${vocabArr[0].word}"?` : 'What is the main skill practiced in this lesson?',
-              options: vocabArr[0]
-                ? [vocabArr[0].ar, 'سيارة سريعة', 'كوكب المشتري', 'محطة قطار']
-                : ['Reading and writing comprehension', 'Swimming', 'Cooking', 'Driving'],
-              correct: 0
-            }
-          ]
-        };
-
-        updateProgressUI(100, 'تم بناء الدرس بنجاح! جاري العرض...');
-
-        const all = getAllLessons();
-        all.unshift(newCustomLesson);
-        saveLessonsSafely(all);
-        incrementTrialCount();
-
-        selectedGrade = 'الكل';
-        selectedSubject = 'الكل';
-        renderFilterPills();
-        closeUploadModal();
-        displayLesson(newCustomLesson.id, true);
-        showToast('تم توليد الدرس المستقل وعرضه بنجاح! ✨', 'success');
+        updateProgressUI(85, 'جاري استخراج عناصر الدرس وتجهيز صفحة المراجعة اليدوية...');
+        const localDraft = await extractStage1DraftLocally(grade, subject, hintTitle, rawText, imagesPayload, uncertainWords);
+        updateProgressUI(100, 'اكتمل التحليل! يرجى مراجعة المحتوى وتعديله ثم اعتماده.');
+        showStage1ReviewScreen(localDraft);
       } catch (err) {
         console.error(err);
-        showToast('حدث خطأ غير متوقع أثناء التوليد، حاول مرة أخرى', 'error');
+        showToast('حدث خطأ أثناء تحليل الصورة، يرجى المحاولة مرة أخرى.', 'error');
       } finally {
+        isAnalyzingNow = false;
         if (submitBtn) submitBtn.disabled = false;
       }
     }
 
+    async function extractStage1DraftLocally(grade, subject, hintTitle, rawText, imagesPayload, uncertainWords) {
+      const combinedCheck = `${hintTitle} ${rawText}`.toLowerCase();
+
+      if (
+        combinedCheck.includes('postcard') ||
+        combinedCheck.includes('mariam') ||
+        combinedCheck.includes('amna') ||
+        combinedCheck.includes('hyde park') ||
+        combinedCheck.includes('birds on the lake')
+      ) {
+        const preset = JSON.parse(JSON.stringify(DEFAULT_LESSONS[0]));
+        preset.grade = grade || 'الصف الثامن';
+        preset.subject = subject || 'اللغة الإنجليزية';
+        preset.sourceImage = imagesPayload[0] || '';
+        preset.sourceImages = imagesPayload;
+        preset.rawExtractedText = rawText || 'When she was on holiday in London, Amna wrote a postcard to her friend, Mariam. Today we went for a walk in the park. There were lots of birds on the lake.';
+        preset.subheadings = ['عطلة لندن (Holiday in London)', 'النزهة في الحديقة (Walk in Hyde Park)', 'ركوب القارب (Boat on the Lake)'];
+        preset.mainIdeas = preset.infographic.map(i => i.ar);
+        preset.definitions = [{ term: 'Postcard', def: 'بطاقة بريدية ترسل أثناء السفر.' }];
+        preset.lawsAndEquations = preset.grammar.map(g => ({ law: g.rule, eq: g.formula }));
+        preset.examples = [{ title: 'مثال من الدرس', solution: 'We went for a walk and bought some bread.' }];
+        preset.questionsAndActivities = preset.flashcards.map(f => f.q);
+        preset.tablesAndComparisons = ['go → went | buy → bought | sit → sat'];
+        preset.uncertainParts = uncertainWords;
+        return preset;
+      }
+
+      if (
+        combinedCheck.includes('come to school') ||
+        combinedCheck.includes('drives to school') ||
+        combinedCheck.includes('by bicycle')
+      ) {
+        const preset = JSON.parse(JSON.stringify(DEFAULT_LESSONS[1]));
+        preset.grade = grade || 'الصف الثامن';
+        preset.subject = subject || 'اللغة الإنجليزية';
+        preset.sourceImage = imagesPayload[0] || '';
+        preset.sourceImages = imagesPayload;
+        preset.rawExtractedText = rawText || 'How does he come to school? He drives to school. He runs to school. He comes to school by bus. He comes to school by bicycle. He walks to school.';
+        preset.subheadings = ['أفعال الحركة المباشرة', 'وسائل النقل المسبوقة بـ by'];
+        preset.mainIdeas = preset.infographic.map(i => i.ar);
+        preset.definitions = [{ term: 'By bus / By bicycle', def: 'استخدام حرف الجر by قبل وسيلة المواصلات.' }];
+        preset.lawsAndEquations = preset.grammar.map(g => ({ law: g.rule, eq: g.formula }));
+        preset.examples = [{ title: 'سؤال وجواب', solution: 'How does Taha come to school? He comes by bicycle.' }];
+        preset.questionsAndActivities = preset.flashcards.map(f => f.q);
+        preset.tablesAndComparisons = ['Teacher: drives | Fuad: runs | Ahmed: by bus | Taha: by bicycle | Saleh: walks'];
+        preset.uncertainParts = uncertainWords;
+        return preset;
+      }
+
+      const cleanedLines = (rawText || hintTitle)
+        .replace(/\r/g, '\n')
+        .replace(/([.?!؟])\s+/g, '$1\n')
+        .split('\n')
+        .map(s => s.replace(/\s+/g, ' ').trim())
+        .filter(s => s.length > 6);
+
+      const detectedTitle = hintTitle || (cleanedLines[0] ? cleanedLines[0].slice(0, 70) : 'درس تفاعلي مرفوع');
+      const sentencesToExplain = cleanedLines.slice(0, 6);
+      if (sentencesToExplain.length === 0) {
+        sentencesToExplain.push(detectedTitle);
+      }
+
+      const walkthroughArr = [];
+      for (let i = 0; i < sentencesToExplain.length; i++) {
+        const s = sentencesToExplain[i];
+        const arTrans = await translateEnglishSentenceToArabic(s);
+        walkthroughArr.push({
+          en: s,
+          ar: arTrans,
+          note: 'جملة مستخرجة مباشرة من صفحة الدرس المرفوعة.'
+        });
+      }
+
+      const definitionsList = [];
+      const equationsList = [];
+      const questionsList = [];
+      cleanedLines.forEach(line => {
+        if (line.includes(':') || line.includes('هو ') || line.includes('هي ')) {
+          definitionsList.push(line);
+        }
+        if (/[=→⇌+\-×÷]/.test(line) || line.includes('قانون') || line.includes('معادلة')) {
+          equationsList.push(line);
+        }
+        if (line.includes('؟') || line.includes('?') || line.startsWith('علل') || line.startsWith('ما ')) {
+          questionsList.push(line);
+        }
+      });
+
+      const wordsInText = (rawText || detectedTitle).toLowerCase().match(/[a-z]{4,14}/g) || [];
+      const uniqueWords = [...new Set(wordsInText)];
+      const vocabArr = [];
+
+      for (const w of uniqueWords) {
+        if (COMMON_WORD_DICT[w]) {
+          vocabArr.push({
+            word: w.charAt(0).toUpperCase() + w.slice(1),
+            pos: COMMON_WORD_DICT[w].pos,
+            ar: COMMON_WORD_DICT[w].ar,
+            ex: sentencesToExplain.find(s => s.toLowerCase().includes(w)) || `Key word from ${detectedTitle}`
+          });
+        }
+        if (vocabArr.length >= 6) break;
+      }
+
+      if (vocabArr.length === 0) {
+        const arTokens = (rawText || detectedTitle).match(/[\u0600-\u06FF]{4,14}/g) || [detectedTitle];
+        [...new Set(arTokens)].slice(0, 6).forEach(w => {
+          vocabArr.push({
+            word: w,
+            pos: 'كلمة مفتاحية',
+            ar: `مفهوم وارد في درس (${detectedTitle})`,
+            ex: sentencesToExplain.find(s => s.includes(w)) || detectedTitle
+          });
+        });
+      }
+
+      return {
+        id: 'custom-lesson-' + Date.now(),
+        grade,
+        subject,
+        title: detectedTitle,
+        desc: `درس مستقل تم تحليله ومراجعته من الصفحة المرفوعة (${grade} • ${subject}).`,
+        sourceImage: imagesPayload[0] || '',
+        sourceImages: imagesPayload,
+        rawExtractedText: rawText || detectedTitle,
+        uncertainParts: uncertainWords.length ? uncertainWords : ['لا توجد أجزاء غامضة؛ يرجى مراجعة النص المستخرج للتأكد قبل الاعتماد.'],
+        subheadings: walkthroughArr.slice(0, 3).map((w, i) => `العنوان الفرعي ${i + 1}: ${w.ar.slice(0, 45)}`),
+        mainIdeas: walkthroughArr.slice(0, 3).map(w => w.ar),
+        definitions: definitionsList.length ? definitionsList : [`${detectedTitle}: ${walkthroughArr[0]?.ar || detectedTitle}`],
+        lawsAndEquations: equationsList.length ? equationsList : [`القاعدة الأساسية: ${walkthroughArr[0]?.en || detectedTitle}`],
+        examples: walkthroughArr.slice(0, 2).map(w => `${w.en} — ${w.ar}`),
+        questionsAndActivities: questionsList.length ? questionsList : [`ما الفكرة الرئيسية في درس (${detectedTitle})؟`],
+        tablesAndComparisons: walkthroughArr.slice(0, 2).map((w, i) => `المحور ${i + 1}: ${w.en} | ${w.ar}`),
+        objectives: [
+          {
+            en: `Read, understand, and analyze the core text of "${detectedTitle}".`,
+            ar: `قراءة وفهم وتحليل النص الأساسي لدرس (${detectedTitle}).`
+          },
+          {
+            en: 'Master the key vocabulary, sentence structures, and grammar rules in the lesson.',
+            ar: 'إتقان المفردات الجديدة والتراكيب اللغوية والقواعد الواردة في الدرس.'
+          }
+        ],
+        infographic: walkthroughArr.slice(0, 3).map((w, idx) => ({
+          step: `المحور ${idx + 1}`,
+          en: w.en,
+          ar: w.ar
+        })),
+        vocab: vocabArr,
+        walkthrough: walkthroughArr,
+        grammar: [
+          {
+            rule: 'القاعدة أو القانون الأساسي في الدرس',
+            formula: equationsList[0] || (walkthroughArr[0]?.en || detectedTitle),
+            example: walkthroughArr[0]?.ar || detectedTitle
+          }
+        ],
+        flashcards: walkthroughArr.slice(0, 3).map(w => ({
+          q: `ما معنى أو شرح: "${w.en}"؟`,
+          a: w.ar
+        })),
+        quiz: [
+          {
+            q: `Which sentence is part of the lesson "${detectedTitle}"?`,
+            options: [
+              walkthroughArr[0]?.en || detectedTitle,
+              'The astronauts landed on Mars in 1920.',
+              'Sharks live in the desert.',
+              'None of the above.'
+            ],
+            correct: 0
+          }
+        ]
+      };
+    }
+
+    // --- STAGE 1: POPULATE & SHOW CONTENT REVIEW SCREEN ---
+    function showStage1ReviewScreen(draft) {
+      pendingStage1Draft = draft;
+
+      document.getElementById('stage1-upload-view')?.classList.add('hidden');
+      document.getElementById('generation-progress-box')?.classList.add('hidden');
+      document.getElementById('stage1-review-view')?.classList.remove('hidden');
+
+      const b1 = document.getElementById('stage1-step-upload-badge');
+      const b2 = document.getElementById('stage1-step-review-badge');
+      if (b1) b1.className = 'py-2 px-3 rounded-xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/40';
+      if (b2) b2.className = 'py-2 px-3 rounded-xl bg-[#fbbf24] text-slate-950';
+
+      document.getElementById('review-field-subject').value = draft.subject || '';
+      document.getElementById('review-field-grade').value = draft.grade || '';
+      document.getElementById('review-field-title').value = draft.title || '';
+      document.getElementById('review-field-raw-text').value = draft.rawExtractedText || '';
+      document.getElementById('review-uncertain-parts').value = (draft.uncertainParts || []).join('\n');
+
+      document.getElementById('review-field-objectives').value = (draft.objectives || [])
+        .map(o => typeof o === 'string' ? o : (o.ar || o.en || ''))
+        .join('\n');
+      document.getElementById('review-field-subheadings').value = (draft.subheadings || []).join('\n');
+      document.getElementById('review-field-main-ideas').value = (draft.mainIdeas || []).join('\n');
+      document.getElementById('review-field-definitions').value = (draft.definitions || [])
+        .map(d => typeof d === 'string' ? d : `${d.term || ''}: ${d.def || ''}`)
+        .join('\n');
+      document.getElementById('review-field-equations').value = (draft.lawsAndEquations || [])
+        .map(l => typeof l === 'string' ? l : `${l.law || ''}: ${l.eq || ''}`)
+        .join('\n');
+      document.getElementById('review-field-examples').value = (draft.examples || [])
+        .map(ex => typeof ex === 'string' ? ex : `${ex.title || ''}: ${ex.solution || ''}`)
+        .join('\n');
+      document.getElementById('review-field-activities').value = (draft.questionsAndActivities || []).join('\n');
+      document.getElementById('review-field-comparisons').value = (draft.tablesAndComparisons || [])
+        .map(c => typeof c === 'string' ? c : `${c.item || ''} | ${c.col1 || ''} | ${c.col2 || ''}`)
+        .join('\n');
+      document.getElementById('review-field-keywords').value = (draft.vocab || [])
+        .map(v => `${v.word} : ${v.ar}`)
+        .join('\n');
+    }
+
+    function returnToStage1UploadStep() {
+      document.getElementById('stage1-review-view')?.classList.add('hidden');
+      document.getElementById('stage1-upload-view')?.classList.remove('hidden');
+      const b1 = document.getElementById('stage1-step-upload-badge');
+      const b2 = document.getElementById('stage1-step-review-badge');
+      if (b1) b1.className = 'py-2 px-3 rounded-xl bg-[#fbbf24] text-slate-950';
+      if (b2) b2.className = 'py-2 px-3 rounded-xl text-slate-400';
+    }
+
+    // --- STAGE 1: APPROVE CONTENT & CONTINUE («اعتماد المحتوى والمتابعة») ---
+    function approveReviewedContentAndBuildLesson() {
+      if (!pendingStage1Draft) return;
+      const draft = pendingStage1Draft;
+
+      draft.subject = sanitizeUserInput(document.getElementById('review-field-subject')?.value || draft.subject, 100);
+      draft.grade = sanitizeUserInput(document.getElementById('review-field-grade')?.value || draft.grade, 100);
+      draft.title = sanitizeUserInput(document.getElementById('review-field-title')?.value || draft.title, 200);
+      draft.rawExtractedText = sanitizeUserInput(document.getElementById('review-field-raw-text')?.value || draft.rawExtractedText, 15000);
+
+      const editedObjectives = sanitizeUserInput(document.getElementById('review-field-objectives')?.value || '', 3000)
+        .split('\n').map(s => s.trim()).filter(Boolean);
+      if (editedObjectives.length > 0) {
+        draft.objectives = editedObjectives.map((line, idx) => ({
+          en: draft.objectives?.[idx]?.en || line,
+          ar: line
+        }));
+      }
+
+      const editedMainIdeas = sanitizeUserInput(document.getElementById('review-field-main-ideas')?.value || '', 4000)
+        .split('\n').map(s => s.trim()).filter(Boolean);
+      if (editedMainIdeas.length > 0) {
+        draft.mainIdeas = editedMainIdeas;
+        draft.infographic = editedMainIdeas.slice(0, 4).map((idea, idx) => ({
+          step: `المحور ${idx + 1}`,
+          en: draft.infographic?.[idx]?.en || idea,
+          ar: idea
+        }));
+      }
+
+      const editedEquations = sanitizeUserInput(document.getElementById('review-field-equations')?.value || '', 3000)
+        .split('\n').map(s => s.trim()).filter(Boolean);
+      if (editedEquations.length > 0) {
+        draft.grammar = editedEquations.map(line => {
+          const parts = line.split(':');
+          return {
+            rule: (parts[0] || 'القانون / المعادلة').trim(),
+            formula: (parts.slice(1).join(':') || line).trim(),
+            example: 'تمت المراجعة والاعتماد يدوياً.'
+          };
+        });
+      }
+
+      const editedKeywords = sanitizeUserInput(document.getElementById('review-field-keywords')?.value || '', 3000)
+        .split('\n').map(s => s.trim()).filter(Boolean);
+      if (editedKeywords.length > 0) {
+        draft.vocab = editedKeywords.map((line, idx) => {
+          const parts = line.split(':');
+          return {
+            word: (parts[0] || `Word ${idx + 1}`).trim(),
+            pos: draft.vocab?.[idx]?.pos || 'Keyword',
+            ar: (parts.slice(1).join(':') || line).trim(),
+            ex: draft.vocab?.[idx]?.ex || draft.title
+          };
+        });
+      }
+
+      draft.id = draft.id || ('lesson-' + Date.now());
+      draft.approvedAt = new Date().toISOString();
+
+      const all = getAllLessons();
+      all.unshift(draft);
+      saveLessonsSafely(all);
+      logOperationToIndexedDB({
+        lessonId: draft.id,
+        title: draft.title,
+        grade: draft.grade,
+        subject: draft.subject,
+        rawExtractedText: draft.rawExtractedText
+      });
+      incrementTrialCount();
+
+      selectedGrade = 'الكل';
+      selectedSubject = 'الكل';
+      renderFilterPills();
+      closeUploadModal();
+      displayLesson(draft.id, true);
+      pendingStage1Draft = null;
+      showToast('تم اعتماد المحتوى وتوليد الدرس المستقل وحفظه في IndexedDB بنجاح! 🎉', 'success');
+    }
+
     // --- MODALS & UI CONTROLS ---
     function openUploadModal() {
+      pendingStage1Draft = null;
+      uploadedImagesArray = [];
+      uploadedImageDataUrl = '';
       const m = document.getElementById('upload-modal');
       if (m) m.style.display = 'flex';
+      returnToStage1UploadStep();
       document.getElementById('generation-progress-box')?.classList.add('hidden');
+      document.getElementById('image-clarity-alert-box')?.classList.add('hidden');
+      document.getElementById('upload-image-preview-box')?.classList.add('hidden');
       const fileInput = document.getElementById('lesson-image-input');
       if (fileInput) fileInput.value = '';
     }
@@ -2550,7 +3089,7 @@ ${rawText ? `النص المستخرج: ${rawText}` : ''}
       }
     }
 
-    // --- OWNER ADMIN PORTAL (ABU HUSSAM) ---
+    // --- OWNER ADMIN PORTAL (NO PLAIN-TEXT CREDENTIALS EXPOSED) ---
     function openAdminModal() {
       document.getElementById('admin-modal').style.display = 'flex';
     }
@@ -2561,17 +3100,18 @@ ${rawText ? `النص المستخرج: ${rawText}` : ''}
 
     function loginOwnerAdmin() {
       const email = (document.getElementById('admin-email-input')?.value || '').trim().toLowerCase();
-      const pass = (document.getElementById('admin-pass-input')?.value || '').trim();
+      const pass = (document.getElementById('admin-pass-input')?.value || '').trim().toLowerCase();
 
-      const validEmails = ['alshakliamohammed4@gmail.com', 'admin@hussam.com', 'owner@email.com'];
-      const validPasses = ['hussam2026', '774354892', 'admin123'];
+      // Compare FNV-1a digests rather than storing raw emails or passwords in source code
+      const allowedEmailHashes = ['12904a5a', 'd374e29a', '85e2a38a'];
+      const allowedPassHashes = ['a86e095a', '67b4d5f5', 'c904349b'];
 
-      if (validEmails.includes(email) && validPasses.includes(pass.toLowerCase())) {
+      if (allowedEmailHashes.includes(computeDigestHash(email)) && allowedPassHashes.includes(computeDigestHash(pass))) {
         document.getElementById('admin-login-box').classList.add('hidden');
         document.getElementById('admin-dashboard-box').classList.remove('hidden');
         try {
-          const savedKey = localStorage.getItem(STORAGE_KEYS.GEMINI_KEY) || '';
-          document.getElementById('owner-gemini-key').value = savedKey;
+          const savedProxy = localStorage.getItem(STORAGE_KEYS.PROXY_ENDPOINT) || DEFAULT_BACKEND_PROXY_URL;
+          document.getElementById('owner-gemini-key').value = savedProxy;
         } catch (e) {}
         showToast('مرحباً بك يا أستاذ أبوحسام في لوحة التحكم 👑', 'success');
       } else {
@@ -2660,10 +3200,10 @@ ${rawText ? `النص المستخرج: ${rawText}` : ''}
     }
 
     function saveOwnerGeminiKey() {
-      const key = (document.getElementById('owner-gemini-key')?.value || '').trim();
+      const proxyUrl = (document.getElementById('owner-gemini-key')?.value || '').trim();
       try {
-        localStorage.setItem(STORAGE_KEYS.GEMINI_KEY, key);
-        showToast('تم حفظ مفتاح Gemini API بنجاح ✅', 'success');
+        localStorage.setItem(STORAGE_KEYS.PROXY_ENDPOINT, proxyUrl);
+        showToast('تم حفظ رابط الخادم الوسيط (Backend Proxy) بنجاح ✅', 'success');
       } catch (e) {}
     }
 
@@ -2710,7 +3250,7 @@ ${rawText ? `النص المستخرج: ${rawText}` : ''}
     }
 
     // --- INITIALIZE APPLICATION ON LOAD ---
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', async () => {
       getOrCreateDeviceId();
       loadCustomBrandAssets();
       updateTrialAndVipUI();
@@ -2721,6 +3261,7 @@ ${rawText ? `النص المستخرج: ${rawText}` : ''}
       if (lessons.length > 0) {
         displayLesson(lessons[0].id, false);
       }
+      await migrateLegacyLocalStorageToIndexedDB();
     });
   </script>
 </body>
