@@ -999,7 +999,7 @@
     const MAX_FREE_TRIALS = 2;
     const MAX_UPLOAD_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB per file
     const MIN_IMAGE_DIMENSION = 340; // Minimum width/height before showing clarity warning
-    const REQUEST_TIMEOUT_MS = 60000; // 60 seconds timeout for Gemini Vision
+    const REQUEST_TIMEOUT_MS = 95000; // 95 seconds timeout for 3G + Gemini Vision
     const COOLDOWN_MS = 4500; // Prevent repeated clicks
 
     let isAnalyzingNow = false;
@@ -1857,7 +1857,7 @@
     }
 
     // Preserves crisp Arabic text & mathematical equations (maxWidth = 1400, quality = 0.82)
-    function compressImageDataUrl(file, maxWidth = 1400, quality = 0.82) {
+    function compressImageDataUrl(file, maxWidth = 1150, quality = 0.74) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = function(ev) {
@@ -1952,7 +1952,7 @@
           continue;
         }
         try {
-          const dataUrl = await compressImageDataUrl(file, 1400, 0.82);
+          const dataUrl = await compressImageDataUrl(file, 1150, 0.74);
           const meta = compressedImageMetaCache.get(dataUrl) || { width: 0, height: 0, warnings: [] };
           const kbSize = Math.round((dataUrl.length * 3) / 4 / 1024);
           uploadedImagesArray.push({
@@ -2514,8 +2514,8 @@
         return parsed;
       } catch (err) {
         clearTimeout(timeoutId);
-        if (err.name === 'AbortError') {
-          showToast('انتهت مهلة الطلب بسبب بطء الاتصال، جاري المتابعة بالمحلل المحلي...', 'error');
+        if (err && err.name === 'AbortError') {
+          throw new Error('انتهت مهلة الاتصال بسبب بطء الشبكة');
         }
         throw err;
       }
