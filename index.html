@@ -1885,9 +1885,14 @@
               warnings.push(`أبعاد الصورة (${origW}×${origH}) صغيرة وقد تؤثر على دقة قراءة النص العربي.`);
             }
             try {
-              const sampleW = Math.min(w, 180);
-              const sampleH = Math.min(h, 180);
-              const pixels = ctx.getImageData(0, 0, sampleW, sampleH).data;
+              const sampleW = 160;
+              const sampleH = 160;
+              const sampleCanvas = document.createElement('canvas');
+              sampleCanvas.width = sampleW;
+              sampleCanvas.height = sampleH;
+              const sampleCtx = sampleCanvas.getContext('2d');
+              sampleCtx.drawImage(canvas, 0, 0, sampleW, sampleH);
+              const pixels = sampleCtx.getImageData(0, 0, sampleW, sampleH).data;
               let sum = 0;
               let sumSq = 0;
               const total = sampleW * sampleH;
@@ -2495,9 +2500,11 @@
           let serverErrMsg = '';
           try {
             const errJson = await response.json();
-            serverErrMsg = errJson.error || errJson.upstreamMessage || '';
+            const upStatus = errJson.upstreamStatus ? `Gemini ${errJson.upstreamStatus}` : '';
+            const upMsg = errJson.upstreamMessage ? `: ${errJson.upstreamMessage}` : '';
+            serverErrMsg = upStatus ? `${upStatus}${upMsg}` : (errJson.error || '');
           } catch (e) {}
-          throw new Error(serverErrMsg ? `${serverErrMsg} (${response.status})` : `HTTP ${response.status}`);
+          throw new Error(serverErrMsg ? `${serverErrMsg} (Proxy ${response.status})` : `HTTP ${response.status}`);
         }
 
         const parsed = await response.json();
