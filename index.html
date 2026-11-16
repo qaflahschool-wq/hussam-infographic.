@@ -947,7 +947,7 @@
             ضع رابط Cloudflare Worker أو Vercel API الذي يحتفظ بمتغير البيئة <code class="text-[#fbbf24]">GEMINI_API_KEY</code> في الخادم:
           </p>
           <div class="flex gap-2">
-            <input type="url" id="owner-gemini-key" placeholder="https://hussam-infographic-proxy.alshakliamohammed04.workers.dev" dir="ltr" class="flex-grow bg-[#0a1c32] border border-[#1e3a5f] rounded-xl px-3 py-2 text-xs text-white font-en outline-none" />
+            <input type="url" id="owner-gemini-key" placeholder="https://hussam-ai-api.alshakliamohammed04.workers.dev" dir="ltr" class="flex-grow bg-[#0a1c32] border border-[#1e3a5f] rounded-xl px-3 py-2 text-xs text-white font-en outline-none" />
             <button type="button" onclick="saveOwnerGeminiKey()" class="bg-[#fbbf24] text-slate-950 font-black text-xs px-4 py-2 rounded-xl">حفظ</button>
           </div>
         </div>
@@ -975,7 +975,7 @@
     // ملاحظة أمنية: لا يتم وضع أي مفتاح Gemini API داخل هذا الملف نهائياً.
     // يتم الاتصال عبر DEFAULT_BACKEND_PROXY_URL الذي يقرأ GEMINI_API_KEY من متغيرات البيئة.
     // =========================================================================
-    const DEFAULT_BACKEND_PROXY_URL = 'https://hussam-infographic-proxy.alshakliamohammed04.workers.dev';
+    const DEFAULT_BACKEND_PROXY_URL = 'https://hussam-ai-api.alshakliamohammed04.workers.dev';
 
     const STORAGE_KEYS = {
       LEGACY_LESSONS: 'hussam_info_lessons_v13',
@@ -999,7 +999,7 @@
     const MAX_FREE_TRIALS = 2;
     const MAX_UPLOAD_SIZE_BYTES = 10 * 1024 * 1024; // 10 MB per file
     const MIN_IMAGE_DIMENSION = 340; // Minimum width/height before showing clarity warning
-    const REQUEST_TIMEOUT_MS = 28000; // 28 seconds timeout
+    const REQUEST_TIMEOUT_MS = 60000; // 60 seconds timeout for Gemini Vision
     const COOLDOWN_MS = 4500; // Prevent repeated clicks
 
     let isAnalyzingNow = false;
@@ -1030,7 +1030,7 @@
     function getActiveGeminiKey() {
       try {
         const customProxy = (localStorage.getItem(STORAGE_KEYS.PROXY_ENDPOINT) || '').trim();
-        if (customProxy && customProxy.startsWith('https://')) {
+        if (customProxy && customProxy.startsWith('https://') && !customProxy.includes('qaflahschool.workers.dev')) {
           return customProxy;
         }
       } catch (e) {}
@@ -2492,7 +2492,12 @@
         clearTimeout(timeoutId);
 
         if (!response.ok) {
-          throw new Error(`Proxy HTTP Status: ${response.status}`);
+          let serverErrMsg = '';
+          try {
+            const errJson = await response.json();
+            serverErrMsg = errJson.error || errJson.upstreamMessage || '';
+          } catch (e) {}
+          throw new Error(serverErrMsg ? `${serverErrMsg} (${response.status})` : `HTTP ${response.status}`);
         }
 
         const parsed = await response.json();
@@ -2593,7 +2598,8 @@
             return;
           } catch (proxyErr) {
             console.warn('Backend Proxy unavailable, falling back to Local Arabic+English OCR:', proxyErr);
-            showToast('جاري المتابعة عبر الماسح البصري المحلي (العربية + الإنجليزية)...', 'info');
+            const reason = proxyErr && proxyErr.message ? proxyErr.message : 'تعذر الوصول للخادم';
+            showToast(`تعذر التحليل السحابي (${reason}) — جاري المتابعة بالماسح البصري المحلي...`, 'error');
           }
         }
 
