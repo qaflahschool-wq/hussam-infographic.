@@ -1476,12 +1476,7 @@
 
     // Returns the active Backend Proxy endpoint (no raw API keys in browser)
     function getActiveGeminiKey() {
-      try {
-        const customProxy = (localStorage.getItem(STORAGE_KEYS.PROXY_ENDPOINT) || '').trim();
-        if (customProxy && customProxy.startsWith('https://') && !customProxy.includes('qaflahschool.workers.dev')) {
-          return customProxy;
-        }
-      } catch (e) {}
+      // API tokens must never be sent to a user-configurable endpoint.
       return DEFAULT_BACKEND_PROXY_URL;
     }
 
@@ -4585,15 +4580,9 @@
     }
 
     function saveOwnerGeminiKey() {
-      const proxyUrl = (document.getElementById('owner-gemini-key')?.value || '').trim();
-      if (!/^https:\\/\\//i.test(proxyUrl)) {
-        showToast('أدخل رابط HTTPS صالحاً للخادم.', 'error');
-        return;
-      }
-      try {
-        localStorage.setItem(STORAGE_KEYS.PROXY_ENDPOINT, proxyUrl.replace(/\\/+$/, ''));
-        showToast('تم حفظ رابط واجهة API.', 'success');
-      } catch (e) {}
+      showToast('عنوان API ثابت ومحدد داخل التطبيق لحماية جلسات المستخدمين.', 'info');
+      const input = document.getElementById('owner-gemini-key');
+      if (input) input.value = DEFAULT_BACKEND_PROXY_URL;
     }
 
     // --- STAGE 4: ADVANCED HISTORY MANAGEMENT (REOPEN, EDIT, REGENERATE, DELETE, DOWNLOAD) & ERROR DIAGNOSTICS ---
