@@ -58,6 +58,21 @@
       display: inline-block;
       font-family: 'Outfit', monospace, sans-serif;
     }
+    .rtl-safe-text {
+      direction: rtl;
+      text-align: right;
+      unicode-bidi: plaintext;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      line-height: 1.85;
+      letter-spacing: 0 !important;
+      font-feature-settings: "kern" 1, "liga" 1;
+    }
+    .infographic-node-card {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+      transition: all 0.25s ease;
+    }
     .no-scrollbar::-webkit-scrollbar {
       display: none;
     }
@@ -382,6 +397,10 @@
                 <i class="fa-solid fa-robot"></i>
                 <span id="ai-teacher-badge-text">شرح وإنفوجرافيك درس مستقل (Standalone Lesson)</span>
               </span>
+              <span id="active-analysis-source-badge" class="bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 text-xs font-extrabold px-3 py-1 rounded-full flex items-center gap-1.5">
+                <i class="fa-solid fa-cloud-bolt"></i>
+                <span>📚 درس نموذجي معتمد</span>
+              </span>
             </div>
             <h2 id="active-lesson-title" class="text-xl sm:text-3xl font-black text-white leading-snug"></h2>
             <p id="active-lesson-desc" class="text-sm sm:text-base text-slate-300 leading-relaxed"></p>
@@ -424,11 +443,135 @@
           <div id="active-objectives-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
         </div>
 
+        <!-- STAGE 2 - REQUIREMENT 4: MULTI-LEVEL SUMMARY & STRUCTURED EXTRACTIONS -->
+        <div id="active-summary-section" class="print-card bg-[#07111e] border-2 border-[#fbbf24]/40 rounded-2xl p-4 sm:p-5 space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[#163252] pb-3">
+            <h3 class="text-base sm:text-lg font-black text-[#fbbf24] flex items-center gap-2">
+              <i class="fa-solid fa-book-open-reader"></i>
+              <span id="sec-summary-title">ملخص الدرس الشامل والمتدرج (Multi-Level Summary)</span>
+            </h3>
+            <span class="text-[11px] bg-[#fbbf24]/15 text-[#fbbf24] border border-[#fbbf24]/30 px-2.5 py-1 rounded-full font-extrabold">
+              مبسط • متوسط • مراجعة سريعة • قوانين وتعريفات
+            </span>
+          </div>
+
+          <!-- Extra Info Alert Banner (Requirement 4.7) -->
+          <div id="summary-extra-info-alert" class="hidden bg-amber-500/15 border-2 border-amber-400/60 rounded-xl p-3 text-xs text-amber-200 flex items-start gap-2.5">
+            <i class="fa-solid fa-circle-info text-amber-300 text-base mt-0.5 shrink-0"></i>
+            <div class="rtl-safe-text">
+              <span class="font-black text-amber-300">تنبيه أمانة علمية:</span>
+              <span id="summary-extra-info-text">يتضمن الشرح المبسط توضيحاً تعليمياً مسانداً لتسهيل الفهم، مع التمييز الصريح بينه وبين النص الحرفي الوارد في الصورة الأصلية.</span>
+            </div>
+          </div>
+
+          <!-- 3 Summary Levels Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-3.5">
+            <div class="bg-[#0a1c32] border border-emerald-500/40 rounded-xl p-3.5 space-y-2">
+              <div class="text-xs font-black text-emerald-300 flex items-center gap-1.5">
+                <i class="fa-solid fa-lightbulb"></i>
+                <span>1. شرح مبسط للدرس</span>
+              </div>
+              <div id="summary-simplified-text" class="text-xs sm:text-sm text-slate-200 rtl-safe-text"></div>
+            </div>
+
+            <div class="bg-[#0a1c32] border border-[#22d3ee]/40 rounded-xl p-3.5 space-y-2">
+              <div class="text-xs font-black text-[#22d3ee] flex items-center gap-1.5">
+                <i class="fa-solid fa-layer-group"></i>
+                <span>2. ملخص متوسط</span>
+              </div>
+              <div id="summary-medium-text" class="text-xs sm:text-sm text-slate-200 rtl-safe-text"></div>
+            </div>
+
+            <div class="bg-[#0a1c32] border border-[#fbbf24]/40 rounded-xl p-3.5 space-y-2">
+              <div class="text-xs font-black text-[#fbbf24] flex items-center gap-1.5">
+                <i class="fa-solid fa-bolt"></i>
+                <span>3. مراجعة سريعة جدًا (قبل الامتحان)</span>
+              </div>
+              <div id="summary-quick-text" class="text-xs sm:text-sm text-slate-200 rtl-safe-text"></div>
+            </div>
+          </div>
+
+          <!-- Definitions, Laws/Equations, and Solved Examples -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 pt-1">
+            <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-3.5 space-y-2">
+              <div class="text-xs font-black text-[#fbbf24] flex items-center gap-1.5">
+                <i class="fa-solid fa-book-bookmark"></i>
+                <span>4. قائمة التعريفات والمصطلحات</span>
+              </div>
+              <div id="summary-definitions-list" class="space-y-2 text-xs text-slate-200 rtl-safe-text"></div>
+            </div>
+
+            <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-3.5 space-y-2">
+              <div class="text-xs font-black text-[#22d3ee] flex items-center gap-1.5">
+                <i class="fa-solid fa-square-root-variable"></i>
+                <span>5. قائمة القوانين والمعادلات</span>
+              </div>
+              <div id="summary-equations-list" class="space-y-2 text-xs text-slate-200 rtl-safe-text"></div>
+            </div>
+
+            <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-3.5 space-y-2">
+              <div class="text-xs font-black text-emerald-300 flex items-center gap-1.5">
+                <i class="fa-solid fa-check-double"></i>
+                <span>6. أمثلة محلولة من الدرس</span>
+              </div>
+              <div id="summary-examples-list" class="space-y-2 text-xs text-slate-200 rtl-safe-text"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STAGE 2 - REQUIREMENT 7: SCIENTIFIC & MATH VERIFICATION BOX -->
+        <div id="active-scientific-verification-box" class="hidden print-card bg-[#07111e] border-2 border-cyan-500/50 rounded-2xl p-4 sm:p-5 space-y-3.5">
+          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[#163252] pb-3">
+            <h3 class="text-base sm:text-lg font-black text-[#22d3ee] flex items-center gap-2">
+              <i class="fa-solid fa-microscope"></i>
+              <span>وحدة التحقق الدقيق للمواد العلمية والرياضيات (Scientific & Math Audit)</span>
+            </h3>
+            <span id="scientific-verification-status-badge" class="text-xs font-extrabold px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
+              ✅ تم فحص المعادلات والرموز والوحدات
+            </span>
+          </div>
+
+          <!-- Teacher Review Needed Alert -->
+          <div id="scientific-teacher-review-alert" class="hidden bg-amber-500/15 border-2 border-amber-400/60 rounded-xl p-3.5 text-xs text-amber-200 flex items-start gap-2.5">
+            <i class="fa-solid fa-user-check text-amber-300 text-base mt-0.5 shrink-0"></i>
+            <div class="rtl-safe-text space-y-1">
+              <div class="font-black text-amber-300">👩‍🏫 تنبيه: يحتاج الناتج إلى مراجعة من معلم المادة</div>
+              <div id="scientific-teacher-review-reason">توجد معادلات أو رسوم علمية أو رموز رياضية دقيقة، ولم نقم بتخمين أي أجزاء غير واضحة في الصورة الأصلية.</div>
+            </div>
+          </div>
+
+          <div id="scientific-verification-table-wrap" class="overflow-x-auto">
+            <table class="w-full text-right text-xs border-collapse">
+              <thead>
+                <tr class="bg-[#0a1c32] text-[#fbbf24] border-b border-[#1e3a5f]">
+                  <th class="p-2.5 font-extrabold">البند / القانون</th>
+                  <th class="p-2.5 font-extrabold">الصيغة والرموز والوحدات (LTR)</th>
+                  <th class="p-2.5 font-extrabold">المطابقة مع النص الأصلي</th>
+                </tr>
+              </thead>
+              <tbody id="scientific-verification-tbody" class="divide-y divide-[#163252] text-slate-200"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- STAGE 2 - REQUIREMENT 5: 8 INFOGRAPHIC TYPES WITH AUTO-SUGGESTION & LIVE SWITCHER -->
         <div class="print-card bg-[#07111e] border border-[#163252] rounded-2xl p-4 sm:p-5 space-y-4">
-          <h3 class="text-base sm:text-lg font-black text-[#22d3ee] flex items-center gap-2">
-            <i class="fa-solid fa-diagram-project"></i>
-            <span id="sec-2-title">ثانياً: الخريطة البصرية والإنفوجرافيك للدرس (Visual Infographic)</span>
-          </h3>
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#163252] pb-3">
+            <h3 class="text-base sm:text-lg font-black text-[#22d3ee] flex items-center gap-2">
+              <i class="fa-solid fa-diagram-project"></i>
+              <span id="sec-2-title">ثانياً: الخريطة البصرية والإنفوجرافيك للدرس (8 أنماط تفاعلية)</span>
+            </h3>
+            <span id="active-infographic-suggested-badge" class="text-xs font-extrabold px-3 py-1 rounded-full bg-[#fbbf24]/20 text-[#fbbf24] border border-[#fbbf24]/40">
+              💡 النمط المقترح تلقائياً: خريطة ذهنية
+            </span>
+          </div>
+
+          <!-- 8 Infographic Type Pills Switcher -->
+          <div class="no-print space-y-1.5">
+            <div class="text-xs font-bold text-slate-400">اختر نوع الإنفوجرافيك لعرض الدرس بالنمط البصري المناسب:</div>
+            <div id="infographic-type-selector-bar" class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1"></div>
+          </div>
+
           <div id="active-infographic-map" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
         </div>
 
@@ -671,6 +814,18 @@
           </button>
         </div>
 
+        <!-- Cloud AI vs Local OCR Clear Verification Badge -->
+        <div id="review-analysis-source-badge" class="bg-emerald-500/20 border-2 border-emerald-400/70 rounded-2xl p-3.5 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5">
+            <i id="review-source-icon" class="fa-solid fa-cloud-bolt text-xl text-emerald-300"></i>
+            <div>
+              <div id="review-source-title" class="text-xs sm:text-sm font-black text-emerald-200">☁️ تم التحليل عبر الذكاء الاصطناعي السحابي (Cloud AI)</div>
+              <div id="review-source-sub" class="text-[11px] text-slate-300">تم استخراج النص والعناصر الـ 13 بدقة عالية عبر الخادم الوسيط الآمن بدون تخمين.</div>
+            </div>
+          </div>
+          <span id="review-source-pill" class="text-[11px] font-en font-black px-2.5 py-1 rounded-full bg-emerald-400 text-slate-950 shrink-0">CLOUD AI</span>
+        </div>
+
         <!-- 13. Uncertain / Unclear Parts Highlighted Box -->
         <div class="bg-amber-500/15 border-2 border-amber-400/60 rounded-2xl p-3.5 space-y-1.5">
           <label class="block text-xs font-black text-amber-300">
@@ -738,6 +893,54 @@
           <div class="sm:col-span-2">
             <label class="block text-xs font-bold text-slate-300 mb-1">12. الكلمات المهمة (الكلمة : المعنى):</label>
             <textarea id="review-field-keywords" rows="2" class="w-full bg-[#07111e] border border-[#1e3a5f] rounded-xl p-2.5 text-xs text-white outline-none focus:border-[#fbbf24]"></textarea>
+          </div>
+        </div>
+
+        <!-- Stage 2: Infographic Type Choice & Auto-Suggestion -->
+        <div class="bg-[#07111e] border-2 border-[#22d3ee]/50 rounded-2xl p-3.5 space-y-2.5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <label for="review-infographic-type" class="text-xs sm:text-sm font-black text-[#22d3ee] flex items-center gap-1.5">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <span>اختر نوع الإنفوجرافيك المفضل (8 أنماط قياسية):</span>
+            </label>
+            <span id="review-suggested-type-badge" class="text-[11px] font-extrabold px-2.5 py-1 rounded-full bg-[#fbbf24]/20 text-[#fbbf24] border border-[#fbbf24]/40">
+              💡 المقترح تلقائياً: خريطة ذهنية
+            </span>
+          </div>
+          <select id="review-infographic-type" class="w-full bg-[#0a1c32] border border-[#1e3a5f] rounded-xl px-3 py-2.5 text-xs sm:text-sm font-bold text-white outline-none focus:border-[#fbbf24]">
+            <option value="mindmap">1. خريطة ذهنية (Mind Map)</option>
+            <option value="comparison">2. جدول مقارنة (Comparison Table)</option>
+            <option value="steps">3. مخطط خطوات (Step-by-Step Flow)</option>
+            <option value="timeline">4. خط زمني (Timeline)</option>
+            <option value="cards">5. بطاقات تعليمية (Educational Cards)</option>
+            <option value="qa">6. سؤال وجواب (Q & A Infographic)</option>
+            <option value="scientific">7. ملخص علمي (Scientific Summary)</option>
+            <option value="equations">8. ملخص قوانين ومعادلات (Laws & Equations)</option>
+          </select>
+        </div>
+
+        <!-- Stage 2: Editable Multi-Level Summary Fields Before Final Generation -->
+        <div class="bg-[#07111e] border border-[#1e3a5f] rounded-2xl p-3.5 space-y-3">
+          <div class="text-xs font-black text-[#fbbf24] flex items-center justify-between">
+            <span>ملخصات الدرس الثلاثة (تُولّد تلقائياً ويمكنك تعديلها قبل الاعتماد):</span>
+            <label class="inline-flex items-center gap-1.5 text-[11px] text-amber-300 cursor-pointer">
+              <input type="checkbox" id="review-has-extra-info" class="rounded accent-[#fbbf24]" />
+              <span>يحتوي على شرح إضافي مساند غير موجود نصاً في الصورة</span>
+            </label>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+            <div>
+              <label class="block text-[11px] font-bold text-emerald-300 mb-1">شرح مبسط للدرس:</label>
+              <textarea id="review-summary-simplified" rows="2" class="w-full bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-2 text-xs text-white outline-none focus:border-[#fbbf24]"></textarea>
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-[#22d3ee] mb-1">ملخص متوسط:</label>
+              <textarea id="review-summary-medium" rows="2" class="w-full bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-2 text-xs text-white outline-none focus:border-[#fbbf24]"></textarea>
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-[#fbbf24] mb-1">مراجعة سريعة جدًا:</label>
+              <textarea id="review-summary-quick" rows="2" class="w-full bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-2 text-xs text-white outline-none focus:border-[#fbbf24]"></textarea>
+            </div>
           </div>
         </div>
 
@@ -2157,7 +2360,11 @@
             <div class="space-y-2">
               <div class="flex items-center justify-between gap-1">
                 <span class="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full bg-[#07111e] text-[#22d3ee] border border-[#1e3a5f]">${escapeHtml(lesson.grade)} • ${escapeHtml(lesson.subject)}</span>
-                ${lesson.sourceImage ? '<span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">📸 مرفوع بصورة</span>' : ''}
+                ${lesson.analysisSource === 'cloud'
+                  ? '<span class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full font-extrabold">☁️ تحليل سحابي AI</span>'
+                  : (lesson.analysisSource === 'local'
+                    ? '<span class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-0.5 rounded-full font-extrabold">🔍 ماسح محلي</span>'
+                    : (lesson.sourceImage ? '<span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-bold">📸 مرفوع بصورة</span>' : ''))}
               </div>
               <h3 class="font-extrabold text-sm sm:text-base text-white group-hover:text-[#fbbf24] transition line-clamp-2">${escapeHtml(lesson.title)}</h3>
               <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">${escapeHtml(lesson.desc)}</p>
@@ -2190,6 +2397,356 @@
       const sentence = lesson.walkthrough[idx].en || lesson.walkthrough[idx].ar || '';
       const lang = /[\u0600-\u06FF]/.test(sentence) ? 'ar-SA' : 'en-GB';
       speakText(sentence, lang, allowed);
+    }
+
+    // --- STAGE 2: 8 INFOGRAPHIC TYPES, AUTO-SUGGESTION, MULTI-LEVEL SUMMARY & SCIENTIFIC AUDIT ---
+    const INFOGRAPHIC_TYPES_META = {
+      mindmap:    { key: 'mindmap',    label: 'خريطة ذهنية',          en: 'Mind Map',           icon: 'fa-sitemap' },
+      comparison: { key: 'comparison', label: 'جدول مقارنة',          en: 'Comparison Table',   icon: 'fa-table-columns' },
+      steps:      { key: 'steps',      label: 'مخطط خطوات',           en: 'Step-by-Step Flow',  icon: 'fa-list-ol' },
+      timeline:   { key: 'timeline',   label: 'خط زمني',              en: 'Timeline',           icon: 'fa-timeline' },
+      cards:      { key: 'cards',      label: 'بطاقات تعليمية',       en: 'Educational Cards',  icon: 'fa-layer-group' },
+      qa:         { key: 'qa',         label: 'سؤال وجواب',           en: 'Q & A',              icon: 'fa-circle-question' },
+      scientific: { key: 'scientific', label: 'ملخص علمي',            en: 'Scientific Summary', icon: 'fa-flask-vial' },
+      equations:  { key: 'equations',  label: 'ملخص قوانين ومعادلات', en: 'Laws & Equations',   icon: 'fa-square-root-variable' }
+    };
+
+    function formatRtlSafeWithMath(rawStr) {
+      const safe = escapeHtml(String(rawStr || ''));
+      // Isolate equations, chemical arrows, numbers with units, and English/Math expressions in LTR spans
+      return safe.replace(/([A-Za-z0-9_]+(?:\s*[=+\-×÷*/^→⇌<>≤≥≈]+\s*[A-Za-z0-9_().,/%°]+)+|\b\d+(?:\.\d+)?\s*(?:m\/s²|m\/s|km\/h|kg|g|cm|mm|m|N|J|W|Pa|Hz|V|A|Ω|mol|L|mL|°C|K|%)\b)/g, '<span dir="ltr" class="math-ltr px-1 rounded bg-slate-900/70 text-[#22d3ee]">$1</span>');
+    }
+
+    function suggestBestInfographicType(lessonOrDraft) {
+      if (!lessonOrDraft) return 'mindmap';
+      const sub = String(lessonOrDraft.subject || '');
+      const text = `${lessonOrDraft.title || ''} ${lessonOrDraft.rawExtractedText || ''}`.toLowerCase();
+      const eqCount = (lessonOrDraft.lawsAndEquations || lessonOrDraft.grammar || []).length;
+      const compCount = (lessonOrDraft.tablesAndComparisons || []).length;
+      const qaCount = (lessonOrDraft.questionsAndActivities || []).length;
+
+      if (sub.includes('الرياضيات') || (sub.includes('الفيزياء') && eqCount >= 2) || /[=→⇌]/.test(text)) {
+        if (eqCount > 0) return 'equations';
+      }
+      if (sub.includes('العلوم') || sub.includes('الأحياء') || sub.includes('الكيمياء') || sub.includes('الفيزياء')) {
+        return 'scientific';
+      }
+      if (sub.includes('التاريخ') || /(19\d\d|20\d\d|عام|سنة|قرن|عهد|غزوة|تاريخ)/.test(text)) {
+        return 'timeline';
+      }
+      if (compCount >= 2 || text.includes('مقارنة') || text.includes('الفرق بين') || text.includes('compare')) {
+        return 'comparison';
+      }
+      if (text.includes('خطوات') || text.includes('مراحل') || text.includes('أولاً') || text.includes('step')) {
+        return 'steps';
+      }
+      if (qaCount >= 3 || text.includes('سؤال') || text.includes('علل') || text.includes('how does') || text.includes('where are')) {
+        return 'qa';
+      }
+      if (sub.includes('الإنجليزية') || (lessonOrDraft.vocab && lessonOrDraft.vocab.length >= 4)) {
+        return 'cards';
+      }
+      return 'mindmap';
+    }
+
+    function buildLessonSummaries(lesson) {
+      const existing = lesson.summaries || {};
+      const walkAr = (lesson.walkthrough || []).map(w => w.ar).filter(Boolean);
+      const ideas = (lesson.mainIdeas && lesson.mainIdeas.length)
+        ? lesson.mainIdeas
+        : (lesson.infographic || []).map(i => i.ar).filter(Boolean);
+      const objs = (lesson.objectives || []).map(o => typeof o === 'string' ? o : (o.ar || o.en)).filter(Boolean);
+
+      const simplified = existing.simplified || (
+        walkAr.length > 0
+          ? `يشرح درس «${lesson.title}» بأسلوب مبسط: ${walkAr.slice(0, 3).join(' ثم ')}`
+          : `يتناول درس «${lesson.title}» (${lesson.subject} - ${lesson.grade}) المفاهيم الأساسية الواردة في الصفحة المرفوعة بأسلوب واضح ومباشر.`
+      );
+
+      const medium = existing.medium || (
+        ideas.length > 0
+          ? `المحاور الرئيسية للدرس: ${ideas.map((x, idx) => `(${idx + 1}) ${x}`).join(' — ')}`
+          : (objs.length > 0 ? `يركز الدرس على تحقيق الأهداف الآتية: ${objs.join(' | ')}` : simplified)
+      );
+
+      const quickReview = existing.quickReview || (
+        `⚡ خلاصة سريعة للمراجعة: عنوان الدرس (${lesson.title}) • أهم قاعدة/مفهوم: ${
+          (lesson.grammar && lesson.grammar[0] ? `${lesson.grammar[0].rule} (${lesson.grammar[0].formula})` : (ideas[0] || objs[0] || lesson.desc))
+        }`
+      );
+
+      const definitions = (Array.isArray(lesson.definitions) && lesson.definitions.length > 0)
+        ? lesson.definitions.map(d => typeof d === 'string' ? d : `${d.term || 'مصطلح'}: ${d.def || ''}`)
+        : (lesson.vocab || []).slice(0, 5).map(v => `${v.word}: ${v.ar}`);
+
+      const lawsAndEquations = (Array.isArray(lesson.lawsAndEquations) && lesson.lawsAndEquations.length > 0)
+        ? lesson.lawsAndEquations.map(l => typeof l === 'string' ? l : `${l.law || 'قاعدة'}: ${l.eq || ''}`)
+        : (lesson.grammar || []).map(g => `${g.rule}: ${g.formula}`);
+
+      const examples = (Array.isArray(lesson.examples) && lesson.examples.length > 0)
+        ? lesson.examples.map(ex => typeof ex === 'string' ? ex : `${ex.title || 'مثال'}: ${ex.solution || ''}`)
+        : (lesson.grammar || []).map(g => `${g.rule} — مثال: ${g.example}`).slice(0, 3);
+
+      return {
+        simplified,
+        medium,
+        quickReview,
+        definitions,
+        lawsAndEquations,
+        examples,
+        hasExtraInfo: Boolean(existing.hasExtraInfo || lesson.hasExtraInfo)
+      };
+    }
+
+    function verifyScientificAndMathContent(lesson) {
+      const sub = String(lesson.subject || '');
+      const raw = String(lesson.rawExtractedText || '');
+      const summaries = buildLessonSummaries(lesson);
+      const eqList = summaries.lawsAndEquations || [];
+      const isSciSubject = (
+        sub.includes('الرياضيات') ||
+        sub.includes('الفيزياء') ||
+        sub.includes('الكيمياء') ||
+        sub.includes('العلوم') ||
+        sub.includes('الأحياء') ||
+        /[=→⇌+\-×÷]/.test(raw)
+      );
+
+      const uncertainList = (lesson.uncertainParts || []).filter(u =>
+        u && !u.includes('لا توجد أجزاء غامضة') && !u.includes('لا توجد كلمات')
+      );
+
+      const auditRows = eqList.map((eqItem, idx) => {
+        const parts = String(eqItem).split(':');
+        const label = parts.length > 1 ? parts[0].trim() : `المعادلة / القانون #${idx + 1}`;
+        const formula = parts.length > 1 ? parts.slice(1).join(':').trim() : String(eqItem).trim();
+        // Extract numbers and symbols from formula to verify against raw text
+        const numbersInFormula = formula.match(/\d+(?:\.\d+)?/g) || [];
+        const allNumbersPresent = numbersInFormula.every(num => !raw || raw.includes(num));
+        const hasReversedArrow = formula.includes('←') && !raw.includes('←');
+        const verified = allNumbersPresent && !hasReversedArrow;
+
+        return {
+          label,
+          formula,
+          verified,
+          statusText: verified
+            ? '✅ مطابق للنص والأرقام والإشارات'
+            : '⚠️ يحتاج مراجعة معلم (تحقق من الأرقام/الرموز في الصورة)'
+        };
+      });
+
+      const needsTeacherReview = uncertainList.length > 0 || auditRows.some(r => !r.verified);
+      return {
+        isSciSubject,
+        auditRows,
+        needsTeacherReview,
+        teacherReviewReason: uncertainList.length > 0
+          ? `تم رصد أجزاء غير واضحة في الصورة (${uncertainList.join(' — ')})؛ يرجى مراجعتها من قِبل معلم المادة.`
+          : 'يرجى مطابقة الرموز الرياضية والوحدات والاتجاهات السهمية مع صورة الكتاب المدرسي قبل الطباعة.'
+      };
+    }
+
+    function switchActiveInfographicType(typeKey) {
+      const all = getAllLessons();
+      const lesson = all.find(l => l.id === activeLessonId);
+      if (!lesson) return;
+      lesson.selectedInfographicType = typeKey;
+      renderActiveInfographicSection(lesson);
+    }
+
+    function renderActiveInfographicSection(lesson) {
+      const suggestedKey = lesson.suggestedInfographicType || suggestBestInfographicType(lesson);
+      const activeKey = lesson.selectedInfographicType || suggestedKey || 'mindmap';
+      const suggestedMeta = INFOGRAPHIC_TYPES_META[suggestedKey] || INFOGRAPHIC_TYPES_META.mindmap;
+
+      const sugBadge = document.getElementById('active-infographic-suggested-badge');
+      if (sugBadge) {
+        sugBadge.innerHTML = `<i class="fa-solid ${suggestedMeta.icon} ml-1"></i> النمط المقترح تلقائياً: ${escapeHtml(suggestedMeta.label)}`;
+      }
+
+      const bar = document.getElementById('infographic-type-selector-bar');
+      if (bar) {
+        bar.innerHTML = Object.values(INFOGRAPHIC_TYPES_META).map(meta => {
+          const isSelected = meta.key === activeKey;
+          const isSuggested = meta.key === suggestedKey;
+          return `
+            <button
+              type="button"
+              onclick="switchActiveInfographicType('${meta.key}')"
+              class="shrink-0 px-3 py-2 rounded-xl text-xs font-extrabold border transition flex items-center gap-1.5 ${
+                isSelected
+                  ? 'bg-[#22d3ee] text-slate-950 border-[#22d3ee] shadow-lg'
+                  : 'bg-[#0a1c32] text-slate-300 border-[#1e3a5f] hover:border-[#fbbf24]'
+              }"
+            >
+              <i class="fa-solid ${meta.icon}"></i>
+              <span>${escapeHtml(meta.label)}</span>
+              ${isSuggested ? '<span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-400/20 text-[#fbbf24]">مقترح</span>' : ''}
+            </button>
+          `;
+        }).join('');
+      }
+
+      const infoContainer = document.getElementById('active-infographic-map');
+      if (!infoContainer) return;
+
+      const nodes = (lesson.infographic && lesson.infographic.length > 0)
+        ? lesson.infographic
+        : [{ step: 'المحور 1', en: lesson.title, ar: lesson.desc }];
+      const summaries = buildLessonSummaries(lesson);
+
+      if (activeKey === 'mindmap') {
+        infoContainer.className = 'space-y-4';
+        infoContainer.innerHTML = `
+          <div class="bg-gradient-to-r from-[#0a1c32] via-[#102a49] to-[#0a1c32] border-2 border-[#fbbf24] rounded-2xl p-4 text-center shadow-lg">
+            <div class="text-[11px] font-black text-[#fbbf24] mb-1">🧠 الفكرة المركزية للخريطة الذهنية</div>
+            <div class="text-base sm:text-lg font-black text-white rtl-safe-text">${formatRtlSafeWithMath(lesson.title)}</div>
+            <div class="text-xs text-slate-300 mt-1 rtl-safe-text">${formatRtlSafeWithMath(lesson.desc)}</div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            ${nodes.map((node, idx) => `
+              <div class="infographic-node-card bg-[#0a1c32] border-2 border-[#22d3ee]/60 rounded-2xl p-4 space-y-2 relative">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-black text-[#fbbf24] flex items-center gap-1"><i class="fa-solid fa-code-branch"></i> ${escapeHtml(node.step || ('فرع ' + (idx + 1)))}</span>
+                  <span class="w-6 h-6 rounded-full bg-[#22d3ee]/20 text-[#22d3ee] font-en font-black text-xs flex items-center justify-center">${idx + 1}</span>
+                </div>
+                <div dir="ltr" class="font-en text-xs sm:text-sm font-bold text-white leading-relaxed">${escapeHtml(node.en)}</div>
+                <div class="text-xs text-slate-200 rtl-safe-text border-t border-[#163252] pt-2">${formatRtlSafeWithMath(node.ar)}</div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else if (activeKey === 'comparison') {
+        const compRows = (lesson.tablesAndComparisons && lesson.tablesAndComparisons.length > 0)
+          ? lesson.tablesAndComparisons
+          : nodes.map(n => `${n.step} | ${n.en} | ${n.ar}`);
+        infoContainer.className = 'overflow-x-auto';
+        infoContainer.innerHTML = `
+          <table class="w-full text-right text-xs sm:text-sm border-collapse bg-[#0a1c32] rounded-2xl overflow-hidden border border-[#1e3a5f]">
+            <thead>
+              <tr class="bg-[#102a49] text-[#fbbf24] border-b border-[#1e3a5f]">
+                <th class="p-3 font-black">#</th>
+                <th class="p-3 font-black">العنصر / المحور</th>
+                <th class="p-3 font-black">المحتوى أو الصيغة</th>
+                <th class="p-3 font-black">الشرح والمقارنة</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[#163252]">
+              ${compRows.map((row, idx) => {
+                if (typeof row === 'object' && row !== null) {
+                  return `
+                    <tr class="hover:bg-[#0f2542]">
+                      <td class="p-3 font-en font-bold text-[#22d3ee]">${idx + 1}</td>
+                      <td class="p-3 font-extrabold text-white rtl-safe-text">${formatRtlSafeWithMath(row.item || ('البند ' + (idx + 1)))}</td>
+                      <td class="p-3 text-slate-200 rtl-safe-text">${formatRtlSafeWithMath(row.col1 || '')}</td>
+                      <td class="p-3 text-emerald-300 rtl-safe-text">${formatRtlSafeWithMath(row.col2 || '')}</td>
+                    </tr>
+                  `;
+                }
+                const parts = String(row).split('|').map(s => s.trim());
+                return `
+                  <tr class="hover:bg-[#0f2542]">
+                    <td class="p-3 font-en font-bold text-[#22d3ee]">${idx + 1}</td>
+                    <td class="p-3 font-extrabold text-white rtl-safe-text">${formatRtlSafeWithMath(parts[0] || ('المحور ' + (idx + 1)))}</td>
+                    <td class="p-3 text-slate-200 rtl-safe-text">${formatRtlSafeWithMath(parts[1] || parts[0] || '')}</td>
+                    <td class="p-3 text-emerald-300 rtl-safe-text">${formatRtlSafeWithMath(parts[2] || nodes[idx]?.ar || '')}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        `;
+      } else if (activeKey === 'steps') {
+        infoContainer.className = 'space-y-3';
+        infoContainer.innerHTML = nodes.map((node, idx) => `
+          <div class="infographic-node-card bg-[#0a1c32] border-r-4 border-[#fbbf24] border border-[#1e3a5f] rounded-2xl p-4 flex items-start gap-3.5">
+            <div class="w-9 h-9 rounded-xl bg-[#fbbf24] text-slate-950 font-en font-black text-sm flex items-center justify-center shrink-0 shadow">
+              ${idx + 1}
+            </div>
+            <div class="space-y-1 flex-1 min-w-0">
+              <div class="text-xs font-black text-[#fbbf24]">${escapeHtml(node.step || ('الخطوة ' + (idx + 1)))}</div>
+              <div dir="ltr" class="font-en text-xs sm:text-sm font-bold text-white">${escapeHtml(node.en)}</div>
+              <div class="text-xs sm:text-sm text-slate-200 rtl-safe-text">${formatRtlSafeWithMath(node.ar)}</div>
+            </div>
+          </div>
+        `).join('');
+      } else if (activeKey === 'timeline') {
+        infoContainer.className = 'relative border-r-2 border-[#22d3ee]/60 pr-5 mr-2 space-y-4';
+        infoContainer.innerHTML = nodes.map((node, idx) => `
+          <div class="infographic-node-card bg-[#0a1c32] border border-[#1e3a5f] rounded-2xl p-4 relative">
+            <span class="absolute -right-[29px] top-4 w-4 h-4 rounded-full bg-[#22d3ee] border-2 border-[#07111e]"></span>
+            <div class="text-xs font-black text-[#22d3ee] mb-1">⏱️ المرحلة الزمنية ${idx + 1}: ${escapeHtml(node.step || '')}</div>
+            <div dir="ltr" class="font-en text-xs sm:text-sm font-bold text-white">${escapeHtml(node.en)}</div>
+            <div class="text-xs text-slate-200 rtl-safe-text mt-1">${formatRtlSafeWithMath(node.ar)}</div>
+          </div>
+        `).join('');
+      } else if (activeKey === 'qa') {
+        const qaItems = (lesson.flashcards && lesson.flashcards.length > 0)
+          ? lesson.flashcards
+          : nodes.map((n, i) => ({ q: `سؤال ${i + 1}: ما المقصود بـ (${n.step || n.en})؟`, a: n.ar }));
+        infoContainer.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+        infoContainer.innerHTML = qaItems.map((item, idx) => `
+          <div class="infographic-node-card bg-[#0a1c32] border border-[#1e3a5f] rounded-2xl p-4 space-y-2">
+            <div class="text-xs font-black text-[#fbbf24] flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-question"></i>
+              <span>سؤال #${idx + 1}</span>
+            </div>
+            <div class="text-xs sm:text-sm font-extrabold text-white rtl-safe-text">${formatRtlSafeWithMath(item.q)}</div>
+            <div class="text-xs sm:text-sm text-emerald-300 bg-[#07111e] p-3 rounded-xl border border-emerald-500/30 rtl-safe-text">
+              <span class="font-black">الإجابة: </span>${formatRtlSafeWithMath(item.a)}
+            </div>
+          </div>
+        `).join('');
+      } else if (activeKey === 'scientific') {
+        infoContainer.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+        infoContainer.innerHTML = `
+          <div class="infographic-node-card bg-[#0a1c32] border-2 border-emerald-500/40 rounded-2xl p-4 space-y-2">
+            <div class="text-xs font-black text-emerald-300 flex items-center gap-1.5">
+              <i class="fa-solid fa-flask"></i>
+              <span>المفاهيم والتعريفات العلمية</span>
+            </div>
+            <div class="space-y-2 text-xs text-slate-200 rtl-safe-text">
+              ${summaries.definitions.map(d => `<div class="bg-[#07111e] p-2.5 rounded-xl border border-[#163252]">${formatRtlSafeWithMath(d)}</div>`).join('')}
+            </div>
+          </div>
+          <div class="infographic-node-card bg-[#0a1c32] border-2 border-[#22d3ee]/40 rounded-2xl p-4 space-y-2">
+            <div class="text-xs font-black text-[#22d3ee] flex items-center gap-1.5">
+              <i class="fa-solid fa-atom"></i>
+              <span>الاستنتاجات والروابط العلمية</span>
+            </div>
+            <div class="space-y-2 text-xs text-slate-200 rtl-safe-text">
+              ${nodes.map(n => `<div class="bg-[#07111e] p-2.5 rounded-xl border border-[#163252]"><strong class="text-[#fbbf24]">${escapeHtml(n.step)}:</strong> ${formatRtlSafeWithMath(n.ar)}</div>`).join('')}
+            </div>
+          </div>
+        `;
+      } else if (activeKey === 'equations') {
+        infoContainer.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+        infoContainer.innerHTML = summaries.lawsAndEquations.map((eq, idx) => `
+          <div class="infographic-node-card bg-[#0a1c32] border-2 border-[#fbbf24]/50 rounded-2xl p-4 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-black text-[#fbbf24]">📐 القانون / القاعدة #${idx + 1}</span>
+              <span class="text-[10px] font-en bg-[#fbbf24]/20 text-[#fbbf24] px-2 py-0.5 rounded-full">LTR Formula</span>
+            </div>
+            <div class="bg-[#07111e] border border-[#1e3a5f] rounded-xl p-3 text-xs sm:text-sm font-bold text-white rtl-safe-text">
+              ${formatRtlSafeWithMath(eq)}
+            </div>
+          </div>
+        `).join('');
+      } else {
+        // Default 'cards' (Educational Cards)
+        infoContainer.className = 'grid grid-cols-1 md:grid-cols-3 gap-4';
+        infoContainer.innerHTML = nodes.map((node, idx) => `
+          <div class="infographic-node-card bg-[#0a1c32] border-2 border-[#1e3a5f] hover:border-[#22d3ee] rounded-2xl p-4 space-y-2 transition relative overflow-hidden">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-black text-[#22d3ee]">${escapeHtml(node.step || ('بطاقة ' + (idx + 1)))}</span>
+              <span class="w-6 h-6 rounded-full bg-[#22d3ee]/20 text-[#22d3ee] font-en font-black text-xs flex items-center justify-center">${idx + 1}</span>
+            </div>
+            <div dir="ltr" class="font-en text-xs sm:text-sm font-bold text-white leading-relaxed">${escapeHtml(node.en)}</div>
+            <div class="text-xs text-slate-300 rtl-safe-text border-t border-[#163252] pt-2">${formatRtlSafeWithMath(node.ar)}</div>
+          </div>
+        `).join('');
+      }
     }
 
     // --- DISPLAY ACTIVE LESSON (WITH SANITIZED INNERHTML) ---
@@ -2237,18 +2794,93 @@
         </div>
       `).join('');
 
-      // 2. Visual Infographic Map
-      const infoContainer = document.getElementById('active-infographic-map');
-      infoContainer.innerHTML = (lesson.infographic || []).map((node, idx) => `
-        <div class="bg-[#0a1c32] border-2 border-[#1e3a5f] hover:border-[#22d3ee] rounded-2xl p-4 space-y-2 transition relative overflow-hidden">
-          <div class="flex items-center justify-between">
-            <span class="text-xs font-black text-[#22d3ee]">${escapeHtml(node.step || ('المرحلة ' + (idx + 1)))}</span>
-            <span class="w-6 h-6 rounded-full bg-[#22d3ee]/20 text-[#22d3ee] font-en font-black text-xs flex items-center justify-center">${idx + 1}</span>
-          </div>
-          <div dir="ltr" class="font-en text-xs sm:text-sm font-bold text-white leading-relaxed">${escapeHtml(node.en)}</div>
-          <div class="text-xs text-slate-300 leading-relaxed border-t border-[#163252] pt-2">${escapeHtml(node.ar)}</div>
-        </div>
-      `).join('');
+      // Stage 2: Update Analysis Source Badge in Active Lesson Header
+      const activeSourceBadge = document.getElementById('active-analysis-source-badge');
+      if (activeSourceBadge) {
+        if (lesson.analysisSource === 'cloud') {
+          activeSourceBadge.className = 'bg-emerald-500/20 text-emerald-300 border border-emerald-400/50 text-xs font-extrabold px-3 py-1 rounded-full flex items-center gap-1.5';
+          activeSourceBadge.innerHTML = '<i class="fa-solid fa-cloud-bolt"></i><span>☁️ تم التحليل عبر الذكاء الاصطناعي السحابي</span>';
+        } else if (lesson.analysisSource === 'local') {
+          activeSourceBadge.className = 'bg-amber-500/20 text-amber-300 border border-amber-400/50 text-xs font-extrabold px-3 py-1 rounded-full flex items-center gap-1.5';
+          activeSourceBadge.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i><span>🔍 تم التحليل عبر الماسح البصري المحلي</span>';
+        } else {
+          activeSourceBadge.className = 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 text-xs font-extrabold px-3 py-1 rounded-full flex items-center gap-1.5';
+          activeSourceBadge.innerHTML = '<i class="fa-solid fa-circle-check"></i><span>📚 درس نموذجي معتمد</span>';
+        }
+      }
+
+      // Stage 2 (Requirement 4): Populate Multi-Level Summary & Lists
+      const sumData = buildLessonSummaries(lesson);
+      const simpEl = document.getElementById('summary-simplified-text');
+      const medEl = document.getElementById('summary-medium-text');
+      const quickEl = document.getElementById('summary-quick-text');
+      if (simpEl) simpEl.innerHTML = formatRtlSafeWithMath(sumData.simplified);
+      if (medEl) medEl.innerHTML = formatRtlSafeWithMath(sumData.medium);
+      if (quickEl) quickEl.innerHTML = formatRtlSafeWithMath(sumData.quickReview);
+
+      const extraAlert = document.getElementById('summary-extra-info-alert');
+      if (extraAlert) {
+        if (sumData.hasExtraInfo) {
+          extraAlert.classList.remove('hidden');
+        } else {
+          extraAlert.classList.add('hidden');
+        }
+      }
+
+      const defListEl = document.getElementById('summary-definitions-list');
+      if (defListEl) {
+        defListEl.innerHTML = (sumData.definitions || []).map(d => `
+          <div class="bg-[#07111e] border border-[#163252] rounded-lg p-2.5">${formatRtlSafeWithMath(d)}</div>
+        `).join('');
+      }
+
+      const eqListEl = document.getElementById('summary-equations-list');
+      if (eqListEl) {
+        eqListEl.innerHTML = (sumData.lawsAndEquations || []).map(eq => `
+          <div class="bg-[#07111e] border border-[#163252] rounded-lg p-2.5 font-bold">${formatRtlSafeWithMath(eq)}</div>
+        `).join('');
+      }
+
+      const exListEl = document.getElementById('summary-examples-list');
+      if (exListEl) {
+        exListEl.innerHTML = (sumData.examples || []).map(ex => `
+          <div class="bg-[#07111e] border border-[#163252] rounded-lg p-2.5">${formatRtlSafeWithMath(ex)}</div>
+        `).join('');
+      }
+
+      // Stage 2 (Requirement 7): Scientific & Math Verification
+      const sciBox = document.getElementById('active-scientific-verification-box');
+      if (sciBox) {
+        const sciAudit = verifyScientificAndMathContent(lesson);
+        if (sciAudit.isSciSubject && sciAudit.auditRows.length > 0) {
+          sciBox.classList.remove('hidden');
+          const tbody = document.getElementById('scientific-verification-tbody');
+          if (tbody) {
+            tbody.innerHTML = sciAudit.auditRows.map(row => `
+              <tr>
+                <td class="p-2.5 font-bold text-white rtl-safe-text">${escapeHtml(row.label)}</td>
+                <td class="p-2.5"><span dir="ltr" class="math-ltr bg-[#0a1c32] px-2.5 py-1 rounded border border-[#1e3a5f] text-[#22d3ee] font-bold">${escapeHtml(row.formula)}</span></td>
+                <td class="p-2.5 font-bold ${row.verified ? 'text-emerald-300' : 'text-amber-300'}">${escapeHtml(row.statusText)}</td>
+              </tr>
+            `).join('');
+          }
+          const tAlert = document.getElementById('scientific-teacher-review-alert');
+          const tReason = document.getElementById('scientific-teacher-review-reason');
+          if (tAlert) {
+            if (sciAudit.needsTeacherReview) {
+              tAlert.classList.remove('hidden');
+              if (tReason) tReason.textContent = sciAudit.teacherReviewReason;
+            } else {
+              tAlert.classList.add('hidden');
+            }
+          }
+        } else {
+          sciBox.classList.add('hidden');
+        }
+      }
+
+      // 2. Visual Infographic Map (8 Types with Auto-Suggestion)
+      renderActiveInfographicSection(lesson);
 
       // 3. Audio Vocabulary Lab
       const vocabContainer = document.getElementById('active-vocab-grid');
@@ -2599,8 +3231,10 @@
             aiDraft.sourceImages = imagesPayload;
             aiDraft.grade = aiDraft.grade || grade;
             aiDraft.subject = aiDraft.subject || subject;
+            aiDraft.analysisSource = 'cloud';
 
-            updateProgressUI(100, 'تم استخراج المحتوى! راجعه الآن ثم اضغط «اعتماد المحتوى والمتابعة».');
+            updateProgressUI(100, 'تم التحليل عبر الذكاء الاصطناعي السحابي! راجع المحتوى ثم اضغط «اعتماد المحتوى والمتابعة».');
+            showToast('☁️ تم تحليل الدرس بنجاح عبر الذكاء الاصطناعي السحابي!', 'success');
             showStage1ReviewScreen(aiDraft);
             return;
           } catch (proxyErr) {
@@ -2643,7 +3277,8 @@
 
         updateProgressUI(85, 'جاري استخراج عناصر الدرس وتجهيز صفحة المراجعة اليدوية...');
         const localDraft = await extractStage1DraftLocally(grade, subject, hintTitle, rawText, imagesPayload, uncertainWords);
-        updateProgressUI(100, 'اكتمل التحليل! يرجى مراجعة المحتوى وتعديله ثم اعتماده.');
+        localDraft.analysisSource = 'local';
+        updateProgressUI(100, 'اكتمل التحليل المحلي! يرجى مراجعة المحتوى وتعديله ثم اعتماده.');
         showStage1ReviewScreen(localDraft);
       } catch (err) {
         console.error(err);
@@ -2870,6 +3505,52 @@
       document.getElementById('review-field-keywords').value = (draft.vocab || [])
         .map(v => `${v.word} : ${v.ar}`)
         .join('\n');
+
+      // Stage 2: Update Cloud AI vs Local OCR badge in Review Screen
+      const revBadge = document.getElementById('review-analysis-source-badge');
+      const revIcon = document.getElementById('review-source-icon');
+      const revTitle = document.getElementById('review-source-title');
+      const revSub = document.getElementById('review-source-sub');
+      const revPill = document.getElementById('review-source-pill');
+      if (revBadge && revTitle && revSub && revPill && revIcon) {
+        if (draft.analysisSource === 'cloud') {
+          revBadge.className = 'bg-emerald-500/20 border-2 border-emerald-400/70 rounded-2xl p-3.5 flex items-center justify-between gap-3';
+          revIcon.className = 'fa-solid fa-cloud-bolt text-xl text-emerald-300';
+          revTitle.className = 'text-xs sm:text-sm font-black text-emerald-200';
+          revTitle.textContent = '☁️ تم التحليل عبر الذكاء الاصطناعي السحابي (Cloud AI)';
+          revSub.textContent = 'تم استخراج النص والعناصر الـ 13 بدقة عالية عبر الخادم الوسيط الآمن بدون تخمين.';
+          revPill.className = 'text-[11px] font-en font-black px-2.5 py-1 rounded-full bg-emerald-400 text-slate-950 shrink-0';
+          revPill.textContent = 'CLOUD AI';
+        } else {
+          revBadge.className = 'bg-amber-500/20 border-2 border-amber-400/70 rounded-2xl p-3.5 flex items-center justify-between gap-3';
+          revIcon.className = 'fa-solid fa-magnifying-glass text-xl text-amber-300';
+          revTitle.className = 'text-xs sm:text-sm font-black text-amber-200';
+          revTitle.textContent = '🔍 تم التحليل عبر الماسح البصري المحلي (Local OCR)';
+          revSub.textContent = 'تمت قراءة النص محلياً؛ يرجى مراجعة الحقول أدناه وتصحيح أي كلمات قبل الاعتماد.';
+          revPill.className = 'text-[11px] font-en font-black px-2.5 py-1 rounded-full bg-amber-400 text-slate-950 shrink-0';
+          revPill.textContent = 'LOCAL OCR';
+        }
+      }
+
+      // Stage 2: Auto-suggest Infographic Type & populate Summaries
+      const suggestedType = suggestBestInfographicType(draft);
+      draft.suggestedInfographicType = suggestedType;
+      const typeSelect = document.getElementById('review-infographic-type');
+      if (typeSelect) typeSelect.value = draft.selectedInfographicType || suggestedType;
+      const sugBadgeEl = document.getElementById('review-suggested-type-badge');
+      if (sugBadgeEl && INFOGRAPHIC_TYPES_META[suggestedType]) {
+        sugBadgeEl.textContent = `💡 المقترح تلقائياً: ${INFOGRAPHIC_TYPES_META[suggestedType].label}`;
+      }
+
+      const builtSum = buildLessonSummaries(draft);
+      const simpInput = document.getElementById('review-summary-simplified');
+      const medInput = document.getElementById('review-summary-medium');
+      const quickInput = document.getElementById('review-summary-quick');
+      const extraCheck = document.getElementById('review-has-extra-info');
+      if (simpInput) simpInput.value = builtSum.simplified || '';
+      if (medInput) medInput.value = builtSum.medium || '';
+      if (quickInput) quickInput.value = builtSum.quickReview || '';
+      if (extraCheck) extraCheck.checked = Boolean(builtSum.hasExtraInfo);
     }
 
     function returnToStage1UploadStep() {
@@ -2937,6 +3618,35 @@
           };
         });
       }
+
+      // Stage 2: Save edited Definitions, Equations, Examples, Comparisons, Summaries, and Infographic Type
+      const editedDefs = sanitizeUserInput(document.getElementById('review-field-definitions')?.value || '', 3000)
+        .split('\n').map(s => s.trim()).filter(Boolean);
+      if (editedDefs.length > 0) draft.definitions = editedDefs;
+
+      if (editedEquations.length > 0) draft.lawsAndEquations = editedEquations;
+
+      const editedExamples = sanitizeUserInput(document.getElementById('review-field-examples')?.value || '', 3000)
+        .split('\n').map(s => s.trim()).filter(Boolean);
+      if (editedExamples.length > 0) draft.examples = editedExamples;
+
+      const editedComparisons = sanitizeUserInput(document.getElementById('review-field-comparisons')?.value || '', 3000)
+        .split('\n').map(s => s.trim()).filter(Boolean);
+      if (editedComparisons.length > 0) draft.tablesAndComparisons = editedComparisons;
+
+      const editedUncertain = sanitizeUserInput(document.getElementById('review-uncertain-parts')?.value || '', 2000)
+        .split('\n').map(s => s.trim()).filter(Boolean);
+      draft.uncertainParts = editedUncertain;
+
+      const chosenType = document.getElementById('review-infographic-type')?.value || draft.suggestedInfographicType || 'mindmap';
+      draft.selectedInfographicType = chosenType;
+
+      draft.summaries = {
+        simplified: sanitizeUserInput(document.getElementById('review-summary-simplified')?.value || '', 3000),
+        medium: sanitizeUserInput(document.getElementById('review-summary-medium')?.value || '', 3000),
+        quickReview: sanitizeUserInput(document.getElementById('review-summary-quick')?.value || '', 2000),
+        hasExtraInfo: Boolean(document.getElementById('review-has-extra-info')?.checked)
+      };
 
       draft.id = draft.id || ('lesson-' + Date.now());
       draft.approvedAt = new Date().toISOString();
