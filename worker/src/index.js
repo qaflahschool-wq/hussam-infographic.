@@ -198,6 +198,30 @@ function parseModelJson(value) {
   }
 }
 
+function normalizeLessonOutput(value, input) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const title = String(value.title || "").trim().slice(0, 240);
+  if (!title) return null;
+  const normalized = {
+    ...value,
+    title,
+    grade: String(value.grade || input.grade).slice(0, 80),
+    subject: String(value.subject || input.subject).slice(0, 120),
+    desc: String(value.desc || "").slice(0, 5000),
+    rawExtractedText: String(value.rawExtractedText || input.rawText || "").slice(0, 60000)
+  };
+  for (const field of [
+    "uncertainParts", "subheadings", "mainIdeas", "definitions",
+    "lawsAndEquations", "examples", "questionsAndActivities",
+    "tablesAndComparisons", "objectives", "infographic", "vocab",
+    "walkthrough", "grammar", "flashcards", "quiz"
+  ]) {
+    if (!Array.isArray(normalized[field])) normalized[field] = [];
+    if (normalized[field].length > 100) normalized[field] = normalized[field].slice(0, 100);
+  }
+  return normalized;
+}
+
 async function callGemini(input, env) {
   if (!env.GEMINI_API_KEY) throw new Error("PROVIDER_NOT_CONFIGURED");
   const model = MODEL_ALLOWLIST.has(env.GEMINI_MODEL) ? env.GEMINI_MODEL : "gemini-2.5-flash";
@@ -226,10 +250,8 @@ async function callGemini(input, env) {
       if (upstream.ok) {
         const data = await upstream.json();
         const text = data?.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("\n") || "";
-        const parsed = parseModelJson(text);
-        if (!parsed || !parsed.title) throw new Error("INVALID_AI_OUTPUT");
-        parsed.grade = parsed.grade || input.grade;
-        parsed.subject = parsed.subject || input.subject;
+        const parsed = normalizeLessonOutput(parseModelJson(text), input);
+        if (!parsed) throw new Error("INVALID_AI_OUTPUT");
         return { lesson: parsed, model };
       }
       if (![429, 500, 502, 503, 504].includes(upstream.status) || attempt === 2) {
