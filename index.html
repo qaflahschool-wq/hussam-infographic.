@@ -1162,16 +1162,22 @@
         <button type="button" onclick="loginOwnerAdmin()" class="w-full bg-[#fbbf24] hover:bg-[#f59e0b] text-slate-950 font-black text-sm py-3 rounded-xl transition">
           دخول لوحة المالك 🔓
         </button>
+        <details class="rounded-xl border border-[#1e3a5f] p-3">
+          <summary class="cursor-pointer text-xs font-bold text-[#fbbf24]">إعداد حساب المالك لأول مرة</summary>
+          <p class="text-[11px] text-slate-400 mt-2">يستخدم مرة واحدة فقط بعد إعداد ADMIN_BOOTSTRAP_TOKEN في Cloudflare.</p>
+          <input type="password" id="admin-bootstrap-token" placeholder="رمز الإعداد لمرة واحدة" dir="ltr" class="w-full mt-2 bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3 py-2 text-xs text-white font-en" />
+          <button type="button" onclick="bootstrapOwnerAdmin()" class="w-full mt-2 bg-[#163252] hover:bg-[#21466e] text-white font-bold text-xs py-2.5 rounded-xl">إنشاء حساب المالك الآمن</button>
+        </details>
       </div>
 
       <div id="admin-dashboard-box" class="hidden space-y-5">
         <div class="bg-[#07111e] border border-[#163252] rounded-2xl p-4 space-y-3">
           <h4 class="text-sm font-black text-[#fbbf24] flex items-center gap-2">
             <i class="fa-solid fa-key"></i>
-            <span>توليد كود تفعيل مشفر مربوط بجهاز المشترك</span>
+            <span>إنشاء كود اشتراك عشوائي لمرة واحدة</span>
           </h4>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-            <input type="text" id="sub-client-device" placeholder="رقم الجهاز (مثال: HSM-4829)" dir="ltr" class="bg-[#0a1c32] border-2 border-[#22d3ee]/60 rounded-xl px-3 py-2 text-xs text-white font-en uppercase outline-none" />
+            <input type="text" id="sub-client-device" placeholder="ملاحظة داخلية اختيارية" dir="rtl" class="bg-[#0a1c32] border-2 border-[#22d3ee]/60 rounded-xl px-3 py-2 text-xs text-white outline-none" />
             <input type="text" id="sub-client-name" placeholder="اسم المشترك / المدرسة" class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl px-3 py-2 text-xs text-white outline-none" />
             <input type="text" id="sub-client-phone" placeholder="رقم واتساب المشترك" dir="ltr" class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl px-3 py-2 text-xs text-white font-en outline-none" />
           </div>
@@ -4464,6 +4470,28 @@
 
     function closeAdminModal() {
       document.getElementById('admin-modal').style.display = 'none';
+    }
+
+    async function bootstrapOwnerAdmin() {
+      const username = (document.getElementById('admin-email-input')?.value || '').trim().toLowerCase();
+      const password = document.getElementById('admin-pass-input')?.value || '';
+      const bootstrapToken = document.getElementById('admin-bootstrap-token')?.value || '';
+      if (!username || password.length < 12 || bootstrapToken.length < 20) {
+        showToast('أدخل البريد وكلمة مرور لا تقل عن 12 حرفاً ورمز الإعداد.', 'error');
+        return;
+      }
+      try {
+        await apiRequest('/v1/auth/admin/bootstrap', {
+          method: 'POST',
+          headers: { 'X-Admin-Bootstrap': bootstrapToken },
+          body: JSON.stringify({ username, password })
+        }, '');
+        document.getElementById('admin-bootstrap-token').value = '';
+        showToast('تم إنشاء حساب المالك. جارٍ تسجيل الدخول...', 'success');
+        await loginOwnerAdmin();
+      } catch (error) {
+        showToast(error.code === 'BOOTSTRAP_ALREADY_USED' ? 'تم إعداد حساب المالك من قبل؛ استخدم تسجيل الدخول.' : 'تعذر إعداد حساب المالك. تحقق من رمز الإعداد وإعداد الخادم.', 'error');
+      }
     }
 
     async function loginOwnerAdmin() {
