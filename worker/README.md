@@ -9,8 +9,11 @@ This directory is the GitHub source workspace for the Cloudflare Worker. It was 
 - Do not merge or deploy this branch until the acceptance tests pass and the owner explicitly approves production changes.
 
 ## Current baseline
-- `src/index.js`: exact source snapshot from the deployed Worker at the time of audit.
-- `migrations/0001_initial.sql`: proposed schema for server-enforced sessions, trials, activation codes, subscriptions, and minimal usage telemetry.
+- `src/index.js`: new versioned API Worker with D1-backed authentication, sessions, trial enforcement, subscription redemption, and Gemini analysis.
+- `src/security.js`: security primitives shared by the Worker.
+- `migrations/0001_initial.sql`: proposed D1 schema for sessions, trials, activation codes, subscriptions, login throttling, and minimal usage telemetry.
+- `scripts/build.mjs`: packages the root `index.html` and runtime configuration into static assets served by the same Worker.
+- `public/`: generated during `npm run build`; not maintained by hand.
 - `../AUDIT_REPORT_HUSSAM_AI_API.md`: audit findings and remediation plan.
 
 ## Authentication and entitlement target
@@ -26,7 +29,7 @@ Proposed model:
 6. Analysis requests require a valid session and a server-side entitlement check. Usage reservations must be concurrency-safe.
 7. Logs contain request IDs, status, duration, and provider/model metadata only—never images, raw lesson text, session tokens, or API keys.
 
-## Proposed API contract
+## Implemented API contract
 - `POST /v1/auth/guest`: verify Turnstile and create guest session/device record.
 - `POST /v1/auth/admin/login`: validate administrator credentials and create admin session.
 - `POST /v1/auth/logout`: revoke current session.
