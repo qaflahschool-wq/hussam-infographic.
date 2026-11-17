@@ -18,7 +18,7 @@ test("all inline frontend scripts parse as JavaScript", () => {
     try {
       new Script(source, { filename: `index-inline-${index}.js` });
     } catch (error) {
-      throw new Error(`inline script ${index} failed: ${error.stack || error.message}`);
+      throw new Error(`inline script ${index} failed: ${error.stack || error.message}; details=${JSON.stringify(Object.getOwnPropertyNames(error).reduce((o,k)=>(o[k]=error[k],o),{}))}`);
     }
   });
 });
