@@ -1,0 +1,32 @@
+name = "hussam-ai-api"
+main = "src/index.js"
+compatibility_date = "2026-11-18"
+workers_dev = true
+
+[vars]
+ENVIRONMENT = "development"
+DEV_AUTH_BYPASS = "true"
+ALLOWED_ORIGINS = "http://localhost:8787,http://127.0.0.1:8787"
+GEMINI_MODEL = "gemini-2.5-flash"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "hussam-infographic-dev"
+database_id = "local-hussam-infographic-dev"
+migrations_dir = "migrations"
+
+[env.production]
+name = "hussam-ai-api"
+workers_dev = true
+
+[env.production.vars]
+ENVIRONMENT = "production"
+DEV_AUTH_BYPASS = "false"
+GEMINI_MODEL = "gemini-2.5-flash"
+# Set ALLOWED_ORIGINS to the exact deployed frontend origin before deployment.
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "hussam-infographic-prod"
+database_id = "REPLACE_WITH_APPROVED_D1_DATABASE_ID"
+migrations_dir = "migrations"
