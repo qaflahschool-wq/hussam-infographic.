@@ -1760,29 +1760,7 @@
       return devId;
     }
 
-    function computeDeviceSignature(deviceId, days) {
-      const cleanDev = (deviceId || '').trim().toUpperCase();
-      const secret = [65, 98, 117, 72, 117, 115, 115, 97, 109, 95, 50, 48, 50, 54].map(c => String.fromCharCode(c)).join('');
-      const raw = `${cleanDev}:${days}:${secret}`;
-      let hash = 5381;
-      for (let i = 0; i < raw.length; i++) {
-        hash = ((hash << 5) + hash) + raw.charCodeAt(i);
-        hash = hash & 0x7fffffff;
-      }
-      return hash.toString(36).toUpperCase().padStart(5, '0').slice(0, 5);
-    }
-
-    function computeDigestHash(input) {
-      let h = 2166136261;
-      const str = String(input || '').trim().toLowerCase();
-      for (let i = 0; i < str.length; i++) {
-        h ^= str.charCodeAt(i);
-        h = Math.imul(h, 16777619);
-      }
-      return (h >>> 0).toString(16);
-    }
-
-    function isVipActive() {
+            function isVipActive() {
       return Boolean(serverEntitlement && serverEntitlement.isVip === true);
     }
 
