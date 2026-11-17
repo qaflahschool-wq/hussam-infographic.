@@ -12,13 +12,14 @@ Requirements: Node.js 20+, npm, and Wrangler CLI.
 3. Apply the schema to Wrangler's local D1 emulator (this does not create a Cloudflare database):
    `npx wrangler d1 migrations apply hussam-infographic-dev --local`
    The local emulator creates files under Wrangler's local state directory. No Cloudflare D1 resource is created.
-4. Set local secrets:
-   `npx wrangler secret put GEMINI_API_KEY`
-   `npx wrangler secret put DEVICE_ID_PEPPER`
-   For local-only use, a Turnstile bypass is enabled in the development vars. Never deploy those vars to production.
-6. Run tests:
+4. Create a local-only `.dev.vars` file inside `worker/` (never commit it) containing your own development values:
+   `GEMINI_API_KEY=your-development-key`
+   `DEVICE_ID_PEPPER=any-long-random-local-value`
+   `ADMIN_BOOTSTRAP_TOKEN=any-long-random-local-bootstrap-value`
+   The development config bypasses Turnstile only for local runs. Never copy `.dev.vars` or the bypass setting into production.
+5. Run tests:
    `npm test`
-7. Start the Worker:
+6. Start the Worker (serves the app at http://localhost:8787):
    `npx wrangler dev`
 
 ## Production checklist (do not run until explicitly approved)
