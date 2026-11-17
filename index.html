@@ -4524,7 +4524,7 @@
     }
 
     function sendGeneratedCodeWhatsApp() {
-      const phone = (document.getElementById('sub-client-phone')?.value || '').replace(/\\D/g, '');
+      const phone = (document.getElementById('sub-client-phone')?.value || '').replace(/\D/g, '');
       const name = (document.getElementById('sub-client-name')?.value || 'عميلنا العزيز').trim();
       const days = parseInt(document.getElementById('sub-plan-select')?.value || '90', 10);
       if (!lastGeneratedCode) {
