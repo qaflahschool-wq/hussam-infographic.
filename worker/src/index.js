@@ -6,6 +6,7 @@ import {
   validateImageDataUrl,
   createOpaqueToken,
   sha256Hex,
+  constantTimeEqual,
   hashPassword,
   verifyPassword,
   findActiveSession,
@@ -261,7 +262,7 @@ async function handleGuestAuth(request, env, id) {
 async function handleAdminBootstrap(request, env, id) {
   const body = await parseBody(request, 16 * 1024);
   const bootstrap = request.headers.get("X-Admin-Bootstrap") || "";
-  if (!env.ADMIN_BOOTSTRAP_TOKEN || bootstrap.length < 20 || bootstrap !== env.ADMIN_BOOTSTRAP_TOKEN) {
+  if (!env.ADMIN_BOOTSTRAP_TOKEN || bootstrap.length < 20 || !constantTimeEqual(bootstrap, env.ADMIN_BOOTSTRAP_TOKEN)) {
     return { payload: safeError("BOOTSTRAP_NOT_AUTHORIZED", 403, id), status: 403 };
   }
   const count = await env.DB.prepare("SELECT COUNT(*) AS n FROM admins").first();
