@@ -324,11 +324,15 @@ async function handleRedeemCode(request, env, session, id) {
     "UPDATE activation_codes SET status = 'redeemed', redeemed_by_device_id = ?, redeemed_at = ? WHERE code_hash = ? AND status = 'active' RETURNING id, duration_days"
   ).bind(session.device_id, now, codeHash).first();
   if (!result) return { payload: safeError("CODE_INVALID_OR_USED", 400, id), status: 400 };
-  const expiresAt = now + Number(result.duration_days) * 24 * 60 * 60 * 1000;
+  const current = await env.DB.prepare(
+    "SELECT MAX(expires_at) AS current_expiry FROM subscriptions WHERE device_id = ? AND status = 'active' AND expires_at > ?"
+  ).bind(session.device_id, now).first();
+  const startsAt = Math.max(now, Number(current?.current_expiry || now));
+  const expiresAt = startsAt + Number(result.duration_days) * 24 * 60 * 60 * 1000;
   try {
     await env.DB.prepare(
       "INSERT INTO subscriptions (id, device_id, activation_code_id, starts_at, expires_at, status, created_at) VALUES (?, ?, ?, ?, ?, 'active', ?)"
-    ).bind(crypto.randomUUID(), session.device_id, result.id, now, expiresAt, now).run();
+    ).bind(crypto.randomUUID(), session.device_id, result.id, startsAt, expiresAt, now).run();
   } catch {
     await env.DB.prepare("UPDATE activation_codes SET status = 'active', redeemed_by_device_id = NULL, redeemed_at = NULL WHERE id = ? AND status = 'redeemed'").bind(result.id).run();
     throw new Error("REDEMPTION_FAILED");
