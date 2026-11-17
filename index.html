@@ -613,15 +613,44 @@
           <div id="active-flashcards-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
         </div>
 
-        <div class="print-card bg-[#07111e] border border-[#163252] rounded-2xl p-4 sm:p-5 space-y-4">
-          <div class="flex items-center justify-between">
-            <h3 class="text-base sm:text-lg font-black text-[#fbbf24] flex items-center gap-2">
-              <i class="fa-solid fa-circle-question"></i>
-              <span id="sec-7-title">سابعاً: اختبر فهمك للدرس (Interactive Quiz)</span>
-            </h3>
-            <span id="quiz-score-badge" class="bg-[#fbbf24]/20 text-[#fbbf24] text-xs font-black px-3 py-1 rounded-full">النقاط: 0 XP</span>
+        <div class="print-card bg-[#07111e] border-2 border-[#fbbf24]/50 rounded-2xl p-4 sm:p-5 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#163252] pb-3">
+            <div class="space-y-1">
+              <h3 class="text-base sm:text-lg font-black text-[#fbbf24] flex items-center gap-2">
+                <i class="fa-solid fa-circle-question"></i>
+                <span id="sec-7-title">سابعاً: منظومة أسئلة المراجعة الشاملة للدرس (13 سؤالاً مع الحل والشرح)</span>
+              </h3>
+              <p class="text-xs text-slate-400">تعتمد جميع الأسئلة على محتوى هذا الدرس فقط: 5 اختيار من متعدد • 5 صح أو خطأ • 3 أسئلة قصيرة</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 shrink-0">
+              <span id="quiz-score-badge" class="bg-[#fbbf24]/20 text-[#fbbf24] border border-[#fbbf24]/40 text-xs font-black px-3 py-1.5 rounded-full">النقاط: 0 XP</span>
+              <button type="button" onclick="toggleAllQuizExplanations()" class="no-print text-xs bg-[#0a1c32] hover:bg-[#112a4a] text-[#22d3ee] border border-[#22d3ee]/40 font-extrabold px-3 py-1.5 rounded-xl transition flex items-center gap-1.5">
+                <i class="fa-solid fa-book-open"></i>
+                <span id="btn-toggle-explanations-text">إظهار جميع الإجابات والشروحات</span>
+              </button>
+              <button type="button" onclick="resetActiveQuizProgress()" class="no-print text-xs bg-[#0a1c32] hover:bg-[#112a4a] text-slate-300 border border-[#1e3a5f] font-bold px-2.5 py-1.5 rounded-xl transition" title="إعادة ضبط الاختبار">
+                <i class="fa-solid fa-rotate-right"></i>
+              </button>
+            </div>
           </div>
-          <div id="active-quiz-container" class="space-y-4"></div>
+
+          <!-- Stage 3 Quiz Filter Tabs -->
+          <div id="quiz-category-tabs" class="no-print flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+            <button type="button" onclick="switchQuizCategoryTab('all')" id="quiz-tab-all" class="shrink-0 px-3.5 py-2 rounded-xl text-xs font-black bg-[#fbbf24] text-slate-950 shadow transition">
+              الكل (13 سؤالاً)
+            </button>
+            <button type="button" onclick="switchQuizCategoryTab('mcq')" id="quiz-tab-mcq" class="shrink-0 px-3.5 py-2 rounded-xl text-xs font-extrabold bg-[#0a1c32] text-slate-300 border border-[#1e3a5f] hover:border-[#fbbf24] transition">
+              1. اختيار من متعدد (5)
+            </button>
+            <button type="button" onclick="switchQuizCategoryTab('tf')" id="quiz-tab-tf" class="shrink-0 px-3.5 py-2 rounded-xl text-xs font-extrabold bg-[#0a1c32] text-slate-300 border border-[#1e3a5f] hover:border-[#fbbf24] transition">
+              2. صح أو خطأ (5)
+            </button>
+            <button type="button" onclick="switchQuizCategoryTab('short')" id="quiz-tab-short" class="shrink-0 px-3.5 py-2 rounded-xl text-xs font-extrabold bg-[#0a1c32] text-slate-300 border border-[#1e3a5f] hover:border-[#fbbf24] transition">
+              3. أسئلة قصيرة (3)
+            </button>
+          </div>
+
+          <div id="active-quiz-container" class="space-y-6"></div>
         </div>
 
       </div>
@@ -941,6 +970,19 @@
               <label class="block text-[11px] font-bold text-[#fbbf24] mb-1">مراجعة سريعة جدًا:</label>
               <textarea id="review-summary-quick" rows="2" class="w-full bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-2 text-xs text-white outline-none focus:border-[#fbbf24]"></textarea>
             </div>
+          </div>
+        </div>
+
+        <!-- Stage 3: Review Questions Summary Badge in Review Screen -->
+        <div class="bg-[#07111e] border border-emerald-500/40 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2 text-xs font-extrabold text-emerald-300">
+            <i class="fa-solid fa-list-check text-sm"></i>
+            <span>منظومة أسئلة المراجعة التلقائية (تعتمد على محتوى الدرس فقط):</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-1.5 text-[11px] font-bold">
+            <span class="px-2.5 py-1 rounded-full bg-[#0a1c32] text-[#fbbf24] border border-[#fbbf24]/40">5 اختيار من متعدد</span>
+            <span class="px-2.5 py-1 rounded-full bg-[#0a1c32] text-[#22d3ee] border border-[#22d3ee]/40">5 صح أو خطأ</span>
+            <span class="px-2.5 py-1 rounded-full bg-[#0a1c32] text-emerald-300 border border-emerald-500/40">3 أسئلة قصيرة مع الشرح</span>
           </div>
         </div>
 
@@ -2954,25 +2996,8 @@
         </div>
       `).join('');
 
-      // 7. Interactive Quiz
-      const quizContainer = document.getElementById('active-quiz-container');
-      quizContainer.innerHTML = (lesson.quiz || []).map((qItem, qIdx) => `
-        <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-xl p-4 space-y-3">
-          <div dir="ltr" class="font-en text-sm sm:text-base font-extrabold text-white">${qIdx + 1}. ${escapeHtml(qItem.q)}</div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            ${(qItem.options || []).map((opt, oIdx) => `
-              <button
-                type="button"
-                onclick="handleQuizAnswer(this, ${qIdx}, ${oIdx}, ${Number(qItem.correct || 0)})"
-                class="quiz-opt-btn-${qIdx} text-left font-en text-xs sm:text-sm font-bold bg-[#07111e] hover:bg-[#112a4a] text-slate-200 border border-[#1e3a5f] rounded-xl px-3.5 py-2.5 transition"
-                dir="ltr"
-              >
-                ${escapeHtml(opt)}
-              </button>
-            `).join('')}
-          </div>
-        </div>
-      `).join('');
+      // 7. Stage 3 Comprehensive Interactive Review Questions (5 MCQ + 5 True/False + 3 Short Answer)
+      renderStage3QuizSection(lesson);
 
       applyFiltersAndRender();
 
@@ -2982,9 +3007,370 @@
       }
     }
 
+    // --- STAGE 3: COMPREHENSIVE LESSON-GROUNDED REVIEW QUESTIONS ENGINE (5 MCQ + 5 TF + 3 SHORT) ---
+    let currentQuizCategoryFilter = 'all';
+    let allExplanationsVisible = false;
+
+    function buildStage3ReviewQuestions(lesson) {
+      const existing = lesson.reviewQuestions || {};
+      const title = lesson.title || 'الدرس';
+      const subject = lesson.subject || 'المادة';
+      const grade = lesson.grade || 'الصف الدراسي';
+      const walk = Array.isArray(lesson.walkthrough) && lesson.walkthrough.length > 0
+        ? lesson.walkthrough
+        : [{ en: title, ar: lesson.desc || title, note: 'المحور الأساسي للدرس.' }];
+      const vocab = Array.isArray(lesson.vocab) && lesson.vocab.length > 0
+        ? lesson.vocab
+        : [{ word: title, pos: 'Keyword', ar: lesson.desc || title, ex: title }];
+      const summaries = buildLessonSummaries(lesson);
+      const defs = summaries.definitions || [];
+      const eqs = summaries.lawsAndEquations || [];
+      const objs = (lesson.objectives || []).map(o => typeof o === 'string' ? o : (o.ar || o.en || '')).filter(Boolean);
+      const ideas = (lesson.mainIdeas && lesson.mainIdeas.length > 0)
+        ? lesson.mainIdeas
+        : (lesson.infographic || []).map(n => n.ar || n.en).filter(Boolean);
+
+      // 1. Build 5 Multiple-Choice Questions strictly from lesson content
+      const mcqList = Array.isArray(existing.mcq) ? existing.mcq.slice(0, 5) : [];
+      // Seed from existing lesson.quiz if available
+      if (mcqList.length === 0 && Array.isArray(lesson.quiz)) {
+        lesson.quiz.forEach((qItem, idx) => {
+          if (mcqList.length < 5 && qItem && qItem.q && Array.isArray(qItem.options)) {
+            const cIdx = Number(qItem.correct || 0);
+            const rightOpt = qItem.options[cIdx] || qItem.options[0] || '';
+            mcqList.push({
+              q: qItem.q,
+              options: qItem.options.slice(0, 4),
+              correct: cIdx,
+              explanation: qItem.explanation || `الإجابة الصحيحة من نص الدرس هي (${rightOpt}) لأنها وردت صراحةً في شرح درس «${title}».`
+            });
+          }
+        });
+      }
+
+      const fallbackMcqTemplates = [
+        {
+          q: `ما الفكرة أو الجملة الأساسية الأولى الواردة في درس «${title}»؟`,
+          options: [
+            walk[0]?.ar || walk[0]?.en || title,
+            'معلومة خارجية لا علاقة لها بمحتوى الصفحة المرفوعة',
+            'قاعدة غير مذكورة في هذا الدرس',
+            'لا شيء مما سبق'
+          ],
+          correct: 0,
+          explanation: `ورد في مطلع الدرس: «${walk[0]?.ar || walk[0]?.en || title}» وهو المحور الأول المعتمد في الصفحة.`
+        },
+        {
+          q: vocab[0]
+            ? `ما المعنى أو المفهوم الصحيح للمصطلح/الكلمة (${vocab[0].word}) حسب ما ورد في الدرس؟`
+            : `ما الهدف التعليمي الرئيسي من دراسة «${title}»؟`,
+          options: [
+            'مفهوم غير وارد في الدرس',
+            vocab[0] ? vocab[0].ar : (objs[0] || title),
+            'مصطلح من درس آخر غير مرتبط بالصفحة',
+            'تخمين خارجي غير مذكور'
+          ],
+          correct: 1,
+          explanation: vocab[0]
+            ? `في معجم مفردات ومفاهيم الدرس، الكلمة (${vocab[0].word}) تعني: «${vocab[0].ar}».`
+            : `الهدف المعتمد في الدرس هو: «${objs[0] || title}».`
+        },
+        {
+          q: eqs[0]
+            ? `أي صيغة أو قاعدة مما يلي وردت ضمن قوانين وقواعد درس «${title}»؟`
+            : `ما المحور التحليلي الثاني الذي يتناوله درس «${title}»؟`,
+          options: [
+            'صيغة مخالفة لما ورد في الدرس',
+            'علاقة غير موجودة في الكتاب',
+            eqs[0] || (walk[1]?.ar || ideas[1] || walk[0]?.ar || title),
+            'معادلة افتراضية خارج المنهج'
+          ],
+          correct: 2,
+          explanation: eqs[0]
+            ? `القاعدة/المعادلة المعتمدة في الدرس هي: «${eqs[0]}».`
+            : `المحور المذكور في الدرس ينص على: «${walk[1]?.ar || ideas[1] || walk[0]?.ar || title}».`
+        },
+        {
+          q: vocab[1]
+            ? `ما الدلالة الصحيحة للكلمة أو المفهوم (${vocab[1].word}) في سياق هذا الدرس؟`
+            : `أي عبارة مما يلي تلخص مضمون درس «${title}» بدقة؟`,
+          options: [
+            'دلالة مناقضة لمحتوى الصفحة',
+            'مفهوم غير مرتبط بالمادة',
+            'إجابة خارج نطاق الدرس',
+            vocab[1] ? vocab[1].ar : (summaries.quickReview || title)
+          ],
+          correct: 3,
+          explanation: vocab[1]
+            ? `ورد في مفردات الدرس أن (${vocab[1].word}) يقابله في المعنى: «${vocab[1].ar}».`
+            : `الخلاصة المعتمدة من محتوى الدرس هي: «${summaries.quickReview || title}».`
+        },
+        {
+          q: defs[0]
+            ? `أي تعريف أو مصطلح مما يلي ورد في قائمة تعريفات درس «${title}»؟`
+            : `ضمن أي مادة وصف دراسي يُصنَّف درس «${title}»؟`,
+          options: [
+            defs[0] || `${grade} • ${subject}`,
+            'تعريف خارجي غير موجود في الصورة الأصلية',
+            'مصطلح من فصل دراسي مختلف تماماً',
+            'معلومة غير واردة في النص'
+          ],
+          correct: 0,
+          explanation: defs[0]
+            ? `ورد هذا التعريف مباشرةً في ملخص تعريفات الدرس: «${defs[0]}».`
+            : `يصنف هذا الدرس ضمن (${grade} • ${subject}) كما هو مثبت في بيانات الدرس.`
+        }
+      ];
+
+      while (mcqList.length < 5) {
+        mcqList.push(fallbackMcqTemplates[mcqList.length]);
+      }
+
+      // 2. Build 5 True/False Questions strictly from lesson content
+      const tfList = Array.isArray(existing.trueFalse) ? existing.trueFalse.slice(0, 5) : [];
+      const fallbackTfTemplates = [
+        {
+          q: `يتناول درس «${title}» محور: (${walk[0]?.ar || walk[0]?.en || title}).`,
+          isTrue: true,
+          explanation: `عبارة صحيحة ✅؛ لأن هذا المحور وارد صراحةً في النص الأساسي المستخرج من الدرس.`
+        },
+        {
+          q: vocab[0]
+            ? `المعنى الصحيح للمصطلح (${vocab[0].word}) في هذا الدرس هو: (${vocab[0].ar}).`
+            : `من أهداف درس «${title}»: (${objs[0] || lesson.desc}).`,
+          isTrue: true,
+          explanation: vocab[0]
+            ? `عبارة صحيحة ✅؛ حيث وردت الكلمة (${vocab[0].word}) بمعنى (${vocab[0].ar}) في معجم الدرس.`
+            : `عبارة صحيحة ✅؛ وهذا الهدف من نواتج التعلم المباشرة للدرس.`
+        },
+        {
+          q: `يعتمد تحليل درس «${title}» على تخمين معلومات خارجية غير موجودة في صفحة الدرس.`,
+          isTrue: false,
+          explanation: `عبارة خاطئة ❌؛ فالتحليل والملخص يلتزمان حرفياً بما ورد في صفحة الدرس المرفوعة دون تخمين.`
+        },
+        {
+          q: eqs[0]
+            ? `من القواعد أو القوانين المعتمدة في هذا الدرس: (${eqs[0]}).`
+            : `من الأفكار الفرعية الواردة في الدرس: (${walk[1]?.ar || ideas[0] || walk[0]?.ar || title}).`,
+          isTrue: true,
+          explanation: eqs[0]
+            ? `عبارة صحيحة ✅؛ لأن هذه القاعدة/المعادلة مستخرجة ومعتمدة ضمن قوانين الدرس.`
+            : `عبارة صحيحة ✅؛ لأن هذه الفكرة وردت ضمن التسلسل التحليلي لجمل الدرس.`
+        },
+        {
+          q: vocab[1]
+            ? `الكلمة أو المفهوم (${vocab[1].word}) لا علاقة له بموضوع درس «${title}» ولم يرد فيه.`
+            : `محتوى درس «${title}» يخالف أهداف (${subject} - ${grade}).`,
+          isTrue: false,
+          explanation: vocab[1]
+            ? `عبارة خاطئة ❌؛ فالمصطلح (${vocab[1].word}) ومعناه (${vocab[1].ar}) من المفردات الأساسية الواردة في الدرس.`
+            : `عبارة خاطئة ❌؛ فمحتوى الدرس مرتبط مباشرةً بأهداف (${subject} - ${grade}).`
+        }
+      ];
+
+      while (tfList.length < 5) {
+        tfList.push(fallbackTfTemplates[tfList.length]);
+      }
+
+      // 3. Build 3 Short-Answer Questions strictly from lesson content
+      const saList = Array.isArray(existing.shortAnswer) ? existing.shortAnswer.slice(0, 3) : [];
+      const fallbackSaTemplates = [
+        {
+          q: `اذكر الفكرة الرئيسية أو الملخص المبسط لدرس «${title}» كما ورد في الصفحة.`,
+          modelAnswer: summaries.simplified || walk[0]?.ar || lesson.desc,
+          explanation: `تعتمد هذه الإجابة مباشرةً على الشرح المبسط المستخرج من نص الدرس الأصلي.`
+        },
+        {
+          q: defs[0]
+            ? `عرّف أو وضّح المقصود بأهم مصطلح وارد في الدرس: (${defs[0].split(':')[0] || title}).`
+            : `اذكر اثنتين من المفردات أو المفاهيم المهمة الواردة في درس «${title}» مع معانيهما.`,
+          modelAnswer: defs[0] || vocab.slice(0, 2).map(v => `${v.word}: ${v.ar}`).join(' ، '),
+          explanation: `تم استخراج هذه المصطلحات وتعريفاتها من قسم التعريفات والمفردات المعتمد في الدرس.`
+        },
+        {
+          q: eqs[0]
+            ? `اكتب القانون أو القاعدة الأساسية الواردة في درس «${title}» مع ذكر مثال عليها من الدرس.`
+            : `استخرج جملة أو مثالاً تطبيقياً ورد في درس «${title}» واشرح معناه باختصار.`,
+          modelAnswer: eqs[0]
+            ? `${eqs[0]} — مثال من الدرس: ${(summaries.examples && summaries.examples[0]) || walk[0]?.en || ''}`
+            : `${walk[0]?.en || ''} — الشرح: ${walk[0]?.ar || summaries.quickReview}`,
+          explanation: `هذا القانون والمثال التطبيقي مستخرجان من قسم القواعد والأمثلة المحلولة في الدرس.`
+        }
+      ];
+
+      while (saList.length < 3) {
+        saList.push(fallbackSaTemplates[saList.length]);
+      }
+
+      return {
+        mcq: mcqList,
+        trueFalse: tfList,
+        shortAnswer: saList
+      };
+    }
+
+    function switchQuizCategoryTab(categoryKey) {
+      currentQuizCategoryFilter = categoryKey || 'all';
+      const tabs = ['all', 'mcq', 'tf', 'short'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`quiz-tab-${t}`);
+        if (!btn) return;
+        if (t === currentQuizCategoryFilter) {
+          btn.className = 'shrink-0 px-3.5 py-2 rounded-xl text-xs font-black bg-[#fbbf24] text-slate-950 shadow transition';
+        } else {
+          btn.className = 'shrink-0 px-3.5 py-2 rounded-xl text-xs font-extrabold bg-[#0a1c32] text-slate-300 border border-[#1e3a5f] hover:border-[#fbbf24] transition';
+        }
+      });
+
+      const mcqBlock = document.getElementById('quiz-block-mcq');
+      const tfBlock = document.getElementById('quiz-block-tf');
+      const shortBlock = document.getElementById('quiz-block-short');
+      if (mcqBlock) mcqBlock.style.display = (currentQuizCategoryFilter === 'all' || currentQuizCategoryFilter === 'mcq') ? 'block' : 'none';
+      if (tfBlock) tfBlock.style.display = (currentQuizCategoryFilter === 'all' || currentQuizCategoryFilter === 'tf') ? 'block' : 'none';
+      if (shortBlock) shortBlock.style.display = (currentQuizCategoryFilter === 'all' || currentQuizCategoryFilter === 'short') ? 'block' : 'none';
+    }
+
+    function renderStage3QuizSection(lesson) {
+      const quizContainer = document.getElementById('active-quiz-container');
+      if (!quizContainer) return;
+
+      allExplanationsVisible = false;
+      const toggleTxt = document.getElementById('btn-toggle-explanations-text');
+      if (toggleTxt) toggleTxt.textContent = 'إظهار جميع الإجابات والشروحات';
+
+      const qData = buildStage3ReviewQuestions(lesson);
+      lesson.reviewQuestions = qData;
+
+      const mcqHtml = qData.mcq.map((qItem, qIdx) => {
+        const cIdx = Number(qItem.correct || 0);
+        const rightAnswerText = (qItem.options && qItem.options[cIdx]) ? qItem.options[cIdx] : '';
+        return `
+          <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-2xl p-4 space-y-3">
+            <div class="flex items-start justify-between gap-2">
+              <div class="text-xs sm:text-sm font-extrabold text-white rtl-safe-text">
+                <span class="inline-block bg-[#fbbf24]/20 text-[#fbbf24] border border-[#fbbf24]/40 px-2 py-0.5 rounded-lg ml-1.5 font-en">MCQ ${qIdx + 1}/5</span>
+                ${formatRtlSafeWithMath(qItem.q)}
+              </div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              ${(qItem.options || []).map((opt, oIdx) => `
+                <button
+                  type="button"
+                  onclick="handleQuizAnswer(this, ${qIdx}, ${oIdx}, ${cIdx})"
+                  class="quiz-opt-btn-${qIdx} text-right text-xs sm:text-sm font-bold bg-[#07111e] hover:bg-[#112a4a] text-slate-200 border border-[#1e3a5f] rounded-xl px-3.5 py-2.5 transition rtl-safe-text"
+                >
+                  <span class="font-en text-[#fbbf24] ml-1.5">${['A', 'B', 'C', 'D'][oIdx] || (oIdx + 1)}.</span>
+                  ${formatRtlSafeWithMath(opt)}
+                </button>
+              `).join('')}
+            </div>
+            <div id="mcq-exp-${qIdx}" class="quiz-explanation-box hidden bg-[#07111e] border-r-4 border-emerald-400 rounded-xl p-3 text-xs space-y-1 rtl-safe-text">
+              <div class="font-black text-emerald-300">✅ الإجابة الصحيحة: ${formatRtlSafeWithMath(rightAnswerText)}</div>
+              <div class="text-slate-300"><strong class="text-[#fbbf24]">الشرح من الدرس:</strong> ${formatRtlSafeWithMath(qItem.explanation || '')}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const tfHtml = qData.trueFalse.map((tfItem, tfIdx) => {
+        const corrBool = Boolean(tfItem.isTrue);
+        return `
+          <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-2xl p-4 space-y-3">
+            <div class="text-xs sm:text-sm font-extrabold text-white rtl-safe-text">
+              <span class="inline-block bg-[#22d3ee]/20 text-[#22d3ee] border border-[#22d3ee]/40 px-2 py-0.5 rounded-lg ml-1.5 font-en">T/F ${tfIdx + 1}/5</span>
+              ${formatRtlSafeWithMath(tfItem.q)}
+            </div>
+            <div class="grid grid-cols-2 gap-2.5">
+              <button
+                type="button"
+                onclick="handleTrueFalseAnswer(this, ${tfIdx}, true, ${corrBool})"
+                class="tf-opt-btn-${tfIdx} data-tf-true py-2.5 px-4 rounded-xl font-extrabold text-xs sm:text-sm bg-[#07111e] hover:bg-[#112a4a] text-slate-200 border border-[#1e3a5f] transition flex items-center justify-center gap-1.5"
+              >
+                <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                <span>صح (True)</span>
+              </button>
+              <button
+                type="button"
+                onclick="handleTrueFalseAnswer(this, ${tfIdx}, false, ${corrBool})"
+                class="tf-opt-btn-${tfIdx} data-tf-false py-2.5 px-4 rounded-xl font-extrabold text-xs sm:text-sm bg-[#07111e] hover:bg-[#112a4a] text-slate-200 border border-[#1e3a5f] transition flex items-center justify-center gap-1.5"
+              >
+                <i class="fa-solid fa-circle-xmark text-rose-400"></i>
+                <span>خطأ (False)</span>
+              </button>
+            </div>
+            <div id="tf-exp-${tfIdx}" class="quiz-explanation-box hidden bg-[#07111e] border-r-4 border-[#22d3ee] rounded-xl p-3 text-xs space-y-1 rtl-safe-text">
+              <div class="font-black text-[#22d3ee]">الإجابة النموذجية: ${corrBool ? 'صح ✅' : 'خطأ ❌'}</div>
+              <div class="text-slate-300"><strong class="text-[#fbbf24]">الشرح والتعليل من الدرس:</strong> ${formatRtlSafeWithMath(tfItem.explanation || '')}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const shortHtml = qData.shortAnswer.map((saItem, saIdx) => `
+        <div class="bg-[#0a1c32] border border-[#1e3a5f] rounded-2xl p-4 space-y-3">
+          <div class="text-xs sm:text-sm font-extrabold text-white rtl-safe-text">
+            <span class="inline-block bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-lg ml-1.5 font-en">سؤال قصير ${saIdx + 1}/3</span>
+            ${formatRtlSafeWithMath(saItem.q)}
+          </div>
+          <div class="flex flex-col sm:flex-row gap-2 no-print">
+            <input
+              type="text"
+              id="short-ans-input-${saIdx}"
+              placeholder="اكتب إجابتك المختصرة هنا ثم اضغط تحقق..."
+              class="flex-1 bg-[#07111e] border border-[#1e3a5f] rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white outline-none focus:border-[#fbbf24]"
+            />
+            <button
+              type="button"
+              id="short-ans-btn-${saIdx}"
+              onclick="handleShortAnswerCheck(${saIdx})"
+              class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs px-4 py-2.5 rounded-xl shrink-0 transition flex items-center justify-center gap-1.5"
+            >
+              <i class="fa-solid fa-eye"></i>
+              <span>تحقق وأظهر الإجابة والشرح</span>
+            </button>
+          </div>
+          <div id="sa-exp-${saIdx}" class="quiz-explanation-box hidden bg-[#07111e] border-r-4 border-[#fbbf24] rounded-xl p-3.5 text-xs space-y-1.5 rtl-safe-text">
+            <div class="font-black text-emerald-300">✅ الإجابة النموذجية من الدرس: ${formatRtlSafeWithMath(saItem.modelAnswer || '')}</div>
+            <div class="text-slate-300"><strong class="text-[#fbbf24]">الشرح والمصدر في الدرس:</strong> ${formatRtlSafeWithMath(saItem.explanation || '')}</div>
+          </div>
+        </div>
+      `).join('');
+
+      quizContainer.innerHTML = `
+        <div id="quiz-block-mcq" class="space-y-3">
+          <h4 class="text-xs sm:text-sm font-black text-[#fbbf24] flex items-center gap-2 border-b border-[#163252] pb-2">
+            <i class="fa-solid fa-list-ul"></i>
+            <span>القسم الأول: أسئلة الاختيار من متعدد (5 أسئلة مع الشرح)</span>
+          </h4>
+          ${mcqHtml}
+        </div>
+
+        <div id="quiz-block-tf" class="space-y-3">
+          <h4 class="text-xs sm:text-sm font-black text-[#22d3ee] flex items-center gap-2 border-b border-[#163252] pb-2">
+            <i class="fa-solid fa-check-double"></i>
+            <span>القسم الثاني: أسئلة صح أو خطأ (5 أسئلة مع التعليل)</span>
+          </h4>
+          ${tfHtml}
+        </div>
+
+        <div id="quiz-block-short" class="space-y-3">
+          <h4 class="text-xs sm:text-sm font-black text-emerald-300 flex items-center gap-2 border-b border-[#163252] pb-2">
+            <i class="fa-solid fa-pen-clip"></i>
+            <span>القسم الثالث: الأسئلة المقالية القصيرة (3 أسئلة مع الإجابة النموذجية والشرح)</span>
+          </h4>
+          ${shortHtml}
+        </div>
+      `;
+
+      switchQuizCategoryTab(currentQuizCategoryFilter);
+    }
+
     function handleQuizAnswer(btnEl, qIdx, chosenIdx, correctIdx) {
       const allBtns = document.querySelectorAll(`.quiz-opt-btn-${qIdx}`);
       allBtns.forEach(b => b.disabled = true);
+
+      const expBox = document.getElementById(`mcq-exp-${qIdx}`);
+      if (expBox) expBox.classList.remove('hidden');
 
       if (chosenIdx === correctIdx) {
         btnEl.classList.remove('bg-[#07111e]', 'border-[#1e3a5f]');
@@ -3001,7 +3387,81 @@
         if (allBtns[correctIdx]) {
           allBtns[correctIdx].classList.add('bg-emerald-500/30', 'border-emerald-400', 'text-emerald-200');
         }
-        showToast('إجابة غير صحيحة، تم توضيح الإجابة الصحيحة باللون الأخضر 💡', 'error');
+        showToast('إجابة غير صحيحة، راجع الشرح التفصيلي أسفل السؤال 💡', 'error');
+      }
+    }
+
+    function handleTrueFalseAnswer(btnEl, tfIdx, chosenBool, correctBool) {
+      const allBtns = document.querySelectorAll(`.tf-opt-btn-${tfIdx}`);
+      allBtns.forEach(b => b.disabled = true);
+
+      const expBox = document.getElementById(`tf-exp-${tfIdx}`);
+      if (expBox) expBox.classList.remove('hidden');
+
+      if (chosenBool === correctBool) {
+        btnEl.classList.remove('bg-[#07111e]', 'border-[#1e3a5f]');
+        btnEl.classList.add('bg-emerald-500/30', 'border-emerald-400', 'text-emerald-200');
+        quizScore += 10;
+        document.getElementById('quiz-score-badge').textContent = `النقاط: ${quizScore} XP`;
+        showToast('إجابة صحيحة! أحسنت 🎉 (+10 XP)', 'success');
+        if (typeof confetti === 'function') {
+          confetti({ particleCount: 40, spread: 55, origin: { y: 0.8 } });
+        }
+      } else {
+        btnEl.classList.remove('bg-[#07111e]', 'border-[#1e3a5f]');
+        btnEl.classList.add('bg-rose-500/30', 'border-rose-400', 'text-rose-200');
+        allBtns.forEach(b => {
+          if ((correctBool && b.classList.contains('data-tf-true')) || (!correctBool && b.classList.contains('data-tf-false'))) {
+            b.classList.add('bg-emerald-500/30', 'border-emerald-400', 'text-emerald-200');
+          }
+        });
+        showToast('إجابة غير صحيحة، تم إظهار التصحيح والشرح من الدرس 💡', 'error');
+      }
+    }
+
+    function handleShortAnswerCheck(saIdx) {
+      const expBox = document.getElementById(`sa-exp-${saIdx}`);
+      const btn = document.getElementById(`short-ans-btn-${saIdx}`);
+      const inp = document.getElementById(`short-ans-input-${saIdx}`);
+      if (expBox) expBox.classList.remove('hidden');
+      if (btn && !btn.disabled) {
+        btn.disabled = true;
+        btn.classList.add('opacity-70');
+        quizScore += 15;
+        const badge = document.getElementById('quiz-score-badge');
+        if (badge) badge.textContent = `النقاط: ${quizScore} XP`;
+        const hasText = inp && inp.value.trim().length > 0;
+        showToast(hasText ? 'أحسنت المحاولة! قارن إجابتك بالإجابة النموذجية والشرح (+15 XP) 🌟' : 'تم إظهار الإجابة النموذجية والشرح من الدرس 📖 (+15 XP)', 'success');
+      }
+    }
+
+    function toggleAllQuizExplanations() {
+      allExplanationsVisible = !allExplanationsVisible;
+      const boxes = document.querySelectorAll('.quiz-explanation-box');
+      boxes.forEach(b => {
+        if (allExplanationsVisible) {
+          b.classList.remove('hidden');
+        } else {
+          b.classList.add('hidden');
+        }
+      });
+      const toggleTxt = document.getElementById('btn-toggle-explanations-text');
+      if (toggleTxt) {
+        toggleTxt.textContent = allExplanationsVisible
+          ? 'إخفاء الإجابات والشروحات'
+          : 'إظهار جميع الإجابات والشروحات';
+      }
+    }
+
+    function resetActiveQuizProgress() {
+      quizScore = 0;
+      const badge = document.getElementById('quiz-score-badge');
+      if (badge) badge.textContent = 'النقاط: 0 XP';
+      const all = getAllLessons();
+      const lesson = all.find(l => l.id === activeLessonId);
+      if (lesson) {
+        renderStage3QuizSection(lesson);
+        showToast('تمت إعادة ضبط أسئلة المراجعة والنقاط بنجاح 🔄', 'info');
       }
     }
 
@@ -3648,6 +4108,7 @@
         hasExtraInfo: Boolean(document.getElementById('review-has-extra-info')?.checked)
       };
 
+      draft.reviewQuestions = buildStage3ReviewQuestions(draft);
       draft.id = draft.id || ('lesson-' + Date.now());
       draft.approvedAt = new Date().toISOString();
 
