@@ -15,7 +15,11 @@ test("all inline frontend scripts parse as JavaScript", () => {
     .filter((value) => value.trim().length > 0);
   assert.ok(scripts.length > 0, "expected at least one inline script");
   scripts.forEach((source, index) => {
-    assert.doesNotThrow(() => new Script(source, { filename: `index-inline-${index}.js` }));
+    try {
+      new Script(source, { filename: `index-inline-${index}.js` });
+    } catch (error) {
+      throw new Error(`inline script ${index} failed: ${error.message}`);
+    }
   });
 });
 
