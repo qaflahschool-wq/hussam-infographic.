@@ -33,5 +33,5 @@ ALLOWED_ORIGINS = "https://hussam-ai-api.alshakliamohammed04.workers.dev"
 [[env.production.d1_databases]]
 binding = "DB"
 database_name = "hussam-infographic-prod"
-database_id = "REPLACE_WITH_APPROVED_D1_DATABASE_ID"
+database_id = "e4a4107a-afa5-4176-9084-7522eb17ef2d"
 migrations_dir = "migrations"
