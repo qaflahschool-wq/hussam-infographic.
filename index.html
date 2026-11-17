@@ -4524,11 +4524,15 @@
     }
 
     function sendGeneratedCodeWhatsApp() {
-      const phone = (document.getElementById('sub-client-phone')?.value || '').replace(/\D/g, '');
+      const phone = (document.getElementById('sub-client-phone')?.value || '').replace(/\\D/g, '');
       const name = (document.getElementById('sub-client-name')?.value || 'عميلنا العزيز').trim();
-      const dev = (document.getElementById('sub-client-device')?.value || '').trim().toUpperCase();
-      const msg = `مرحباً ${name}،\nتم تفعيل اشتراكك في منصة Hussam Infographic VIP بنجاح!\n\n🔑 كود التفعيل الخاص بجهازك (${dev}):\n${lastGeneratedCode}\n\nانسخ الكود وأدخله في نافذة التفعيل داخل المنصة.`;
-      const url = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
+      const days = parseInt(document.getElementById('sub-plan-select')?.value || '90', 10);
+      if (!lastGeneratedCode) {
+        showToast('أنشئ كود الاشتراك أولاً.', 'error');
+        return;
+      }
+      const msg = `مرحباً ${name}،\n\nتم إصدار كود اشتراك منصة حسام إنفوجرافيك لمدة ${days} يوماً.\n\n🔑 كود التفعيل: ${lastGeneratedCode}\n\nالكود صالح للاستخدام مرة واحدة. أدخله في نافذة الاشتراك داخل المنصة.`;
+      const url = phone ? `https://wa.me/967${phone.replace(/^0/, '')}?text=${encodeURIComponent(msg)}` : `https://wa.me/?text=${encodeURIComponent(msg)}`;
       window.open(url, '_blank');
     }
 
