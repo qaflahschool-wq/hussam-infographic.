@@ -9,7 +9,8 @@ async function call(path, { method = "GET", body, token, headers = {}, expected 
   const res = await fetch(base + path, {
     method,
     headers: h,
-    body: body === undefined ? undefined : JSON.stringify(body)
+    body: body === undefined ? undefined : JSON.stringify(body),
+    signal: AbortSignal.timeout(12000)
   });
   const data = res.status === 204 ? null : await res.json().catch(() => null);
   if (expected !== undefined && res.status !== expected) {
