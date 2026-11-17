@@ -392,8 +392,11 @@ export default {
       }
       return new Response(null, { status: 204, headers: cors.headers });
     }
-    if (request.method === "GET" && (path === "/" || path === "/health")) {
+    if (request.method === "GET" && path === "/health") {
       return response({ service: "HUSSAM AI API", status: "ok", version: "2.0.0" }, 200, cors, id);
+    }
+    if (request.method === "GET" && env.ASSETS) {
+      return env.ASSETS.fetch(request);
     }
     if (!env.DB) return response(safeError("DATABASE_NOT_CONFIGURED", 503, id), 503, cors, id);
     try {
