@@ -49,7 +49,8 @@ jobs:
           node tests/smoke-local.mjs
       - name: Package the deployable application
         run: |
-          zip -r HUSSAM-INFOGRAPHIC-DEPLOYMENT.zip src security.js migrations scripts public wrangler.toml package.json SETUP.md README.md
+          cd ..
+          zip -r worker/HUSSAM-INFOGRAPHIC-DEPLOYMENT.zip worker/src worker/migrations worker/scripts worker/public worker/wrangler.toml worker/package.json worker/SETUP.md worker/README.md worker/security.js index.html
       - uses: actions/upload-artifact@v4
         with:
           name: HUSSAM-INFOGRAPHIC-DEPLOYMENT
