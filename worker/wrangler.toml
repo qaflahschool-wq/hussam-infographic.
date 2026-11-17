@@ -3,6 +3,11 @@ main = "src/index.js"
 compatibility_date = "2026-11-18"
 workers_dev = true
 
+[assets]
+directory = "./public"
+binding = "ASSETS"
+run_worker_first = ["/health", "/v1/*"]
+
 [vars]
 ENVIRONMENT = "development"
 DEV_AUTH_BYPASS = "true"
@@ -23,7 +28,7 @@ workers_dev = true
 ENVIRONMENT = "production"
 DEV_AUTH_BYPASS = "false"
 GEMINI_MODEL = "gemini-2.5-flash"
-# Set ALLOWED_ORIGINS to the exact deployed frontend origin before deployment.
+ALLOWED_ORIGINS = "https://hussam-ai-api.alshakliamohammed04.workers.dev"
 
 [[env.production.d1_databases]]
 binding = "DB"
