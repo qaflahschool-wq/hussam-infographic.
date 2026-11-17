@@ -101,15 +101,17 @@ async function getOrCreateDevice(db, clientDeviceId, env) {
   return device;
 }
 
-async function recordAuthAttempt(db, identityHash, success) {
-  const now = Date.now();
-  await db.prepare(
-    "INSERT INTO auth_attempts (id, identity_hash, succeeded, created_at) VALUES (?, ?, ?, ?)"
-  ).bind(crypto.randomUUID(), identityHash, success ? 1 : 0, now).run();
+async function countRecentFailures(db, identityHash) {
   const row = await db.prepare(
     "SELECT COUNT(*) AS n FROM auth_attempts WHERE identity_hash = ? AND succeeded = 0 AND created_at > ?"
-  ).bind(identityHash, now - 15 * 60 * 1000).first();
-  return Number(row?.n || 0) <= 8;
+  ).bind(identityHash, Date.now() - 15 * 60 * 1000).first();
+  return Number(row?.n || 0);
+}
+
+async function recordAuthAttempt(db, identityHash, success) {
+  await db.prepare(
+    "INSERT INTO auth_attempts (id, identity_hash, succeeded, created_at) VALUES (?, ?, ?, ?)"
+  ).bind(crypto.randomUUID(), identityHash, success ? 1 : 0, Date.now()).run();
 }
 
 async function getEntitlement(db, session) {
@@ -284,12 +286,15 @@ async function handleAdminLogin(request, env, id) {
   const password = String(body.password || "");
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
   const identityHash = await sha256Hex(ip + ":" + username);
-  const canContinue = await recordAuthAttempt(env.DB, identityHash, false);
-  if (!canContinue) return { payload: safeError("LOGIN_RATE_LIMITED", 429, id), status: 429 };
+  const failures = await countRecentFailures(env.DB, identityHash);
+  if (failures >= 8) return { payload: safeError("LOGIN_RATE_LIMITED", 429, id), status: 429 };
   const admin = await env.DB.prepare("SELECT * FROM admins WHERE username = ? AND is_active = 1 LIMIT 1").bind(username).first();
   const valid = Boolean(admin && await verifyPassword(password, admin.password_salt, admin.password_hash, admin.password_iterations));
-  if (!valid) return { payload: safeError("INVALID_CREDENTIALS", 401, id), status: 401 };
-  await env.DB.prepare("INSERT INTO auth_attempts (id, identity_hash, succeeded, created_at) VALUES (?, ?, 1, ?)").bind(crypto.randomUUID(), identityHash, Date.now()).run();
+  if (!valid) {
+    await recordAuthAttempt(env.DB, identityHash, false);
+    return { payload: safeError("INVALID_CREDENTIALS", 401, id), status: 401 };
+  }
+  await recordAuthAttempt(env.DB, identityHash, true);
   const session = await createSession(env.DB, { sessionType: "admin", adminId: admin.id, ttlMs: ADMIN_TTL_MS });
   await env.DB.prepare("UPDATE admins SET last_login_at = ?, updated_at = ? WHERE id = ?").bind(Date.now(), Date.now(), admin.id).run();
   return { payload: { token: session.token, expiresAt: session.expiresAt, username: admin.username }, status: 200 };
@@ -338,8 +343,13 @@ async function handleAnalyze(request, env, session, id) {
   if (session.session_type === "guest") {
     const entitlement = await getEntitlement(env.DB, session);
     if (!entitlement) return { payload: safeError("DEVICE_NOT_ALLOWED", 403, id), status: 403 };
+    const now = Date.now();
+    const cooldown = await env.DB.prepare(
+      "UPDATE devices SET last_analysis_at = ? WHERE id = ? AND (last_analysis_at IS NULL OR last_analysis_at <= ?) RETURNING id"
+    ).bind(now, session.device_id, now - 4000).first();
+    if (!cooldown) return { payload: safeError("RATE_LIMITED", 429, id), status: 429 };
     if (!entitlement.isVip) {
-      const reservation = await reserveGuestTrial(env.DB, session.device_id, MAX_TRIALS);
+      const reservation = await reserveGuestTrial(env.DB, session.device_id, MAX_TRIALS, now);
       if (!reservation.allowed) return { payload: { ...safeError("TRIAL_LIMIT_REACHED", 402, id), entitlement }, status: 402 };
     }
   }
