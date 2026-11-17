@@ -47,3 +47,12 @@ jobs:
           fi
           curl --silent --fail http://127.0.0.1:8787/health
           node tests/smoke-local.mjs
+      - name: Package the deployable application
+        run: |
+          zip -r HUSSAM-INFOGRAPHIC-DEPLOYMENT.zip src security.js migrations scripts public wrangler.toml package.json SETUP.md README.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: HUSSAM-INFOGRAPHIC-DEPLOYMENT
+          path: worker/HUSSAM-INFOGRAPHIC-DEPLOYMENT.zip
+          if-no-files-found: error
+          retention-days: 14
