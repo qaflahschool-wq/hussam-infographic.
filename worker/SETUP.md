@@ -6,10 +6,10 @@ Requirements: Node.js 20+, npm, and Wrangler CLI.
 
 1. Install dependencies (the project currently uses Node built-ins only):
    `npm install`
-2. Create local D1 storage:
-   `npx wrangler d1 create hussam-infographic-dev`
-3. If Wrangler returns a database UUID, replace the local `database_id` in `wrangler.toml` with that UUID.
-4. Apply schema locally:
+2. Apply the schema to Wrangler's local D1 emulator (this does not create a Cloudflare database):
+   `npx wrangler d1 migrations apply hussam-infographic-dev --local`
+3. The local D1 emulator creates its own files under Wrangler's local state directory. No Cloudflare D1 resource is created by this command.
+4. Apply schema locally (if you reset local state):
    `npx wrangler d1 migrations apply hussam-infographic-dev --local`
 5. Set local secrets:
    `npx wrangler secret put GEMINI_API_KEY`
