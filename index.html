@@ -369,7 +369,11 @@
     <section id="lessons-grid-section" class="space-y-3">
       <div class="flex flex-wrap items-center justify-between gap-2 px-1">
         <span id="lessons-count-badge" class="text-xs sm:text-sm font-bold text-[#22d3ee]">الدروس المستقلة المتاحة</span>
-        <div class="flex items-center gap-3">
+        <div class="flex flex-wrap items-center gap-3">
+          <button type="button" onclick="openHistoryModal()" class="text-xs sm:text-sm font-extrabold bg-[#0a1c32] hover:bg-[#112a4a] text-[#22d3ee] border border-[#22d3ee]/40 px-3 py-1.5 rounded-xl flex items-center gap-1.5 transition shadow">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>سجل العمليات والدروس المحفوظة</span>
+          </button>
           <button type="button" onclick="resetLessonsLibrary()" class="text-xs font-bold text-rose-400 hover:underline flex items-center gap-1" title="حذف الدروس المضافة واستعادة الدروس الأساسية">
             <i class="fa-solid fa-rotate-left"></i>
             <span id="reset-lib-btn-text">تنظيف الدروس المضافة</span>
@@ -419,6 +423,18 @@
               <i class="fa-solid fa-print text-[#fbbf24]"></i>
               <span id="btn-print-lesson">طباعة ورقة عمل A4</span>
               <span id="lock-badge-print" class="text-[10px] text-[#fbbf24] bg-[#fbbf24]/15 px-1.5 py-0.5 rounded">🔒 VIP</span>
+            </button>
+            <button type="button" onclick="editActiveLessonContent()" class="bg-[#07111e] hover:bg-[#112a4a] text-[#fbbf24] border border-[#fbbf24]/40 font-extrabold text-xs px-3 py-2.5 rounded-xl flex items-center gap-1.5 transition" title="تعديل النص والملخصات والإنفوجرافيك">
+              <i class="fa-solid fa-pen-to-square"></i>
+              <span>تعديل النص</span>
+            </button>
+            <button type="button" onclick="regenerateActiveLesson()" class="bg-[#07111e] hover:bg-[#112a4a] text-[#22d3ee] border border-[#22d3ee]/40 font-extrabold text-xs px-3 py-2.5 rounded-xl flex items-center gap-1.5 transition" title="إعادة توليد الملخص والإنفوجرافيك والأسئلة">
+              <i class="fa-solid fa-arrows-rotate"></i>
+              <span>إعادة التوليد</span>
+            </button>
+            <button type="button" onclick="downloadActiveLessonPackage()" class="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 font-extrabold text-xs px-3 py-2.5 rounded-xl flex items-center gap-1.5 transition" title="تنزيل الدرس كاملاً كملف HTML مستقل للعمل بدون إنترنت">
+              <i class="fa-solid fa-download"></i>
+              <span>تنزيل الدرس</span>
             </button>
           </div>
         </div>
@@ -713,6 +729,26 @@
         </div>
         <div id="stage1-step-review-badge" class="py-2 px-3 rounded-xl text-slate-400">
           2. مراجعة المحتوى واعتماده يدوياً
+        </div>
+      </div>
+
+      <!-- Stage 4 (Requirement 10): Comprehensive Error Diagnostic & Recovery Box -->
+      <div id="stage4-error-diagnostic-box" class="hidden bg-rose-500/15 border-2 border-rose-400/70 rounded-2xl p-4 space-y-2.5">
+        <div class="flex items-start justify-between gap-2">
+          <div class="flex items-center gap-2 text-xs sm:text-sm font-black text-rose-300">
+            <i class="fa-solid fa-triangle-exclamation text-base"></i>
+            <span id="stage4-error-title">تنبيه معالجة الأخطاء الذكي</span>
+          </div>
+          <button type="button" onclick="hideDiagnosticErrorBox()" class="text-xs text-rose-300 hover:text-white px-2 py-0.5 rounded bg-rose-950/50">إغلاق ✕</button>
+        </div>
+        <p id="stage4-error-desc" class="text-xs text-rose-100 leading-relaxed rtl-safe-text"></p>
+        <div class="flex flex-wrap items-center gap-2 pt-1">
+          <button type="button" onclick="generateLessonNow()" class="text-xs font-black bg-[#fbbf24] hover:bg-[#f59e0b] text-slate-950 px-3.5 py-1.5 rounded-xl transition">
+            🔄 إعادة المحاولة الآن
+          </button>
+          <button type="button" onclick="switchUploadTab('text'); hideDiagnosticErrorBox();" class="text-xs font-bold bg-[#07111e] hover:bg-[#112a4a] text-[#22d3ee] border border-[#1e3a5f] px-3 py-1.5 rounded-xl transition">
+            ✍️ إدخال أو لصق نص الدرس يدوياً
+          </button>
         </div>
       </div>
 
@@ -1198,6 +1234,43 @@
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- ==================== 11B. STAGE 4: HISTORY & SAVED OPERATIONS MANAGER MODAL ==================== -->
+  <div id="history-manager-modal" style="display: none;" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm items-center justify-center p-2 sm:p-4 overflow-y-auto">
+    <div class="bg-[#0a1c32] border-2 border-[#22d3ee] rounded-3xl max-w-4xl w-full p-4 sm:p-7 space-y-5 shadow-2xl my-auto max-h-[94vh] overflow-y-auto">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-[#163252] pb-3">
+        <div>
+          <h3 class="text-lg sm:text-xl font-black text-white flex items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left text-[#22d3ee]"></i>
+            <span>سجل العمليات والدروس المحفوظة (IndexedDB & Local Storage)</span>
+          </h3>
+          <p class="text-xs text-slate-400 mt-0.5">
+            يحفظ النظام الصورة الأصلية، النص المستخرج، الملخصات، نوع الإنفوجرافيك، النتيجة النهائية، وتاريخ الإنشاء مع إمكانية إعادة الفتح والتعديل وإعادة التوليد والتنزيل والحذف.
+          </p>
+        </div>
+        <button type="button" onclick="closeHistoryModal()" class="w-8 h-8 rounded-full bg-[#07111e] text-slate-400 hover:text-white flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Summary Counters & Export All Button -->
+      <div class="flex flex-wrap items-center justify-between gap-2 bg-[#07111e] border border-[#163252] rounded-2xl p-3">
+        <div class="flex flex-wrap items-center gap-2 text-xs font-extrabold">
+          <span id="history-total-lessons-badge" class="px-3 py-1 rounded-full bg-[#22d3ee]/15 text-[#22d3ee] border border-[#22d3ee]/30">إجمالي الدروس: 0</span>
+          <span id="history-total-logs-badge" class="px-3 py-1 rounded-full bg-[#fbbf24]/15 text-[#fbbf24] border border-[#fbbf24]/30">سجل العمليات: 0</span>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" onclick="exportAllLessonsBackupJson()" class="text-xs font-black bg-emerald-500 hover:bg-emerald-600 text-slate-950 px-3.5 py-1.5 rounded-xl flex items-center gap-1.5 transition">
+            <i class="fa-solid fa-file-export"></i>
+            <span>تنزيل نسخة احتياطية كاملة (JSON)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Saved Lessons List -->
+      <div id="history-lessons-list" class="space-y-3 max-h-[60vh] overflow-y-auto pr-1"></div>
     </div>
   </div>
 
@@ -2188,7 +2261,8 @@
       for (const file of files.slice(0, 6)) {
         const check = validateFileBeforeProcessing(file);
         if (!check.ok) {
-          showToast(check.msg, 'error');
+          const errCode = (check.msg && check.msg.includes('حجم')) ? 'SIZE_EXCEEDED' : 'UNSUPPORTED_FILE';
+          reportDiagnosticError(errCode, check.msg);
           continue;
         }
         if (check.isPdf) {
@@ -2411,9 +2485,18 @@
               <h3 class="font-extrabold text-sm sm:text-base text-white group-hover:text-[#fbbf24] transition line-clamp-2">${escapeHtml(lesson.title)}</h3>
               <p class="text-xs text-slate-400 line-clamp-2 leading-relaxed">${escapeHtml(lesson.desc)}</p>
             </div>
-            <div class="pt-3 mt-3 border-t border-[#163252] flex items-center justify-between text-xs font-bold">
-              <span class="text-[#fbbf24]">استعراض الشرح والإنفوجرافيك</span>
-              <i class="fa-solid fa-arrow-left text-[#22d3ee] group-hover:-translate-x-1 transition"></i>
+            <div class="pt-3 mt-3 border-t border-[#163252] space-y-2">
+              <div class="flex items-center justify-between text-xs font-bold">
+                <span class="text-[#fbbf24]">استعراض الشرح والإنفوجرافيك</span>
+                <span class="text-[10px] text-slate-400 font-en">${escapeHtml((lesson.approvedAt || lesson.createdAt || '').slice(0, 10) || 'جاهز')}</span>
+              </div>
+              <div class="flex flex-wrap items-center gap-1.5 pt-1" onclick="event.stopPropagation();">
+                <button type="button" onclick="reopenSavedLesson('${escapeHtml(lesson.id)}')" class="text-[11px] bg-[#07111e] hover:bg-[#112a4a] text-[#22d3ee] border border-[#1e3a5f] px-2 py-1 rounded-lg font-bold" title="إعادة فتح الدرس">فتح</button>
+                <button type="button" onclick="editSavedLessonContent('${escapeHtml(lesson.id)}')" class="text-[11px] bg-[#07111e] hover:bg-[#112a4a] text-[#fbbf24] border border-[#1e3a5f] px-2 py-1 rounded-lg font-bold" title="تعديل النص والمحتوى">تعديل</button>
+                <button type="button" onclick="regenerateSavedLesson('${escapeHtml(lesson.id)}')" class="text-[11px] bg-[#07111e] hover:bg-[#112a4a] text-emerald-300 border border-[#1e3a5f] px-2 py-1 rounded-lg font-bold" title="إعادة التوليد">توليد</button>
+                <button type="button" onclick="downloadSavedLessonHtml('${escapeHtml(lesson.id)}')" class="text-[11px] bg-[#07111e] hover:bg-[#112a4a] text-slate-200 border border-[#1e3a5f] px-2 py-1 rounded-lg font-bold" title="تنزيل الدرس">تنزيل</button>
+                ${String(lesson.id).startsWith('lesson-g8-') ? '' : `<button type="button" onclick="deleteSavedLesson('${escapeHtml(lesson.id)}')" class="text-[11px] bg-rose-500/15 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 px-2 py-1 rounded-lg font-bold" title="حذف الدرس">حذف</button>`}
+              </div>
             </div>
           </div>
         `;
@@ -3731,7 +3814,11 @@
         }
 
         if (!rawText && !hintTitle) {
-          showToast('لم نتمكن من قراءة نص واضح في الصورة. يرجى رفع صورة أوضح أو كتابة النص.', 'error');
+          reportDiagnosticError('UNCLEAR_IMAGE', 'فشل قراءة الصورة لأنها غير واضحة أو خالية من نص مقروء. يرجى تصوير الصفحة في إضاءة جيدة أو كتابة عنوان/نص الدرس يدوياً.');
+          return;
+        }
+        if ((rawText || hintTitle).trim().length < 4) {
+          reportDiagnosticError('EMPTY_OR_SHORT_TEXT', 'النص المستخرج فارغ أو غير كافٍ لبناء درس متكامل. يرجى إضافة جملة واحدة على الأقل أو رفع صورة أوضح.');
           return;
         }
 
@@ -4110,19 +4197,43 @@
 
       draft.reviewQuestions = buildStage3ReviewQuestions(draft);
       draft.id = draft.id || ('lesson-' + Date.now());
-      draft.approvedAt = new Date().toISOString();
+      const nowIso = new Date().toISOString();
+      draft.createdAt = draft.createdAt || nowIso;
+      draft.approvedAt = nowIso;
 
       const all = getAllLessons();
-      all.unshift(draft);
+      const existingIdx = all.findIndex(item => item.id === draft.id);
+      const wasEditing = Boolean(draft.isEditingExisting && existingIdx !== -1);
+      delete draft.isEditingExisting;
+
+      if (existingIdx !== -1) {
+        all[existingIdx] = draft;
+      } else {
+        all.unshift(draft);
+      }
+
       saveLessonsSafely(all);
       logOperationToIndexedDB({
         lessonId: draft.id,
+        actionType: wasEditing ? 'edit_and_update' : 'create_new_lesson',
         title: draft.title,
         grade: draft.grade,
         subject: draft.subject,
-        rawExtractedText: draft.rawExtractedText
+        sourceImage: draft.sourceImage || '',
+        rawExtractedText: draft.rawExtractedText || '',
+        summaries: draft.summaries || {},
+        selectedInfographicType: draft.selectedInfographicType || 'mindmap',
+        finalResult: {
+          objectivesCount: (draft.objectives || []).length,
+          infographicNodesCount: (draft.infographic || []).length,
+          questionsCount: 13
+        },
+        createdAt: draft.createdAt,
+        approvedAt: draft.approvedAt
       });
-      incrementTrialCount();
+      if (!wasEditing) {
+        incrementTrialCount();
+      }
 
       selectedGrade = 'الكل';
       selectedSubject = 'الكل';
@@ -4389,6 +4500,396 @@
         localStorage.setItem(STORAGE_KEYS.PROXY_ENDPOINT, proxyUrl);
         showToast('تم حفظ رابط الخادم الوسيط (Backend Proxy) بنجاح ✅', 'success');
       } catch (e) {}
+    }
+
+    // --- STAGE 4: ADVANCED HISTORY MANAGEMENT (REOPEN, EDIT, REGENERATE, DELETE, DOWNLOAD) & ERROR DIAGNOSTICS ---
+    const ERROR_DIAGNOSTIC_CATALOG = {
+      UNCLEAR_IMAGE: {
+        title: '1. فشل قراءة الصورة لأنها غير واضحة',
+        desc: 'تعذر استخراج نص مقروء من الصورة المرفوعة بسبب ضعف الإضاءة أو الاهتزاز أو صغر حجم الخط. يرجى رفع صورة أوضح أو كتابة النص يدوياً.'
+      },
+      UNSUPPORTED_FILE: {
+        title: '2. نوع ملف غير مدعوم',
+        desc: 'يرجى اختيار ملف بصيغة مدعومة فقط: صور (JPG, JPEG, PNG, WEBP) أو مستند (PDF).'
+      },
+      SIZE_EXCEEDED: {
+        title: '3. تجاوز الحجم المسموح للملف',
+        desc: 'الحد الأقصى المسموح لحجم الملف الواحد هو 10 ميجابايت لضمان سرعة المعالجة وعدم استهلاك الذاكرة.'
+      },
+      EMPTY_OR_SHORT_TEXT: {
+        title: '4. نص فارغ أو غير كافٍ',
+        desc: 'النص المدخل أو المستخرج قصير جداً ولا يكفي لتوليد ملخص وإنفوجرافيك وأسئلة مراجعة. يرجى إدخال فقرة أو جملتين على الأقل.'
+      },
+      ANALYSIS_FAILED: {
+        title: '5. تعذر إتمام التحليل',
+        desc: 'حدث خطأ أثناء تحليل محتوى الدرس. يمكنك إعادة المحاولة الآن أو استخدام تبويب النص المباشر.'
+      },
+      INFOGRAPHIC_FAILED: {
+        title: '6. تعذر إنشاء الإنفوجرافيك',
+        desc: 'تعذر بناء المخطط البصري بسبب نقص العناصر المستخرجة. يرجى مراجعة الأفكار الرئيسية في شاشة المراجعة ثم المحاولة مجدداً.'
+      },
+      NETWORK_TIMEOUT: {
+        title: '7. بطء الشبكة أو انتهاء مهلة الاتصال',
+        desc: 'استغرق الاتصال بالخادم وقتاً أطول من المعتاد بسبب ضعف الإنترنت (3G). تم التبديل التلقائي للماسح المحلي أو يمكنك إعادة المحاولة.'
+      }
+    };
+
+    function reportDiagnosticError(errorCode, customDetail = '') {
+      const meta = ERROR_DIAGNOSTIC_CATALOG[errorCode] || ERROR_DIAGNOSTIC_CATALOG.ANALYSIS_FAILED;
+      const box = document.getElementById('stage4-error-diagnostic-box');
+      const titleEl = document.getElementById('stage4-error-title');
+      const descEl = document.getElementById('stage4-error-desc');
+      if (box && titleEl && descEl) {
+        titleEl.textContent = meta.title;
+        descEl.textContent = customDetail ? `${meta.desc} (${customDetail})` : meta.desc;
+        box.classList.remove('hidden');
+      }
+      showToast(customDetail || meta.title, 'error');
+    }
+
+    function hideDiagnosticErrorBox() {
+      document.getElementById('stage4-error-diagnostic-box')?.classList.add('hidden');
+    }
+
+    async function loadOperationsLogFromIndexedDB() {
+      try {
+        const db = await openHussamIndexedDB();
+        if (!db) return [];
+        return await new Promise((resolve) => {
+          const tx = db.transaction(IDB_CONFIG.STORE_LOGS, 'readonly');
+          const store = tx.objectStore(IDB_CONFIG.STORE_LOGS);
+          const req = store.getAll();
+          req.onsuccess = () => resolve(Array.isArray(req.result) ? req.result : []);
+          req.onerror = () => resolve([]);
+        });
+      } catch (e) {
+        return [];
+      }
+    }
+
+    async function openHistoryModal() {
+      const modal = document.getElementById('history-manager-modal');
+      if (modal) modal.style.display = 'flex';
+      await renderHistoryModalList();
+    }
+
+    function closeHistoryModal() {
+      const modal = document.getElementById('history-manager-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    async function renderHistoryModalList() {
+      const allLessons = getAllLessons();
+      const logs = await loadOperationsLogFromIndexedDB();
+
+      const totalBadge = document.getElementById('history-total-lessons-badge');
+      const logsBadge = document.getElementById('history-total-logs-badge');
+      if (totalBadge) totalBadge.textContent = `إجمالي الدروس المحفوظة: ${allLessons.length}`;
+      if (logsBadge) logsBadge.textContent = `سجل العمليات الموثقة: ${logs.length}`;
+
+      const listEl = document.getElementById('history-lessons-list');
+      if (!listEl) return;
+
+      if (allLessons.length === 0) {
+        listEl.innerHTML = `<div class="bg-[#07111e] border border-[#163252] rounded-2xl p-6 text-center text-xs text-slate-400">لا توجد دروس محفوظة حالياً.</div>`;
+        return;
+      }
+
+      listEl.innerHTML = allLessons.map((lesson, idx) => {
+        const typeKey = lesson.selectedInfographicType || suggestBestInfographicType(lesson);
+        const typeLabel = INFOGRAPHIC_TYPES_META[typeKey]?.label || 'خريطة ذهنية';
+        const dateStr = (lesson.approvedAt || lesson.createdAt || 'درس أساسي').replace('T', ' ').slice(0, 16);
+        const isDefault = String(lesson.id).startsWith('lesson-g8-');
+        const sourceBadge = lesson.analysisSource === 'cloud'
+          ? '<span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-black">☁️ تحليل سحابي AI</span>'
+          : (lesson.analysisSource === 'local'
+            ? '<span class="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px] font-black">🔍 ماسح محلي</span>'
+            : '<span class="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-[10px] font-black">📚 درس نموذجي</span>');
+
+        return `
+          <div class="bg-[#07111e] border border-[#1e3a5f] hover:border-[#22d3ee] rounded-2xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition">
+            <div class="flex items-start gap-3.5 min-w-0 flex-1">
+              ${lesson.sourceImage
+                ? `<img src="${lesson.sourceImage}" alt="Thumb" class="w-16 h-16 rounded-xl object-cover border border-[#22d3ee] shrink-0" />`
+                : `<div class="w-16 h-16 rounded-xl bg-[#0a1c32] border border-[#1e3a5f] flex items-center justify-center text-[#fbbf24] font-en font-black text-sm shrink-0">#${idx + 1}</div>`
+              }
+              <div class="space-y-1 min-w-0 flex-1">
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#0a1c32] text-[#fbbf24] border border-[#fbbf24]/30">${escapeHtml(lesson.grade)} • ${escapeHtml(lesson.subject)}</span>
+                  ${sourceBadge}
+                  <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#0a1c32] text-[#22d3ee] border border-[#1e3a5f]">📊 ${escapeHtml(typeLabel)}</span>
+                  <span class="text-[10px] font-en text-slate-400">🕒 ${escapeHtml(dateStr)}</span>
+                </div>
+                <h4 class="text-sm sm:text-base font-black text-white truncate">${escapeHtml(lesson.title)}</h4>
+                <p class="text-xs text-slate-400 line-clamp-1 rtl-safe-text">${escapeHtml(lesson.rawExtractedText || lesson.desc || '')}</p>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-1.5 shrink-0 w-full md:w-auto justify-end border-t md:border-t-0 border-[#163252] pt-2.5 md:pt-0">
+              <button type="button" onclick="reopenSavedLesson('${escapeHtml(lesson.id)}')" class="text-xs font-extrabold bg-[#22d3ee] hover:bg-[#06b6d4] text-slate-950 px-3 py-1.5 rounded-xl flex items-center gap-1 transition">
+                <i class="fa-solid fa-folder-open"></i>
+                <span>إعادة فتح</span>
+              </button>
+              <button type="button" onclick="editSavedLessonContent('${escapeHtml(lesson.id)}')" class="text-xs font-extrabold bg-[#0a1c32] hover:bg-[#112a4a] text-[#fbbf24] border border-[#fbbf24]/40 px-3 py-1.5 rounded-xl flex items-center gap-1 transition">
+                <i class="fa-solid fa-pen-to-square"></i>
+                <span>تعديل النص</span>
+              </button>
+              <button type="button" onclick="regenerateSavedLesson('${escapeHtml(lesson.id)}')" class="text-xs font-extrabold bg-[#0a1c32] hover:bg-[#112a4a] text-emerald-300 border border-emerald-500/40 px-3 py-1.5 rounded-xl flex items-center gap-1 transition">
+                <i class="fa-solid fa-arrows-rotate"></i>
+                <span>إعادة التوليد</span>
+              </button>
+              <button type="button" onclick="downloadSavedLessonHtml('${escapeHtml(lesson.id)}')" class="text-xs font-extrabold bg-[#0a1c32] hover:bg-[#112a4a] text-white border border-[#1e3a5f] px-3 py-1.5 rounded-xl flex items-center gap-1 transition">
+                <i class="fa-solid fa-download text-[#22d3ee]"></i>
+                <span>تنزيل HTML</span>
+              </button>
+              <button type="button" onclick="downloadSavedLessonJson('${escapeHtml(lesson.id)}')" class="text-xs font-bold bg-[#0a1c32] hover:bg-[#112a4a] text-slate-300 border border-[#1e3a5f] px-2.5 py-1.5 rounded-xl transition" title="تنزيل JSON">
+                JSON
+              </button>
+              ${isDefault ? '' : `
+                <button type="button" onclick="deleteSavedLesson('${escapeHtml(lesson.id)}')" class="text-xs font-extrabold bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 px-3 py-1.5 rounded-xl flex items-center gap-1 transition">
+                  <i class="fa-solid fa-trash-can"></i>
+                  <span>حذف</span>
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function reopenSavedLesson(lessonId) {
+      closeHistoryModal();
+      displayLesson(lessonId, true);
+      showToast('تم إعادة فتح الدرس المحفوظ وعرض جميع عناصره والإنفوجرافيك والأسئلة 📂', 'success');
+    }
+
+    function editSavedLessonContent(lessonId) {
+      const all = getAllLessons();
+      const lesson = all.find(l => l.id === lessonId);
+      if (!lesson) return;
+      closeHistoryModal();
+
+      const editableCopy = JSON.parse(JSON.stringify(lesson));
+      editableCopy.isEditingExisting = true;
+      editableCopy.rawExtractedText = editableCopy.rawExtractedText || (editableCopy.walkthrough || []).map(w => `${w.en} - ${w.ar}`).join('\n') || editableCopy.desc;
+
+      const m = document.getElementById('upload-modal');
+      if (m) m.style.display = 'flex';
+      hideDiagnosticErrorBox();
+      showStage1ReviewScreen(editableCopy);
+      showToast('وضع تعديل الدرس: عدّل أي نص أو معادلة أو ملخص ثم اضغط «اعتماد المحتوى والمتابعة» لحفظ التعديلات ✏️', 'info');
+    }
+
+    function editActiveLessonContent() {
+      if (!activeLessonId) return;
+      editSavedLessonContent(activeLessonId);
+    }
+
+    async function regenerateSavedLesson(lessonId) {
+      const all = getAllLessons();
+      const lesson = all.find(l => l.id === lessonId);
+      if (!lesson) return;
+      closeHistoryModal();
+
+      const rawText = lesson.rawExtractedText || (lesson.walkthrough || []).map(w => w.en).join('. ') || lesson.desc || lesson.title;
+      const imagesPayload = Array.isArray(lesson.sourceImages) && lesson.sourceImages.length > 0
+        ? lesson.sourceImages
+        : (lesson.sourceImage ? [lesson.sourceImage] : []);
+
+      const m = document.getElementById('upload-modal');
+      if (m) m.style.display = 'flex';
+      hideDiagnosticErrorBox();
+      document.getElementById('stage1-upload-view')?.classList.remove('hidden');
+      document.getElementById('stage1-review-view')?.classList.add('hidden');
+      updateProgressUI(35, 'جاري إعادة تحليل وتوليد الملخصات والإنفوجرافيك والأسئلة للدرس...');
+
+      try {
+        const proxyEndpoint = getActiveGeminiKey();
+        if (proxyEndpoint && navigator.onLine && (imagesPayload.length > 0 || rawText)) {
+          try {
+            const regenCloud = await analyzeWithGeminiCloud(proxyEndpoint, lesson.grade, lesson.subject, lesson.title, rawText, imagesPayload);
+            regenCloud.id = lesson.id;
+            regenCloud.createdAt = lesson.createdAt;
+            regenCloud.isEditingExisting = true;
+            regenCloud.sourceImage = imagesPayload[0] || lesson.sourceImage || '';
+            regenCloud.sourceImages = imagesPayload;
+            regenCloud.analysisSource = 'cloud';
+            updateProgressUI(100, 'تمت إعادة التوليد عبر الذكاء الاصطناعي السحابي بنجاح!');
+            showStage1ReviewScreen(regenCloud);
+            showToast('☁️ تمت إعادة توليد الدرس سحابياً! راجعه واضغط اعتماد لحفظ النسخة المجددة.', 'success');
+            return;
+          } catch (e) {
+            console.warn('Cloud regenerate fallback to local:', e);
+          }
+        }
+
+        const regenLocal = await extractStage1DraftLocally(lesson.grade, lesson.subject, lesson.title, rawText, imagesPayload, lesson.uncertainParts || []);
+        regenLocal.id = lesson.id;
+        regenLocal.createdAt = lesson.createdAt;
+        regenLocal.isEditingExisting = true;
+        regenLocal.analysisSource = lesson.analysisSource || 'local';
+        updateProgressUI(100, 'تمت إعادة بناء عناصر الدرس والملخصات والأسئلة!');
+        showStage1ReviewScreen(regenLocal);
+        showToast('🔄 تمت إعادة توليد عناصر الدرس! راجعها واضغط اعتماد للحفظ.', 'success');
+      } catch (err) {
+        reportDiagnosticError('ANALYSIS_FAILED', 'تعذر إعادة التوليد تلقائياً.');
+      }
+    }
+
+    function regenerateActiveLesson() {
+      if (!activeLessonId) return;
+      regenerateSavedLesson(activeLessonId);
+    }
+
+    let pendingDeleteLessonId = null;
+
+    async function deleteSavedLesson(lessonId) {
+      if (String(lessonId).startsWith('lesson-g8-')) {
+        showToast('الدروس النموذجية الأساسية محمية ولا يمكن حذفها.', 'info');
+        return;
+      }
+      if (pendingDeleteLessonId !== lessonId) {
+        pendingDeleteLessonId = lessonId;
+        showToast('اضغط على زر «حذف» مرة أخرى خلال 4 ثوانٍ لتأكيد الحذف النهائي 🗑️', 'info');
+        setTimeout(() => {
+          if (pendingDeleteLessonId === lessonId) pendingDeleteLessonId = null;
+        }, 4000);
+        return;
+      }
+      pendingDeleteLessonId = null;
+
+      const all = getAllLessons().filter(l => l.id !== lessonId);
+      try {
+        const db = await openHussamIndexedDB();
+        if (db) {
+          const tx = db.transaction(IDB_CONFIG.STORE_LESSONS, 'readwrite');
+          tx.objectStore(IDB_CONFIG.STORE_LESSONS).delete(lessonId);
+        }
+      } catch (e) {}
+
+      saveLessonsSafely(all);
+      renderFilterPills();
+      applyFiltersAndRender();
+      if (activeLessonId === lessonId && all.length > 0) {
+        displayLesson(all[0].id, false);
+      }
+      await renderHistoryModalList();
+      showToast('تم حذف الدرس من السجل وقاعدة البيانات بنجاح 🗑️', 'info');
+    }
+
+    function downloadSavedLessonJson(lessonId) {
+      const all = getAllLessons();
+      const lesson = all.find(l => l.id === lessonId);
+      if (!lesson) return;
+      const blob = new Blob([JSON.stringify(lesson, null, 2)], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `hussam-lesson-${(lesson.title || 'lesson').replace(/[^a-zA-Z0-9؀-ۿ_-]+/g, '-')}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+      showToast('تم تنزيل ملف بيانات الدرس (JSON) بنجاح 📥', 'success');
+    }
+
+    function exportAllLessonsBackupJson() {
+      const all = getAllLessons();
+      const blob = new Blob([JSON.stringify({ exportedAt: new Date().toISOString(), count: all.length, lessons: all }, null, 2)], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `hussam-infographic-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+      showToast('تم تنزيل النسخة الاحتياطية الكاملة لجميع الدروس 📥', 'success');
+    }
+
+    function downloadSavedLessonHtml(lessonId) {
+      const all = getAllLessons();
+      const lesson = all.find(l => l.id === lessonId);
+      if (!lesson) return;
+
+      const sumData = buildLessonSummaries(lesson);
+      const qData = buildStage3ReviewQuestions(lesson);
+      const typeKey = lesson.selectedInfographicType || suggestBestInfographicType(lesson);
+      const typeLabel = INFOGRAPHIC_TYPES_META[typeKey]?.label || 'خريطة ذهنية';
+
+      const standaloneHtml = `<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${escapeHtml(lesson.title)} — حسام إنفوجرافيك</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700;800;900&family=Outfit:wght@600;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Tajawal', sans-serif; background: #07111e; color: #f8fafc; margin: 0; padding: 24px; line-height: 1.8; }
+    .container { max-width: 960px; margin: 0 auto; background: #0a1c32; border: 2px solid #fbbf24; border-radius: 24px; padding: 28px; }
+    h1 { color: #fbbf24; margin-top: 8px; }
+    h2 { color: #22d3ee; border-bottom: 1px solid #163252; padding-bottom: 8px; margin-top: 24px; }
+    .badge { display: inline-block; background: #07111e; color: #fbbf24; border: 1px solid #fbbf24; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 800; margin-left: 6px; }
+    .card { background: #07111e; border: 1px solid #1e3a5f; border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+    .math-ltr { direction: ltr !important; unicode-bidi: isolate !important; display: inline-block; font-family: 'Outfit', monospace; color: #22d3ee; }
+    @media print { body { background: #fff; color: #000; } .container, .card { background: #fff; color: #000; border-color: #cbd5e1; } h1, h2 { color: #0f172a; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div>
+      <span class="badge">${escapeHtml(lesson.grade)} • ${escapeHtml(lesson.subject)}</span>
+      <span class="badge">النمط البصري: ${escapeHtml(typeLabel)}</span>
+      <span class="badge">${lesson.analysisSource === 'cloud' ? '☁️ تحليل سحابي AI' : '🔍 تحليل محلي'}</span>
+    </div>
+    <h1>${escapeHtml(lesson.title)}</h1>
+    <p>${escapeHtml(lesson.desc || '')}</p>
+    ${lesson.sourceImage ? `<div style="text-align:center;margin:16px 0;"><img src="${lesson.sourceImage}" style="max-height:320px;border-radius:16px;border:1px solid #22d3ee;" /></div>` : ''}
+
+    <h2>أولاً: الملخص الشامل والمتدرج للدرس</h2>
+    <div class="grid">
+      <div class="card"><strong>1. شرح مبسط:</strong><br/>${formatRtlSafeWithMath(sumData.simplified)}</div>
+      <div class="card"><strong>2. ملخص متوسط:</strong><br/>${formatRtlSafeWithMath(sumData.medium)}</div>
+      <div class="card"><strong>3. مراجعة سريعة:</strong><br/>${formatRtlSafeWithMath(sumData.quickReview)}</div>
+    </div>
+    <div class="grid">
+      <div class="card"><strong>التعريفات والمصطلحات:</strong><br/>${(sumData.definitions || []).map(d => `• ${formatRtlSafeWithMath(d)}`).join('<br/>')}</div>
+      <div class="card"><strong>القوانين والمعادلات:</strong><br/>${(sumData.lawsAndEquations || []).map(e => `• ${formatRtlSafeWithMath(e)}`).join('<br/>')}</div>
+      <div class="card"><strong>أمثلة محلولة:</strong><br/>${(sumData.examples || []).map(ex => `• ${formatRtlSafeWithMath(ex)}`).join('<br/>')}</div>
+    </div>
+
+    <h2>ثانياً: محاور الإنفوجرافيك (${escapeHtml(typeLabel)})</h2>
+    <div class="grid">
+      ${(lesson.infographic || []).map((n, i) => `<div class="card"><strong>${i + 1}. ${escapeHtml(n.step || '')}</strong><br/><div dir="ltr">${escapeHtml(n.en || '')}</div><div>${formatRtlSafeWithMath(n.ar || '')}</div></div>`).join('')}
+    </div>
+
+    <h2>ثالثاً: بنك أسئلة المراجعة الشاملة (13 سؤالاً مع الإجابة والشرح)</h2>
+    <h3>1. الاختيار من متعدد (5 أسئلة)</h3>
+    ${qData.mcq.map((q, i) => `<div class="card"><strong>س${i + 1}: ${formatRtlSafeWithMath(q.q)}</strong><br/>✅ الإجابة الصحيحة: ${formatRtlSafeWithMath(q.options[q.correct || 0] || '')}<br/>💡 الشرح: ${formatRtlSafeWithMath(q.explanation || '')}</div>`).join('')}
+    <h3>2. صح أو خطأ (5 أسئلة)</h3>
+    ${qData.trueFalse.map((q, i) => `<div class="card"><strong>س${i + 1}: ${formatRtlSafeWithMath(q.q)}</strong><br/>✅ الإجابة: ${q.isTrue ? 'صح' : 'خطأ'} — 💡 التعليل: ${formatRtlSafeWithMath(q.explanation || '')}</div>`).join('')}
+    <h3>3. الأسئلة القصيرة (3 أسئلة)</h3>
+    ${qData.shortAnswer.map((q, i) => `<div class="card"><strong>س${i + 1}: ${formatRtlSafeWithMath(q.q)}</strong><br/>✅ الإجابة النموذجية: ${formatRtlSafeWithMath(q.modelAnswer || '')}<br/>💡 الشرح: ${formatRtlSafeWithMath(q.explanation || '')}</div>`).join('')}
+  </div>
+</body>
+</html>`;
+
+      const blob = new Blob([standaloneHtml], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `hussam-infographic-${(lesson.title || 'lesson').replace(/[^a-zA-Z0-9؀-ۿ_-]+/g, '-')}.html`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+      showToast('تم تنزيل بطاقة الدرس والإنفوجرافيك والأسئلة كملف HTML مستقل جاهز للعمل والطباعة! 📥', 'success');
+    }
+
+    function downloadActiveLessonPackage() {
+      if (!activeLessonId) return;
+      downloadSavedLessonHtml(activeLessonId);
     }
 
     // --- LANGUAGE TOGGLE ---
