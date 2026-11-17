@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS devices (
   trial_used INTEGER NOT NULL DEFAULT 0 CHECK (trial_used >= 0),
   is_blocked INTEGER NOT NULL DEFAULT 0 CHECK (is_blocked IN (0, 1)),
   created_at INTEGER NOT NULL,
-  last_seen_at INTEGER NOT NULL
+  last_seen_at INTEGER NOT NULL,
+  last_analysis_at INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS sessions (
@@ -85,3 +86,13 @@ CREATE INDEX IF NOT EXISTS idx_activation_codes_status
   ON activation_codes(status, created_at);
 CREATE INDEX IF NOT EXISTS idx_usage_device_created
   ON usage_events(device_id, created_at);
+
+CREATE TABLE IF NOT EXISTS auth_attempts (
+  id TEXT PRIMARY KEY,
+  identity_hash TEXT NOT NULL,
+  succeeded INTEGER NOT NULL CHECK (succeeded IN (0, 1)),
+  created_at INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_auth_attempts_identity_time
+  ON auth_attempts(identity_hash, created_at);
