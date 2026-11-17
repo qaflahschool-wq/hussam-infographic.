@@ -1294,6 +1294,136 @@
     // يتم الاتصال عبر DEFAULT_BACKEND_PROXY_URL الذي يقرأ GEMINI_API_KEY من متغيرات البيئة.
     // =========================================================================
     const DEFAULT_BACKEND_PROXY_URL = 'https://hussam-ai-api.alshakliamohammed04.workers.dev';
+    // Server-owned authentication and subscription state. Browser storage is only a session cache.
+    const AUTH_SESSION_KEY = 'hussam_api_session_v2';
+    const TURNSTILE_SITE_KEY = (window.HUSSAM_CONFIG && window.HUSSAM_CONFIG.turnstileSiteKey) || '';
+    let serverEntitlement = null;
+    let apiSessionToken = '';
+    let turnstileWidgetId = null;
+
+    function getApiBaseUrl() {
+      return String(getActiveGeminiKey() || DEFAULT_BACKEND_PROXY_URL).replace(/\\/+$/, '');
+    }
+
+    function saveApiSession(token) {
+      apiSessionToken = String(token || '');
+      try {
+        if (apiSessionToken) sessionStorage.setItem(AUTH_SESSION_KEY, apiSessionToken);
+        else sessionStorage.removeItem(AUTH_SESSION_KEY);
+      } catch (e) {}
+    }
+
+    function loadApiSession() {
+      if (apiSessionToken) return apiSessionToken;
+      try { apiSessionToken = sessionStorage.getItem(AUTH_SESSION_KEY) || ''; } catch (e) {}
+      return apiSessionToken;
+    }
+
+    function applyServerEntitlement(entitlement) {
+      if (!entitlement || typeof entitlement !== 'object') return;
+      serverEntitlement = entitlement;
+      try { localStorage.setItem(STORAGE_KEYS.TRIAL_USED, String(Number(entitlement.trialUsed || 0))); } catch (e) {}
+      updateTrialAndVipUI();
+    }
+
+    async function getTurnstileToken() {
+      if (!TURNSTILE_SITE_KEY) return '';
+      if (!window.turnstile) {
+        await new Promise((resolve, reject) => {
+          const existing = document.querySelector('script[data-hussam-turnstile]');
+          if (existing) {
+            existing.addEventListener('load', resolve, { once: true });
+            existing.addEventListener('error', reject, { once: true });
+            return;
+          }
+          const script = document.createElement('script');
+          script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+          script.async = true;
+          script.defer = true;
+          script.dataset.hussamTurnstile = 'true';
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+      }
+      let container = document.getElementById('hussam-turnstile-container');
+      if (!container) {
+        container = document.createElement('div');
+        container.id = 'hussam-turnstile-container';
+        container.className = 'hidden';
+        document.body.appendChild(container);
+      }
+      return new Promise((resolve, reject) => {
+        try {
+          if (turnstileWidgetId !== null) {
+            window.turnstile.remove(turnstileWidgetId);
+            turnstileWidgetId = null;
+          }
+          turnstileWidgetId = window.turnstile.render(container, {
+            sitekey: TURNSTILE_SITE_KEY,
+            size: 'invisible',
+            callback: resolve,
+            'error-callback': () => reject(new Error('تعذر إكمال التحقق الأمني')),
+            'expired-callback': () => reject(new Error('انتهت صلاحية التحقق الأمني'))
+          });
+          window.turnstile.execute(turnstileWidgetId);
+        } catch (error) { reject(error); }
+      });
+    }
+
+    async function apiRequest(path, options = {}, token = loadApiSession()) {
+      const headers = Object.assign({ 'Content-Type': 'application/json' }, options.headers || {});
+      if (token) headers.Authorization = 'Bearer ' + token;
+      const response = await fetch(getApiBaseUrl() + path, {
+        method: options.method || 'GET',
+        headers,
+        body: options.body,
+        cache: 'no-store'
+      });
+      let payload = {};
+      try { payload = await response.json(); } catch (e) {}
+      if (!response.ok) {
+        const error = new Error(payload.error || 'تعذر إكمال الطلب');
+        error.code = payload.error || 'API_ERROR';
+        error.status = response.status;
+        throw error;
+      }
+      return payload;
+    }
+
+    async function ensureApiSession(forceNew = false) {
+      if (!forceNew) {
+        const existing = loadApiSession();
+        if (existing) {
+          try {
+            const current = await apiRequest('/v1/auth/session', {}, existing);
+            applyServerEntitlement(current.entitlement);
+            return existing;
+          } catch (error) {
+            if (error.status !== 401) throw error;
+          }
+        }
+      }
+      const challengeToken = await getTurnstileToken();
+      const created = await apiRequest('/v1/auth/guest', {
+        method: 'POST',
+        body: JSON.stringify({ deviceId: getOrCreateDeviceId(), turnstileToken: challengeToken })
+      }, '');
+      if (!created.token) throw new Error('تعذر إنشاء جلسة آمنة');
+      saveApiSession(created.token);
+      applyServerEntitlement(created.entitlement);
+      return created.token;
+    }
+
+    async function initializeBackendSession() {
+      try {
+        await ensureApiSession();
+      } catch (error) {
+        console.warn('HUSSAM API session is not ready:', error);
+        showToast(error.code === 'CHALLENGE_FAILED' ? 'تعذر التحقق الأمني. أعد المحاولة بعد إعداد Turnstile.' : 'تعذر الاتصال بخادم المنصة حالياً.', 'error');
+      }
+    }
+
 
     const STORAGE_KEYS = {
       LEGACY_LESSONS: 'hussam_info_lessons_v13',
@@ -1620,21 +1750,12 @@
     // --- CRYPTOGRAPHIC DEVICE FINGERPRINT & DRM SIGNATURE ENGINE ---
     function getOrCreateDeviceId() {
       let devId = null;
-      try {
-        devId = localStorage.getItem(STORAGE_KEYS.DEVICE_ID);
-      } catch (e) {}
-      if (!devId) {
-        const cookieMatch = document.cookie.match(/hsm_dev_id=([^;]+)/);
-        if (cookieMatch) devId = cookieMatch[1];
+      try { devId = localStorage.getItem(STORAGE_KEYS.DEVICE_ID); } catch (e) {}
+      if (!devId || !/^HSM-[A-Za-z0-9_-]{16,100}$/.test(devId)) {
+        devId = 'HSM-' + crypto.randomUUID().replace(/-/g, '');
       }
-      if (!devId) {
-        const rand = Math.floor(1000 + Math.random() * 9000);
-        devId = `HSM-${rand}`;
-      }
-      try {
-        localStorage.setItem(STORAGE_KEYS.DEVICE_ID, devId);
-      } catch (e) {}
-      document.cookie = `hsm_dev_id=${devId}; path=/; max-age=31536000`;
+      try { localStorage.setItem(STORAGE_KEYS.DEVICE_ID, devId); } catch (e) {}
+      document.cookie = 'hsm_dev_id=' + devId + '; path=/; max-age=31536000; SameSite=Lax';
       return devId;
     }
 
@@ -1661,32 +1782,15 @@
     }
 
     function isVipActive() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEYS.SUB);
-        if (!raw) return false;
-        const sub = JSON.parse(raw);
-        if (!sub || !sub.expiresAt || !sub.deviceId) return false;
-        if (sub.deviceId !== getOrCreateDeviceId()) return false;
-        return Date.now() < sub.expiresAt;
-      } catch (e) {
-        return false;
-      }
+      return Boolean(serverEntitlement && serverEntitlement.isVip === true);
     }
 
     function getUsedTrials() {
-      try {
-        return parseInt(localStorage.getItem(STORAGE_KEYS.TRIAL_USED) || '0', 10);
-      } catch (e) {
-        return 0;
-      }
+      return serverEntitlement ? Number(serverEntitlement.trialUsed || 0) : 0;
     }
 
     function incrementTrialCount() {
-      if (isVipActive()) return;
-      const used = getUsedTrials() + 1;
-      try {
-        localStorage.setItem(STORAGE_KEYS.TRIAL_USED, String(used));
-      } catch (e) {}
+      // The API already reserves and records the trial. Never increment browser storage as authority.
       updateTrialAndVipUI();
     }
 
@@ -2348,10 +2452,6 @@
     }
 
     async function extractPdfFileObject(file) {
-      if (!isVipActive() && getUsedTrials() >= MAX_FREE_TRIALS) {
-        openSubModal('تحليل ملفات PDF');
-        return;
-      }
       const statusBox = document.getElementById('pdf-status-box');
       if (statusBox) {
         statusBox.classList.remove('hidden');
@@ -3651,48 +3751,40 @@
 
     // --- STAGE 1: SECURE BACKEND PROXY CALL WITH TIMEOUT & ANTI-HALLUCINATION ---
     async function analyzeWithGeminiCloud(proxyEndpoint, grade, subject, hintTitle, rawText, imagesList) {
+      const token = await ensureApiSession();
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-
       try {
-        const response = await fetch(proxyEndpoint, {
+        const response = await fetch(proxyEndpoint.replace(/\\/+$/, '') + '/v1/analyze', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
           signal: controller.signal,
           body: JSON.stringify({
             grade,
             subject,
             hintTitle,
             rawText,
-            images: (imagesList || []).slice(0, 5),
-            deviceId: getOrCreateDeviceId()
+            images: (imagesList || []).slice(0, 5)
           })
         });
-
-        clearTimeout(timeoutId);
-
+        const parsed = await response.json().catch(() => ({}));
         if (!response.ok) {
-          let serverErrMsg = '';
-          try {
-            const errJson = await response.json();
-            const upStatus = errJson.upstreamStatus ? `Gemini ${errJson.upstreamStatus}` : '';
-            const upMsg = errJson.upstreamMessage ? `: ${errJson.upstreamMessage}` : '';
-            serverErrMsg = upStatus ? `${upStatus}${upMsg}` : (errJson.error || '');
-          } catch (e) {}
-          throw new Error(serverErrMsg ? `${serverErrMsg} (Proxy ${response.status})` : `HTTP ${response.status}`);
+          const error = new Error(parsed.error || 'تعذر تحليل الدرس');
+          error.code = parsed.error || 'API_ERROR';
+          error.status = response.status;
+          throw error;
         }
-
-        const parsed = await response.json();
-        if (!parsed || !parsed.title) {
-          throw new Error('Invalid JSON structure from Backend Proxy');
-        }
+        if (!parsed || !parsed.title) throw new Error('Invalid JSON structure from Backend API');
+        if (parsed.entitlement) applyServerEntitlement(parsed.entitlement);
         return parsed;
       } catch (err) {
-        clearTimeout(timeoutId);
-        if (err && err.name === 'AbortError') {
-          throw new Error('انتهت مهلة الاتصال بسبب بطء الشبكة');
-        }
+        if (err && err.name === 'AbortError') throw new Error('انتهت مهلة الاتصال بسبب بطء الشبكة');
         throw err;
+      } finally {
+        clearTimeout(timeoutId);
       }
     }
 
@@ -3705,12 +3797,6 @@
       const now = Date.now();
       if (now - lastAnalyzeTimestamp < COOLDOWN_MS) {
         showToast('يرجى الانتظار ثوانٍ قليلة قبل إرسال طلب تحليل جديد.', 'error');
-        return;
-      }
-
-      if (!isVipActive() && getUsedTrials() >= MAX_FREE_TRIALS) {
-        closeUploadModal();
-        openSubModal('انتهاء المحاولات المجانية لتوليد الدروس');
         return;
       }
 
@@ -3781,9 +3867,18 @@
             showStage1ReviewScreen(aiDraft);
             return;
           } catch (proxyErr) {
-            console.warn('Backend Proxy unavailable, falling back to Local Arabic+English OCR:', proxyErr);
+            console.warn('Backend API request failed:', proxyErr);
+            if (proxyErr && proxyErr.code === 'TRIAL_LIMIT_REACHED') {
+              closeUploadModal();
+              openSubModal('انتهاء المحاولات المجانية لتوليد الدروس');
+              return;
+            }
+            if (proxyErr && proxyErr.code) {
+              showToast('تعذر التحليل عبر الخادم: ' + proxyErr.message, 'error');
+              return;
+            }
             const reason = proxyErr && proxyErr.message ? proxyErr.message : 'تعذر الوصول للخادم';
-            showToast(`تعذر التحليل السحابي (${reason}) — جاري المتابعة بالماسح البصري المحلي...`, 'error');
+            showToast(`تعذر الاتصال بالخادم (${reason}) — يمكن استخدام الماسح المحلي للنصوص فقط.`, 'error');
           }
         }
 
@@ -4344,43 +4439,26 @@
       window.open(`https://wa.me/967774354892?text=${encodeURIComponent(msg)}`, '_blank');
     }
 
-    function activateSubscriptionCode() {
+    async function activateSubscriptionCode() {
       const input = (document.getElementById('activation-code-input')?.value || '').trim().toUpperCase();
       if (!input) {
         showToast('يرجى إدخال كود التفعيل أولاً', 'error');
         return;
       }
-      const parts = input.split('-');
-      if (parts.length !== 3 || parts[0] !== 'VIP') {
-        showToast('صيغة الكود غير صحيحة (مثال: VIP-90-XXXXX)', 'error');
-        return;
-      }
-      const days = parseInt(parts[1], 10);
-      const sig = parts[2];
-      const myDevId = getOrCreateDeviceId();
-      const expectedSig = computeDeviceSignature(myDevId, days);
-
-      if (sig !== expectedSig && input !== 'VIP-365-HUSSAM') {
-        showToast('هذا الكود غير صالح أو مربوط بجهاز آخر غير جهازك!', 'error');
-        return;
-      }
-
-      const subData = {
-        deviceId: myDevId,
-        days: days || 365,
-        activatedAt: Date.now(),
-        expiresAt: Date.now() + (days || 365) * 24 * 60 * 60 * 1000
-      };
       try {
-        localStorage.setItem(STORAGE_KEYS.SUB, JSON.stringify(subData));
-      } catch (e) {}
-
-      updateTrialAndVipUI();
-      if (activeLessonId) displayLesson(activeLessonId);
-      closeSubModal();
-      showToast('🎉 مبروك! تم تفعيل اشتراك VIP على جهازك بنجاح!', 'success');
-      if (typeof confetti === 'function') {
-        confetti({ particleCount: 90, spread: 80, origin: { y: 0.6 } });
+        const token = await ensureApiSession();
+        const result = await apiRequest('/v1/subscriptions/redeem', {
+          method: 'POST',
+          body: JSON.stringify({ code: input })
+        }, token);
+        const session = await apiRequest('/v1/auth/session', {}, token);
+        applyServerEntitlement(session.entitlement);
+        if (activeLessonId) displayLesson(activeLessonId);
+        closeSubModal();
+        showToast('تم تفعيل الاشتراك بنجاح حتى ' + new Date(result.expiresAt).toLocaleDateString('ar'), 'success');
+        if (typeof confetti === 'function') confetti({ particleCount: 90, spread: 80, origin: { y: 0.6 } });
+      } catch (error) {
+        showToast(error.code === 'CODE_INVALID_OR_USED' ? 'كود التفعيل غير صالح أو سبق استخدامه.' : 'تعذر تفعيل الكود: ' + (error.message || 'خطأ غير معروف'), 'error');
       }
     }
 
@@ -4393,39 +4471,51 @@
       document.getElementById('admin-modal').style.display = 'none';
     }
 
-    function loginOwnerAdmin() {
+    async function loginOwnerAdmin() {
       const email = (document.getElementById('admin-email-input')?.value || '').trim().toLowerCase();
-      const pass = (document.getElementById('admin-pass-input')?.value || '').trim().toLowerCase();
-
-      // Compare FNV-1a digests rather than storing raw emails or passwords in source code
-      const allowedEmailHashes = ['12904a5a', 'd374e29a', '85e2a38a'];
-      const allowedPassHashes = ['a86e095a', '67b4d5f5', 'c904349b'];
-
-      if (allowedEmailHashes.includes(computeDigestHash(email)) && allowedPassHashes.includes(computeDigestHash(pass))) {
+      const pass = document.getElementById('admin-pass-input')?.value || '';
+      if (!email || !pass) {
+        showToast('أدخل البريد الإلكتروني وكلمة المرور.', 'error');
+        return;
+      }
+      try {
+        const result = await apiRequest('/v1/auth/admin/login', {
+          method: 'POST',
+          body: JSON.stringify({ username: email, password: pass })
+        }, '');
+        saveApiSession(result.token);
+        const session = await apiRequest('/v1/auth/session', {}, result.token);
+        applyServerEntitlement(session.entitlement);
         document.getElementById('admin-login-box').classList.add('hidden');
         document.getElementById('admin-dashboard-box').classList.remove('hidden');
         try {
           const savedProxy = localStorage.getItem(STORAGE_KEYS.PROXY_ENDPOINT) || DEFAULT_BACKEND_PROXY_URL;
           document.getElementById('owner-gemini-key').value = savedProxy;
         } catch (e) {}
-        showToast('مرحباً بك يا أستاذ أبوحسام في لوحة التحكم 👑', 'success');
-      } else {
-        showToast('بيانات الدخول غير صحيحة!', 'error');
+        showToast('تم تسجيل دخول المالك عبر الخادم بأمان.', 'success');
+      } catch (error) {
+        showToast(error.code === 'LOGIN_RATE_LIMITED' ? 'محاولات كثيرة. انتظر 15 دقيقة ثم أعد المحاولة.' : 'بيانات الدخول غير صحيحة أو الخادم غير مهيأ.', 'error');
       }
     }
 
-    function generateNewSubscriberCode() {
-      const clientDev = (document.getElementById('sub-client-device')?.value || '').trim().toUpperCase();
+    async function generateNewSubscriberCode() {
       const days = parseInt(document.getElementById('sub-plan-select')?.value || '90', 10);
-      if (!clientDev || !clientDev.startsWith('HSM-')) {
-        showToast('يرجى إدخال رقم جهاز العميل الصحيح (يبدأ بـ HSM-)', 'error');
-        return;
+      try {
+        const token = await ensureApiSession();
+        if (!serverEntitlement || serverEntitlement.role !== 'admin') {
+          throw new Error('ADMIN_REQUIRED');
+        }
+        const result = await apiRequest('/v1/admin/activation-codes', {
+          method: 'POST',
+          body: JSON.stringify({ durationDays: days })
+        }, token);
+        lastGeneratedCode = result.code;
+        document.getElementById('generated-code-text').textContent = lastGeneratedCode;
+        document.getElementById('generated-code-box').classList.remove('hidden');
+        showToast('تم إنشاء كود اشتراك عشوائي صالح للاستخدام مرة واحدة.', 'success');
+      } catch (error) {
+        showToast('تعذر إنشاء الكود. تأكد من تسجيل دخول المالك وصلاحياته.', 'error');
       }
-      const sig = computeDeviceSignature(clientDev, days);
-      lastGeneratedCode = `VIP-${days}-${sig}`;
-      document.getElementById('generated-code-text').textContent = lastGeneratedCode;
-      document.getElementById('generated-code-box').classList.remove('hidden');
-      showToast('تم توليد كود التفعيل المشفر بنجاح ⚡', 'success');
     }
 
     function sendGeneratedCodeWhatsApp() {
@@ -4496,9 +4586,13 @@
 
     function saveOwnerGeminiKey() {
       const proxyUrl = (document.getElementById('owner-gemini-key')?.value || '').trim();
+      if (!/^https:\\/\\//i.test(proxyUrl)) {
+        showToast('أدخل رابط HTTPS صالحاً للخادم.', 'error');
+        return;
+      }
       try {
-        localStorage.setItem(STORAGE_KEYS.PROXY_ENDPOINT, proxyUrl);
-        showToast('تم حفظ رابط الخادم الوسيط (Backend Proxy) بنجاح ✅', 'success');
+        localStorage.setItem(STORAGE_KEYS.PROXY_ENDPOINT, proxyUrl.replace(/\\/+$/, ''));
+        showToast('تم حفظ رابط واجهة API.', 'success');
       } catch (e) {}
     }
 
@@ -4948,6 +5042,10 @@
       }
       await migrateLegacyLocalStorageToIndexedDB();
     });
+    window.addEventListener('load', () => {
+      initializeBackendSession();
+    });
+
   </script>
 </body>
 </html>
