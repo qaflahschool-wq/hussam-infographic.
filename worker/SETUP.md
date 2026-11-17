@@ -22,23 +22,30 @@ Requirements: Node.js 20+, npm, and Wrangler CLI.
 6. Start the Worker (serves the app at http://localhost:8787):
    `npx wrangler dev`
 
-## Production checklist (do not run until explicitly approved)
+## Production resources prepared
 
-1. Create a dedicated production D1 database in the correct Cloudflare account:
-   `npx wrangler d1 create hussam-infographic-prod`
-2. Copy the returned database UUID into the production `database_id` in `wrangler.toml`.
-3. Set exact frontend origin in `ALLOWED_ORIGINS`.
-4. Configure secrets in the production environment (Wrangler prompts for each value):
-   - `npx wrangler secret put GEMINI_API_KEY --env production`
-   - `npx wrangler secret put DEVICE_ID_PEPPER --env production` (long random secret)
-   - `npx wrangler secret put TURNSTILE_SECRET_KEY --env production`
-   - `npx wrangler secret put ADMIN_BOOTSTRAP_TOKEN --env production` (long random one-time token)
-5. Configure Turnstile for the final Worker hostname. Build with `HUSSAM_TURNSTILE_SITE_KEY=<public-site-key>` so the public key is written to `public/config.js`.
-6. Set `DEV_AUTH_BYPASS=false` and `ENVIRONMENT=production`.
-7. Apply migrations to production D1 only after database backup and explicit approval:
-   `npx wrangler d1 migrations apply hussam-infographic-prod --remote --env production`
-8. Provision the first administrator using `POST /v1/auth/admin/bootstrap` with header `X-Admin-Bootstrap`. Do not put bootstrap token or password in source control.
-9. Run `npm run build` and deploy the Worker; it serves both the static frontend and API from the same origin.
-10. Verify health, guest auth, admin login, trial enforcement, code redemption, and Gemini analysis.
+The following resources have already been created in the connected Cloudflare account:
 
-The Worker intentionally fails closed when D1, allowed origins, required secrets, or Turnstile are not configured. No production database or secret was created by this repository change.
+- Worker target: `hussam-ai-api` (the existing Worker; its old code has not been replaced yet).
+- Production D1: `hussam-infographic-prod`
+- D1 UUID: `e4a4107a-afa5-4176-9084-7522eb17ef2d`
+- Initial schema: applied and verified (admins, devices, sessions, activation_codes, subscriptions, usage_events, auth_attempts, and indexes).
+- Turnstile widget: `HUSSAM INFOGRAPHIC Production`
+- Turnstile hostname: `hussam-ai-api.alshakliamohammed04.workers.dev`
+- Turnstile site key (public): `0x4AAAAAAGGB8qiUN5rEEU35`
+
+The application HTML is bundled into `src/index.js`; the Worker serves `/` and `/config.js` from the same origin. The current GitHub Actions workflow validates the Worker, builds the frontend, runs unit tests, applies migrations to a local D1 emulator, executes local integration tests, and packages the project.
+
+## Remaining production activation
+
+**The production Worker has not been replaced or deployed yet.** The current Worker still runs its previous code. Before deployment, add these secret bindings to the existing `hussam-ai-api` Worker using Cloudflare Dashboard → Workers & Pages → `hussam-ai-api` → Settings → Variables and Secrets → Add → Secret:
+
+- `TURNSTILE_SECRET_KEY`: copy the secret key from the Turnstile widget above.
+- `DEVICE_ID_PEPPER`: a cryptographically random value of at least 32 bytes.
+- `ADMIN_BOOTSTRAP_TOKEN`: a separate cryptographically random one-time token of at least 32 bytes.
+
+The existing `GEMINI_API_KEY` secret is already present on this Worker and must be preserved. Do not put secret values in GitHub or in source code.
+
+After adding the three secrets, verify that all four secret names are listed (values must remain hidden). Then the Worker can be deployed with the production D1 binding and same-origin app. On first opening the app, use the owner panel's “إعداد حساب المالك لأول مرة” section to create the owner account with the bootstrap token, a valid email, and a strong password of at least 12 characters. The bootstrap endpoint works only before the first administrator exists.
+
+For the final release, verify health, Turnstile guest authentication, admin bootstrap/login, trial enforcement, code redemption, and one real Gemini analysis. Do not expose the bootstrap token in screenshots or public messages.
