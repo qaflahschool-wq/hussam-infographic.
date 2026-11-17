@@ -23,17 +23,19 @@ Requirements: Node.js 20+, npm, and Wrangler CLI.
 
 ## Production checklist (do not run until explicitly approved)
 
-1. Create a dedicated production D1 database in the correct Cloudflare account.
-2. Replace the production D1 placeholder ID in wrangler.toml.
+1. Create a dedicated production D1 database in the correct Cloudflare account:
+   `npx wrangler d1 create hussam-infographic-prod`
+2. Copy the returned database UUID into the production `database_id` in `wrangler.toml`.
 3. Set exact frontend origin in `ALLOWED_ORIGINS`.
-4. Configure secrets:
-   - `GEMINI_API_KEY`
-   - `DEVICE_ID_PEPPER` (long random secret)
-   - `TURNSTILE_SECRET_KEY`
-   - `ADMIN_BOOTSTRAP_TOKEN` (long random one-time token)
+4. Configure secrets in the production environment (Wrangler prompts for each value):
+   - `npx wrangler secret put GEMINI_API_KEY --env production`
+   - `npx wrangler secret put DEVICE_ID_PEPPER --env production` (long random secret)
+   - `npx wrangler secret put TURNSTILE_SECRET_KEY --env production`
+   - `npx wrangler secret put ADMIN_BOOTSTRAP_TOKEN --env production` (long random one-time token)
 5. Configure Turnstile for the final Worker hostname. Build with `HUSSAM_TURNSTILE_SITE_KEY=<public-site-key>` so the public key is written to `public/config.js`.
 6. Set `DEV_AUTH_BYPASS=false` and `ENVIRONMENT=production`.
-7. Apply migrations to production D1 only after database backup and explicit approval.
+7. Apply migrations to production D1 only after database backup and explicit approval:
+   `npx wrangler d1 migrations apply hussam-infographic-prod --remote --env production`
 8. Provision the first administrator using `POST /v1/auth/admin/bootstrap` with header `X-Admin-Bootstrap`. Do not put bootstrap token or password in source control.
 9. Run `npm run build` and deploy the Worker; it serves both the static frontend and API from the same origin.
 10. Verify health, guest auth, admin login, trial enforcement, code redemption, and Gemini analysis.
