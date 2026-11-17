@@ -12,7 +12,7 @@ GEMINI_MODEL = "gemini-2.5-flash"
 [[d1_databases]]
 binding = "DB"
 database_name = "hussam-infographic-dev"
-database_id = "local-hussam-infographic-dev"
+database_id = "00000000-0000-0000-0000-000000000001"
 migrations_dir = "migrations"
 
 [env.production]
