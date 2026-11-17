@@ -20,4 +20,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - run: node --check src/index.js
+      - run: node --check scripts/build.mjs
+      - run: npm run build
       - run: npm test
