@@ -1300,7 +1300,7 @@
     // يتم الاتصال عبر DEFAULT_BACKEND_PROXY_URL الذي يقرأ GEMINI_API_KEY من متغيرات البيئة.
     // =========================================================================
     const DEFAULT_BACKEND_PROXY_URL = (window.HUSSAM_CONFIG && window.HUSSAM_CONFIG.apiBaseUrl)
-      ? String(window.HUSSAM_CONFIG.apiBaseUrl).replace(/\\/+$/, '')
+      ? String(window.HUSSAM_CONFIG.apiBaseUrl).replace(/\/+$/, '')
       : (location.hostname === 'localhost' || location.hostname === '127.0.0.1'
         ? location.origin
         : location.origin);
