@@ -1302,7 +1302,7 @@
     let turnstileWidgetId = null;
 
     function getApiBaseUrl() {
-      return String(getActiveGeminiKey() || DEFAULT_BACKEND_PROXY_URL).replace(/\\/+$/, '');
+      return String(getActiveGeminiKey() || DEFAULT_BACKEND_PROXY_URL).replace(/\/+$/, '');
     }
 
     function saveApiSession(token) {
@@ -3750,7 +3750,7 @@
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
       try {
-        const response = await fetch(proxyEndpoint.replace(/\\/+$/, '') + '/v1/analyze', {
+        const response = await fetch(proxyEndpoint.replace(/\/+$/, '') + '/v1/analyze', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
