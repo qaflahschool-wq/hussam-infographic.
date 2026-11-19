@@ -5,7 +5,7 @@ This directory is the GitHub source workspace for the Cloudflare Worker. It was 
 ## Safety boundary
 - This branch is `work/hussam-ai-api-hardening`.
 - No Cloudflare production settings, secrets, databases, or deployments have been changed.
-- The D1 migration is a proposal only and has not been applied.
+- CI applies `migrations/0001_initial.sql` only to a local D1 emulator. A read-only inspection of the production D1 schema found the expected seven application tables and six indexes; no remote migration was run during this work.
 - Do not merge or deploy this branch until the acceptance tests pass and the owner explicitly approves production changes.
 
 ## Current baseline
@@ -51,7 +51,7 @@ Proposed model:
 No values are stored in this repository. Configure secrets only after review and explicit production approval.
 
 ## D1 migration
-Apply `migrations/0001_initial.sql` only to a newly confirmed/approved database. Before applying it:
+Do not apply `migrations/0001_initial.sql` to production blindly: the currently inspected production database already contains the expected tables and indexes. Check its migration history and take a backup before any remote migration. Before applying it to a new database:
 - confirm the actual frontend origin;
 - confirm the administrator account and recovery process;
 - confirm the subscription duration and existing VIP migration policy;
