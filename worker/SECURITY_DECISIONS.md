@@ -20,9 +20,10 @@ This document records the security decisions for the isolated Worker hardening c
 - This is not equivalent to verified one-person/one-trial enforcement. Without a verified account or phone identity, a visitor may attempt to create another installation identity.
 
 ## 4. Existing VIP subscriptions and codes
-- Browser localStorage is not accepted as proof of payment by the new API.
-- Existing VIP users and legacy codes need a controlled migration plan. Do not silently revoke legitimate paid access, and do not import unverified browser state as proof of payment.
-- Before launch, confirm whether to manually import verified subscribers or issue replacement activation codes.
+- The owner confirmed on 2026-11-19 that there are currently no subscribers.
+- Therefore, no VIP subscriber or legacy-code migration is required for the initial launch, provided this remains true at the release checkpoint.
+- Browser localStorage is not accepted as proof of payment by the new API. New subscriptions must be created through the server-side administrator flow after the first owner account is bootstrapped.
+- If any paid subscriber or previously sold code appears before launch, pause release and reconcile it manually before proceeding; never import unverified browser state as proof of payment.
 
 ## 5. Turnstile and origins
 - Guest-session creation requires server-side Turnstile verification outside explicit local development.
