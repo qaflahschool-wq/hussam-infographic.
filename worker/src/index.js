@@ -200,24 +200,52 @@ function parseModelJson(value) {
 
 function normalizeLessonOutput(value, input) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
-  const title = String(value.title || "").trim().slice(0, 240);
+  const cleanText = (item, max = 4000) => typeof item === "string" ? item.trim().slice(0, max) : "";
+  const title = cleanText(value.title, 240);
   if (!title) return null;
-  const normalized = {
-    ...value,
-    title,
-    grade: String(value.grade || input.grade).slice(0, 80),
-    subject: String(value.subject || input.subject).slice(0, 120),
-    desc: String(value.desc || "").slice(0, 5000),
-    rawExtractedText: String(value.rawExtractedText || input.rawText || "").slice(0, 60000)
+  const objectFields = {
+    uncertainParts: ["text", "value", "reason"],
+    subheadings: ["title", "text"],
+    mainIdeas: ["title", "text"],
+    definitions: ["term", "def"],
+    lawsAndEquations: ["law", "eq"],
+    examples: ["title", "solution"],
+    questionsAndActivities: ["question", "activity", "answer", "text"],
+    tablesAndComparisons: ["item", "col1", "col2"],
+    objectives: ["en", "ar"],
+    infographic: ["step", "en", "ar"],
+    vocab: ["word", "pos", "ar", "ex"],
+    walkthrough: ["en", "ar", "note"],
+    grammar: ["rule", "formula", "example"],
+    flashcards: ["q", "a"],
+    quiz: ["q", "explanation"]
   };
-  for (const field of [
-    "uncertainParts", "subheadings", "mainIdeas", "definitions",
-    "lawsAndEquations", "examples", "questionsAndActivities",
-    "tablesAndComparisons", "objectives", "infographic", "vocab",
-    "walkthrough", "grammar", "flashcards", "quiz"
-  ]) {
-    if (!Array.isArray(normalized[field])) normalized[field] = [];
-    if (normalized[field].length > 100) normalized[field] = normalized[field].slice(0, 100);
+  const normalized = {
+    subject: cleanText(value.subject || input.subject, 120),
+    grade: cleanText(value.grade || input.grade, 80),
+    title,
+    desc: cleanText(value.desc, 5000),
+    rawExtractedText: cleanText(value.rawExtractedText || input.rawText, 60000)
+  };
+  for (const [field, keys] of Object.entries(objectFields)) {
+    const items = Array.isArray(value[field]) ? value[field].slice(0, 100) : [];
+    normalized[field] = items.map((item) => {
+      if (typeof item === "string") return item.trim().slice(0, 2000);
+      if (!item || typeof item !== "object" || Array.isArray(item)) return null;
+      const output = {};
+      for (const key of keys) {
+        if (typeof item[key] === "string") output[key] = item[key].trim().slice(0, 4000);
+      }
+      if (field === "quiz") {
+        output.options = Array.isArray(item.options)
+          ? item.options.slice(0, 4).map((option) => cleanText(option, 500))
+          : [];
+        output.correct = Number.isInteger(item.correct) && item.correct >= 0 && item.correct < output.options.length
+          ? item.correct
+          : 0;
+      }
+      return output;
+    }).filter((item) => item !== null);
   }
   return normalized;
 }
@@ -287,8 +315,6 @@ async function handleAdminBootstrap(request, env, id) {
   if (!env.ADMIN_BOOTSTRAP_TOKEN || bootstrap.length < 20 || !constantTimeEqual(bootstrap, env.ADMIN_BOOTSTRAP_TOKEN)) {
     return { payload: safeError("BOOTSTRAP_NOT_AUTHORIZED", 403, id), status: 403 };
   }
-  const count = await env.DB.prepare("SELECT COUNT(*) AS n FROM admins").first();
-  if (Number(count?.n || 0) > 0) return { payload: safeError("BOOTSTRAP_ALREADY_USED", 409, id), status: 409 };
   const username = String(body.username || "").trim().toLowerCase();
   const password = String(body.password || "");
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(username) || password.length < 12 || password.length > 256) {
@@ -297,9 +323,11 @@ async function handleAdminBootstrap(request, env, id) {
   const hashed = await hashPassword(password);
   const adminId = crypto.randomUUID();
   const now = Date.now();
-  await env.DB.prepare(
-    "INSERT INTO admins (id, username, password_salt, password_hash, password_iterations, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 1, ?, ?)"
-  ).bind(adminId, username, hashed.salt, hashed.hash, hashed.iterations, now, now).run();
+  const inserted = await env.DB.prepare(
+    "INSERT INTO admins (id, username, password_salt, password_hash, password_iterations, is_active, created_at, updated_at) " +
+    "SELECT ?, ?, ?, ?, ?, 1, ?, ? WHERE NOT EXISTS (SELECT 1 FROM admins) RETURNING id"
+  ).bind(adminId, username, hashed.salt, hashed.hash, hashed.iterations, now, now).first();
+  if (!inserted) return { payload: safeError("BOOTSTRAP_ALREADY_USED", 409, id), status: 409 };
   return { payload: { created: true }, status: 201 };
 }
 
