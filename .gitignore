@@ -7,4 +7,6 @@ worker/.wrangler/
 # Generated static assets (created by npm run build)
 worker/public/index.html
 worker/public/config.js
-\n# Local-only Worker secrets\nworker/.dev.vars\n
+
+# Local-only Worker secrets
+worker/.dev.vars
