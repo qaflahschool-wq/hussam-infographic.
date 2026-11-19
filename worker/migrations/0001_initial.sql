@@ -1,5 +1,5 @@
 -- HUSSAM AI API — initial D1 schema
--- This file is a proposal only. It has NOT been applied to any Cloudflare database.
+-- This is the candidate schema reference. The existing production schema was checked read-only and matches these application tables/indexes; no remote migration was run during this work.
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS admins (
