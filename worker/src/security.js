@@ -209,8 +209,8 @@ export async function findActiveSession(db, bearerToken, now = Date.now()) {
 
 export async function createSession(db, { sessionType, adminId = null, deviceId = null, ttlMs }) {
   const validIdentity = sessionType === "guest"
-    ? Boolean(deviceId) && adminId === null
-    : sessionType === "admin" && Boolean(adminId) && deviceId === null;
+    ? typeof deviceId === "string" && deviceId.length > 0 && adminId === null
+    : sessionType === "admin" && typeof adminId === "string" && adminId.length > 0 && deviceId === null;
   if (!db || !validIdentity || !Number.isSafeInteger(ttlMs) || ttlMs <= 0 ||
       !Number.isSafeInteger(Date.now() + ttlMs)) {
     throw new Error("INVALID_SESSION_ARGUMENTS");
