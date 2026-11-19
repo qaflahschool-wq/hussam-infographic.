@@ -46,7 +46,7 @@ function originAllowed(request, allowed) {
 
 async function parseBody(request, limit = MAX_BODY_BYTES) {
   const contentType = (request.headers.get("Content-Type") || "").toLowerCase();
-  if (!/^application\\/json(?:\\s*;|$)/.test(contentType)) {
+  if (!/^application\/json(?:\s*;|$)/.test(contentType)) {
     const e = new Error("UNSUPPORTED_CONTENT_TYPE");
     e.code = "UNSUPPORTED_CONTENT_TYPE";
     throw e;
