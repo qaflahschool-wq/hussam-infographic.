@@ -1,48 +1,47 @@
-# Security decisions required before production rollout
+# HUSSAM INFOGRAPHIC — security decisions and release gates
 
-This document records decisions that must be resolved before the Worker and frontend can be safely connected to D1. It is not permission to change production resources.
+This document records the security decisions for the isolated Worker hardening candidate. It does not authorize production deployment.
 
-## 1. Database
-- No D1 database or D1 binding was visible in the connected Cloudflare account during the read-only audit.
-- Recommended direction: create one dedicated D1 database for HUSSAM INFOGRAPHIC only after reviewing the migration and receiving explicit approval.
-- Do not reuse a database from another product without confirming ownership, schema, backup, and environment separation.
+## 1. Production resources verified
+- Existing Worker: `hussam-ai-api`.
+- Production D1: `hussam-infographic-prod`, ID `e4a4107a-afa5-4176-9084-7522eb17ef2d`.
+- Worker D1 binding `DB` points to that database.
+- The production database has the expected seven application tables and six indexes. Inspection was read-only; no rows were modified and no remote migration was run.
+- Secret binding names `GEMINI_API_KEY`, `TURNSTILE_SECRET_KEY`, `DEVICE_ID_PEPPER`, and `ADMIN_BOOTSTRAP_TOKEN` are present. Secret values were not read.
+- The Cloudflare settings response did not expose the Worker plain-text variables. Before release, explicitly verify `ENVIRONMENT=production`, `DEV_AUTH_BYPASS=false`, `GEMINI_MODEL=gemini-2.5-flash`, and the exact `ALLOWED_ORIGINS` value.
 
 ## 2. Administrator account
-- Existing admin checks are embedded in browser JavaScript and cannot be treated as secure.
-- A new administrator password must be provisioned through a one-time server-side bootstrap flow.
-- Never paste the administrator password or bootstrap token into GitHub or ordinary chat.
-- The first admin must be provisioned only after D1 and the bootstrap secret are configured.
+- The candidate uses server-side admin authentication, PBKDF2 password hashes, hashed opaque session tokens, and a one-time bootstrap secret.
+- Never place the administrator password or bootstrap token in GitHub, source code, screenshots, or ordinary chat.
+- Create the first administrator only after reviewing the release candidate and confirming the bootstrap secret is set.
 
 ## 3. Free trial policy
-Current UI shows two free attempts and stores the count in localStorage. This is not enforceable.
-Proposed default: two server-counted guest attempts per registered installation, plus Turnstile and request-rate controls.
-Important limitation: without verified user identity, a visitor can still attempt to create a new installation identity. If strict one-person/one-trial enforcement is required, the app needs account or phone verification.
+- The candidate enforces two free analyses per installation identity using D1, Turnstile, cooldown controls, and request-specific reservations.
+- This is not equivalent to verified one-person/one-trial enforcement. Without a verified account or phone identity, a visitor may attempt to create another installation identity.
 
 ## 4. Existing VIP subscriptions and codes
-- The current VIP check and code signature are computed in the browser, and a static master code is accepted there.
-- The old scheme cannot be made trustworthy by simply copying its data into D1.
-- Existing VIP users need a controlled migration path. Options: manually import a verified subscriber list, or issue replacement codes after confirming payments.
-- Do not silently revoke legitimate paid access. Also do not trust browser localStorage as proof of payment.
+- Browser localStorage is not accepted as proof of payment by the new API.
+- Existing VIP users and legacy codes need a controlled migration plan. Do not silently revoke legitimate paid access, and do not import unverified browser state as proof of payment.
+- Before launch, confirm whether to manually import verified subscribers or issue replacement activation codes.
 
-## 5. Turnstile
-- Guest-session creation should require server-verified Turnstile.
-- This requires a public site key in the frontend and a private secret in Cloudflare.
-- The widget's hostname restrictions must match the actual published frontend origin.
-- Turnstile reduces automated abuse; it does not prove a visitor is a paying subscriber.
+## 5. Turnstile and origins
+- Guest-session creation requires server-side Turnstile verification outside explicit local development.
+- The public site key is included in the frontend; the private Turnstile secret remains a Cloudflare secret.
+- Confirm that the Turnstile hostname and `ALLOWED_ORIGINS` match the actual published application origin(s). The same-origin Worker-hosted app is currently configured as the candidate deployment path.
 
-## 6. External AI fallback
-- Recommended default: disabled.
-- Re-enable only after the owner approves the provider and the app clearly discloses that uploaded images may be sent to that provider.
+## 6. External AI processing
+- Gemini is the configured provider. Uploaded images and text submitted for analysis are sent to Gemini by the Worker.
+- Keep the provider disclosure clear to users. Do not enable another external provider without owner approval and a disclosure of data sharing.
 
-## 7. Frontend origin and deployment
-- The Worker currently has a custom workers.dev URL.
-- The repository contains a single root `index.html`; no deployment workflow or custom frontend domain was found in the repository.
-- Before CORS is locked down, confirm the exact browser origin used by the deployed site. Do not guess it from the repository name.
+## 7. Release gate
+The hardening candidate is on `work/hussam-ai-api-hardening` and reviewed through draft PR #1. CI has passed syntax checks, build, unit/contract tests, local D1 migration, and local integration smoke tests. This does not prove live production behavior.
 
-## Release gate
-No D1 creation, secret creation/rotation, Worker setting change, production deployment, or merge to `main` is allowed until:
-1. The owner approves the database creation and final schema.
-2. The owner confirms how to handle existing VIP users.
-3. The actual frontend origin is verified.
-4. Test results and the full code diff are reviewed.
-5. The owner explicitly approves the production change.
+Before deployment:
+1. Review and approve the full PR diff.
+2. Verify the production plain-text Worker variables and exact application origin.
+3. Decide the legacy VIP/subscriber migration approach.
+4. Take and verify a production D1 backup.
+5. Confirm all production secret binding names without exposing values.
+6. Run the final production deployment only after explicit owner approval, then verify health, Turnstile guest login, admin bootstrap/login, trials, activation redemption, and Gemini analysis.
+
+No production deployment, remote D1 migration, secret mutation, Worker setting change, or merge to `main` has been performed as part of this candidate work.
