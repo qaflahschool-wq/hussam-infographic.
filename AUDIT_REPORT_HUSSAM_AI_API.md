@@ -118,7 +118,7 @@ Recommendation: maintain Worker source in GitHub, add Wrangler configuration wit
 - Frontend API contract: the client obtains a server-issued guest/admin session, refreshes entitlement from `/v1/auth/session`, and sends analysis requests to `/v1/analyze` with a bearer token. The Gemini provider secret is read by the Worker; it is not used as a browser credential.
 - Packaging cleanup: removed an invalid redundant `worker/security.js` ZIP input; the complete `worker/src/` directory already includes `src/security.js`.
 - Added a regression test that fails if the embedded frontend snapshot drifts from root `index.html` or if runtime configuration injection is removed.
-- Latest pre-cleanup CI run `44532136658` passed all 18 tests, local D1 migration, local Worker smoke tests, and deployment ZIP packaging. A new CI run is required to validate the final packaging/test changes.
+- Final CI run `44533184030` passed all 23 tests, frontend build, local D1 migration, local Worker smoke tests, and deployment ZIP packaging. The `HUSSAM-INFOGRAPHIC-DEPLOYMENT` artifact was generated successfully.
 - Production boundary: no Worker deployment, production setting change, secret rotation, D1 write, or remote migration has been performed. Secret values were not accessed.
 - Remaining release gates: verify production plain-text variables (`ENVIRONMENT=production`, `DEV_AUTH_BYPASS=false`, `ALLOWED_ORIGINS`, `GEMINI_MODEL`); create and verify a restorable production D1 backup before any schema/data change; confirm the live app hostname matches Turnstile and allowed origins; then run approved post-deployment acceptance tests.
 - This candidate is not yet approved for production release. Local CI success is not a production end-to-end test.
