@@ -1,0 +1,36 @@
+name = "hussam-ai-api"
+main = "src/index.js"
+compatibility_date = "2026-11-16"
+workers_dev = true
+
+[vars]
+ENVIRONMENT = "development"
+DEV_AUTH_BYPASS = "true"
+ALLOWED_ORIGINS = "http://localhost:8787,http://127.0.0.1:8787"
+GEMINI_MODEL = "gemini-2.5-flash"
+HUSSAM_API_BASE_URL = ""
+HUSSAM_TURNSTILE_SITE_KEY = "0x4AAAAAAGGB8qiUN5rEEU35"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "hussam-infographic-dev"
+database_id = "00000000-0000-0000-0000-000000000001"
+migrations_dir = "migrations"
+
+[env.production]
+name = "hussam-ai-api"
+workers_dev = true
+
+[env.production.vars]
+ENVIRONMENT = "production"
+DEV_AUTH_BYPASS = "false"
+GEMINI_MODEL = "gemini-2.5-flash"
+HUSSAM_API_BASE_URL = ""
+HUSSAM_TURNSTILE_SITE_KEY = "0x4AAAAAAGGB8qiUN5rEEU35"
+ALLOWED_ORIGINS = "https://hussam-ai-api.alshakliamohammed04.workers.dev"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "hussam-infographic-prod"
+database_id = "e4a4107a-afa5-4176-9084-7522eb17ef2d"
+migrations_dir = "migrations"

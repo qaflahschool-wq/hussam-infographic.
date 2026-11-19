@@ -1,0 +1,12 @@
+# Node and Wrangler local state
+node_modules/
+worker/node_modules/
+worker/.wrangler/
+.wrangler/
+
+# Generated static assets (created by npm run build)
+worker/public/index.html
+worker/public/config.js
+
+# Local-only Worker secrets
+worker/.dev.vars
