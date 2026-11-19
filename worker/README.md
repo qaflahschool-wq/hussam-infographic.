@@ -50,6 +50,12 @@ Proposed model:
 
 No values are stored in this repository. Configure secrets only after review and explicit production approval.
 
+## Read-only production configuration check (2026-11-19)
+- The live Worker has the expected `DB` binding to `hussam-infographic-prod`.
+- The secret binding names `GEMINI_API_KEY`, `TURNSTILE_SECRET_KEY`, `DEVICE_ID_PEPPER`, and `ADMIN_BOOTSTRAP_TOKEN` are present. Secret values were not read.
+- The current Worker settings response did not expose plain-text variable bindings. Before deploying this branch, configure `ENVIRONMENT=production`, `DEV_AUTH_BYPASS=false`, `ALLOWED_ORIGINS` with the exact app origin(s), and `GEMINI_MODEL=gemini-2.5-flash`.
+- `compatibility_date` in this branch matches the current Worker setting (`2026-11-16`).
+
 ## D1 migration
 Do not apply `migrations/0001_initial.sql` to production blindly: the currently inspected production database already contains the expected tables and indexes. Check its migration history and take a backup before any remote migration. Before applying it to a new database:
 - confirm the actual frontend origin;
