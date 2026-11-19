@@ -29,12 +29,12 @@ The following resources have already been created in the connected Cloudflare ac
 - Worker target: `hussam-ai-api` (the existing Worker; its old code has not been replaced yet).
 - Production D1: `hussam-infographic-prod`
 - D1 UUID: `e4a4107a-afa5-4176-9084-7522eb17ef2d`
-- Initial schema: applied and verified (admins, devices, sessions, activation_codes, subscriptions, usage_events, auth_attempts, and indexes).
+- Existing schema: read-only verified against the expected seven application tables and six indexes. This work did not apply a remote migration.
 - Turnstile widget: `HUSSAM INFOGRAPHIC Production`
 - Turnstile hostname: `hussam-ai-api.alshakliamohammed04.workers.dev`
 - Turnstile site key (public): `0x4AAAAAAGGB8qiUN5rEEU35`
 
-The application HTML is bundled into `src/index.js`; the Worker serves `/` and `/config.js` from the same origin. The current GitHub Actions workflow validates the Worker, builds the frontend, runs unit tests, applies migrations to a local D1 emulator, executes local integration tests, and packages the project.
+The application HTML is bundled into `src/index.js`; the Worker injects a `/config.js` script into the page before the app runs, and serves that public runtime configuration from the same origin. The current GitHub Actions workflow validates the Worker, builds the frontend, runs unit tests, applies migrations to a local D1 emulator, executes local integration tests, and packages the project.
 
 ## Remaining production activation
 
