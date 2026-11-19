@@ -371,24 +371,40 @@ async function handleRedeemCode(request, env, session, id) {
   if (!/^HUSSAM-[A-Z0-9_-]{20,80}$/.test(code)) return { payload: safeError("INVALID_CODE", 400, id), status: 400 };
   const codeHash = await sha256Hex(code);
   const now = Date.now();
-  const result = await env.DB.prepare(
-    "UPDATE activation_codes SET status = 'redeemed', redeemed_by_device_id = ?, redeemed_at = ? WHERE code_hash = ? AND status = 'active' RETURNING id, duration_days"
-  ).bind(session.device_id, now, codeHash).first();
-  if (!result) return { payload: safeError("CODE_INVALID_OR_USED", 400, id), status: 400 };
-  const current = await env.DB.prepare(
-    "SELECT MAX(expires_at) AS current_expiry FROM subscriptions WHERE device_id = ? AND status = 'active' AND expires_at > ?"
-  ).bind(session.device_id, now).first();
-  const startsAt = Math.max(now, Number(current?.current_expiry || now));
-  const expiresAt = startsAt + Number(result.duration_days) * 24 * 60 * 60 * 1000;
-  try {
-    await env.DB.prepare(
-      "INSERT INTO subscriptions (id, device_id, activation_code_id, starts_at, expires_at, status, created_at) VALUES (?, ?, ?, ?, ?, 'active', ?)"
-    ).bind(crypto.randomUUID(), session.device_id, result.id, startsAt, expiresAt, now).run();
-  } catch {
-    await env.DB.prepare("UPDATE activation_codes SET status = 'active', redeemed_by_device_id = NULL, redeemed_at = NULL WHERE id = ? AND status = 'redeemed'").bind(result.id).run();
-    throw new Error("REDEMPTION_FAILED");
+  const subscriptionId = crypto.randomUUID();
+  const results = await env.DB.batch([
+    env.DB.prepare(
+      "UPDATE activation_codes SET status = 'redeemed', redeemed_by_device_id = ?, redeemed_at = ? " +
+      "WHERE code_hash = ? AND status = 'active'"
+    ).bind(session.device_id, now, codeHash),
+    env.DB.prepare(
+      "INSERT INTO subscriptions (id, device_id, activation_code_id, starts_at, expires_at, status, created_at) " +
+      "SELECT ?, ?, c.id, " +
+      "MAX(?, COALESCE((SELECT MAX(s.expires_at) FROM subscriptions s WHERE s.device_id = ? AND s.status = 'active' AND s.expires_at > ?), ?)), " +
+      "MAX(?, COALESCE((SELECT MAX(s.expires_at) FROM subscriptions s WHERE s.device_id = ? AND s.status = 'active' AND s.expires_at > ?), ?)) + c.duration_days * 86400000, " +
+      "'active', ? FROM activation_codes c " +
+      "WHERE c.code_hash = ? AND c.status = 'redeemed' AND c.redeemed_by_device_id = ? AND c.redeemed_at = ?"
+    ).bind(
+      subscriptionId, session.device_id,
+      now, session.device_id, now, now,
+      now, session.device_id, now, now,
+      now, codeHash, session.device_id, now
+    )
+  ]);
+  if (Number(results?.[1]?.meta?.changes || 0) !== 1) {
+    return { payload: safeError("CODE_INVALID_OR_USED", 400, id), status: 400 };
   }
-  return { payload: { activated: true, expiresAt, durationDays: result.duration_days }, status: 200 };
+  const subscription = await env.DB.prepare(
+    "SELECT s.expires_at, c.duration_days FROM subscriptions s JOIN activation_codes c ON c.id = s.activation_code_id WHERE s.id = ?"
+  ).bind(subscriptionId).first();
+  return {
+    payload: {
+      activated: true,
+      expiresAt: Number(subscription?.expires_at),
+      durationDays: Number(subscription?.duration_days)
+    },
+    status: 200
+  };
 }
 
 async function handleAnalyze(request, env, session, id) {
