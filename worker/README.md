@@ -88,3 +88,9 @@ The isolated hardening branch now includes:
 CI has passed on the isolated branch, including Node syntax checks, build, 18 unit/contract tests, local D1 migration, and local Worker integration smoke tests. The CI migration targets only Wrangler's local D1 emulator.
 
 **Production remains unchanged.** The branch is a review candidate; no remote D1 migration, secret update, Cloudflare setting change, merge, or production deployment has been performed.
+
+
+## Launch baseline and final integration checks
+- The owner confirmed there are currently no subscribers. No VIP migration is required for the initial launch if this remains true at the release checkpoint.
+- The Worker serves its embedded frontend snapshot. A contract test verifies that it remains byte-for-byte identical to the root `index.html` and that runtime `/config.js` injection remains present.
+- The Gemini API key is held by the Worker as a secret; browser analysis requests use a server-issued bearer session.
