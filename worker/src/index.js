@@ -102,11 +102,21 @@ async function getOrCreateDevice(db, clientDeviceId, env) {
   return device;
 }
 
-async function countRecentFailures(db, identityHash) {
+async function reserveAuthAttempt(db, identityHash, now = Date.now()) {
+  const id = crypto.randomUUID();
   const row = await db.prepare(
-    "SELECT COUNT(*) AS n FROM auth_attempts WHERE identity_hash = ? AND succeeded = 0 AND created_at > ?"
-  ).bind(identityHash, Date.now() - 15 * 60 * 1000).first();
-  return Number(row?.n || 0);
+    "INSERT INTO auth_attempts (id, identity_hash, succeeded, created_at) " +
+    "SELECT ?, ?, 0, ? WHERE " +
+    "(SELECT COUNT(*) FROM auth_attempts WHERE identity_hash = ? AND succeeded = 0 AND created_at > ?) < 8 " +
+    "RETURNING id"
+  ).bind(id, identityHash, now, identityHash, now - 15 * 60 * 1000).first();
+  return row?.id ? { id: row.id } : null;
+}
+
+async function markAuthAttemptSucceeded(db, attemptId) {
+  await db.prepare(
+    "UPDATE auth_attempts SET succeeded = 1 WHERE id = ? AND succeeded = 0"
+  ).bind(attemptId).run();
 }
 
 async function recordAuthAttempt(db, identityHash, success) {
@@ -333,19 +343,18 @@ async function handleAdminBootstrap(request, env, id) {
 
 async function handleAdminLogin(request, env, id) {
   const body = await parseBody(request, 16 * 1024);
-  const username = String(body.username || "").trim().toLowerCase();
+  const username = String(body.username || "").trim().toLowerCase().slice(0, 254);
   const password = String(body.password || "");
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
   const identityHash = await sha256Hex(ip + ":" + username);
-  const failures = await countRecentFailures(env.DB, identityHash);
-  if (failures >= 8) return { payload: safeError("LOGIN_RATE_LIMITED", 429, id), status: 429 };
+  const attempt = await reserveAuthAttempt(env.DB, identityHash);
+  if (!attempt) return { payload: safeError("LOGIN_RATE_LIMITED", 429, id), status: 429 };
   const admin = await env.DB.prepare("SELECT * FROM admins WHERE username = ? AND is_active = 1 LIMIT 1").bind(username).first();
   const valid = Boolean(admin && await verifyPassword(password, admin.password_salt, admin.password_hash, admin.password_iterations));
   if (!valid) {
-    await recordAuthAttempt(env.DB, identityHash, false);
     return { payload: safeError("INVALID_CREDENTIALS", 401, id), status: 401 };
   }
-  await recordAuthAttempt(env.DB, identityHash, true);
+  await markAuthAttemptSucceeded(env.DB, attempt.id);
   const session = await createSession(env.DB, { sessionType: "admin", adminId: admin.id, ttlMs: ADMIN_TTL_MS });
   await env.DB.prepare("UPDATE admins SET last_login_at = ?, updated_at = ? WHERE id = ?").bind(Date.now(), Date.now(), admin.id).run();
   return { payload: { token: session.token, expiresAt: session.expiresAt, username: admin.username }, status: 200 };
