@@ -92,5 +92,9 @@ CI has passed on the isolated branch, including Node syntax checks, build, 23 un
 
 ## Launch baseline and final integration checks
 - The owner confirmed there are currently no subscribers. No VIP migration is required for the initial launch if this remains true at the release checkpoint.
-- The Worker serves its embedded frontend snapshot. A contract test verifies that it remains byte-for-byte identical to the root `index.html` and that runtime `/config.js` injection remains present.
-- The Gemini API key is held by the Worker as a secret; browser analysis requests use a server-issued bearer session.
+- The production D1 aggregate check returned zero active admins, devices, active subscriptions, unused activation codes, and redeemed activation codes. No row-level data was read.
+- The Worker serves its embedded frontend snapshot. A contract test verifies byte-for-byte equality with root `index.html` and the runtime `/config.js` injection.
+- `/config.js` now reads the public API base URL and Turnstile site key from Worker runtime variables. The production same-origin API base is empty by design.
+- The Gemini API key remains a Worker secret; browser analysis requests use a server-issued bearer session.
+- CI passed 23 tests on commit `1cd52e0b965635f47163757708474007bc7a8939`, along with syntax checks, build, local D1 migration, local Worker integration smoke tests, and deployable ZIP packaging. Run: https://github.com/qaflahschool-wq/hussam-infographic./actions/runs/44533184030.
+- No real-browser end-to-end test, live Gemini call, live Turnstile challenge, load test, or penetration test was run. Those remain post-deployment acceptance checks.
