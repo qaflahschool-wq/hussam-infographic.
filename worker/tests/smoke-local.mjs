@@ -28,7 +28,7 @@ if (!home.ok || !html.includes("Hussam Infographic")) throw new Error("Static fr
 if (!html.includes('<script src="/config.js"></script>')) throw new Error("Frontend runtime configuration script was not injected");
 const runtimeConfig = await fetch(base + "/config.js");
 const runtimeConfigText = await runtimeConfig.text();
-const configMatch = runtimeConfigText.match(/Object\\.freeze\\((\\{.*\\})\\)/);
+const configMatch = runtimeConfigText.match(/Object\.freeze\((\{.*\})\)/);
 const publicConfig = configMatch ? JSON.parse(configMatch[1]) : null;
 if (!runtimeConfig.ok ||
     publicConfig?.apiBaseUrl !== "" ||
