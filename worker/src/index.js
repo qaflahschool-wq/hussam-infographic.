@@ -477,7 +477,7 @@ const APP_HTML_BASE64 = "PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImFyIiBkaXI9InJ0bCI
 function getAppConfigJs(env) {
   const config = {
     apiBaseUrl: typeof env.HUSSAM_API_BASE_URL === "string"
-      ? env.HUSSAM_API_BASE_URL.trim().replace(/\\/+$/, "")
+      ? env.HUSSAM_API_BASE_URL.trim().replace(/\/+$/, "")
       : "",
     turnstileSiteKey: typeof env.HUSSAM_TURNSTILE_SITE_KEY === "string"
       ? env.HUSSAM_TURNSTILE_SITE_KEY.trim()
