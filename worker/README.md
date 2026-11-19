@@ -85,7 +85,7 @@ The isolated hardening branch now includes:
 - Atomic administrator login throttling with cleanup of stale attempt records.
 - CORS preflight support for the bootstrap header and explicit malformed UTF-8/content-type handling.
 
-CI has passed on the isolated branch, including Node syntax checks, build, 18 unit/contract tests, local D1 migration, and local Worker integration smoke tests. The CI migration targets only Wrangler's local D1 emulator.
+CI has passed on the isolated branch, including Node syntax checks, build, 23 unit/contract tests, local D1 migration, and local Worker integration smoke tests. The CI migration targets only Wrangler's local D1 emulator.
 
 **Production remains unchanged.** The branch is a review candidate; no remote D1 migration, secret update, Cloudflare setting change, merge, or production deployment has been performed.
 
