@@ -43,7 +43,9 @@ Proposed model:
 - Secret: `GEMINI_API_KEY` (already exists in production; do not expose or rotate without approval)
 - Secret: `TURNSTILE_SECRET_KEY` (requires a configured Turnstile widget)
 - Secret: `ADMIN_BOOTSTRAP_TOKEN` (one-time first-admin provisioning; rotate/revoke after setup)
+- Secret: `DEVICE_ID_PEPPER` (high-entropy server-only pepper used to derive device identifiers; required in production)
 - Variable: `ALLOWED_ORIGINS` (exact deployed frontend origin(s), comma-separated)
+- Production must use `ENVIRONMENT=production` and `DEV_AUTH_BYPASS=false`. Turnstile bypass is permitted only when `ENVIRONMENT=development` and `DEV_AUTH_BYPASS=true`.
 - Optional secret/setting: external vision fallback must remain disabled unless the owner explicitly approves the provider and data-sharing disclosure.
 
 No values are stored in this repository. Configure secrets only after review and explicit production approval.
@@ -65,3 +67,17 @@ The schema deliberately does not import or trust existing browser localStorage e
 4. Update the frontend to use server-issued sessions and server entitlement state.
 5. Add tests for authentication, entitlement concurrency, invalid payloads, provider failures, and output schema.
 6. Review the diff and test report before any production change.
+
+## Hardening implementation update (2026-11-19)
+The isolated hardening branch now includes:
+- Image magic-byte checks for JPEG, PNG, and WebP, including MIME/signature agreement.
+- PBKDF2 iteration and salt-size bounds, plus strict session identity validation.
+- Whitelisted and bounded Gemini output normalization.
+- Atomic first-admin bootstrap and activation-code/subscription redemption.
+- Request-ID-bound guest trial reservations with idempotent refunds.
+- Atomic administrator login throttling with cleanup of stale attempt records.
+- CORS preflight support for the bootstrap header and explicit malformed UTF-8/content-type handling.
+
+CI has passed on the isolated branch, including Node syntax checks, build, 18 unit/contract tests, local D1 migration, and local Worker integration smoke tests. The CI migration targets only Wrangler's local D1 emulator.
+
+**Production remains unchanged.** The branch is a review candidate; no remote D1 migration, secret update, Cloudflare setting change, merge, or production deployment has been performed.
