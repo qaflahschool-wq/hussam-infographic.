@@ -119,12 +119,6 @@ async function markAuthAttemptSucceeded(db, attemptId) {
   ).bind(attemptId).run();
 }
 
-async function recordAuthAttempt(db, identityHash, success) {
-  await db.prepare(
-    "INSERT INTO auth_attempts (id, identity_hash, succeeded, created_at) VALUES (?, ?, ?, ?)"
-  ).bind(crypto.randomUUID(), identityHash, success ? 1 : 0, Date.now()).run();
-}
-
 async function getEntitlement(db, session) {
   if (session.session_type === "admin") {
     return { role: "admin", isVip: true, trialUsed: 0, trialLimit: MAX_TRIALS, remainingTrials: MAX_TRIALS, expiresAt: null };
