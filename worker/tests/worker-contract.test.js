@@ -8,6 +8,7 @@ import { dirname, resolve } from "node:path";
 const here = dirname(fileURLToPath(import.meta.url));
 const frontend = readFileSync(resolve(here, "../../index.html"), "utf8");
 const worker = readFileSync(resolve(here, "../src/index.js"), "utf8");
+const wrangler = readFileSync(resolve(here, "../wrangler.toml"), "utf8");
 
 test("all inline frontend scripts parse as JavaScript", () => {
   const scripts = [...frontend.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)]
@@ -62,6 +63,12 @@ test("embedded Worker frontend stays byte-for-byte aligned with the root index",
   assert.equal(embeddedFrontend, frontend, "rebuild the embedded frontend after changing index.html");
   assert.ok(worker.includes('html.replace("</head>", \'  <script src="/config.js"></script>\''),
     "the Worker must inject runtime configuration before frontend scripts execute");
-  assert.ok(worker.includes('window.HUSSAM_CONFIG = Object.freeze({apiBaseUrl:"",turnstileSiteKey:"0x4AAAAAAGGB8qiUN5rEEU35"})'),
-    "the public Turnstile site key and same-origin API configuration must be present");
+  assert.ok(worker.includes("function getAppConfigJs(env)"),
+    "runtime config must be generated from Worker environment variables");
+  assert.ok(worker.includes("env.HUSSAM_API_BASE_URL") && worker.includes("env.HUSSAM_TURNSTILE_SITE_KEY"),
+    "Worker must read the API base URL and public Turnstile site key from runtime variables");
+  assert.ok(wrangler.includes('HUSSAM_API_BASE_URL = ""'),
+    "same-origin API routing must be the production default");
+  assert.ok(wrangler.includes('HUSSAM_TURNSTILE_SITE_KEY = "0x4AAAAAAGGB8qiUN5rEEU35"'),
+    "the public Turnstile site key must be declared in Wrangler runtime config");
 });
