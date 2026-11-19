@@ -25,6 +25,12 @@ if (health.data?.status !== "ok") throw new Error("Worker health check failed");
 const home = await fetch(base + "/");
 const html = await home.text();
 if (!home.ok || !html.includes("Hussam Infographic")) throw new Error("Static frontend was not served by Worker");
+if (!html.includes('<script src="/config.js"></script>')) throw new Error("Frontend runtime configuration script was not injected");
+const runtimeConfig = await fetch(base + "/config.js");
+const runtimeConfigText = await runtimeConfig.text();
+if (!runtimeConfig.ok || !runtimeConfigText.includes("turnstileSiteKey") || !runtimeConfigText.includes("0x4AAAAAAGGB8qiUN5rEEU35")) {
+  throw new Error("Public Turnstile runtime configuration was not served");
+}
 
 const guest = await call("/v1/auth/guest", {
   method: "POST",
