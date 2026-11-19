@@ -53,3 +53,15 @@ test("frontend sends analysis requests through bearer-authenticated API", () => 
   assert.ok(frontend.includes("'Authorization': 'Bearer ' + token"));
   assert.ok(frontend.includes("applyServerEntitlement(parsed.entitlement)"));
 });
+
+
+test("embedded Worker frontend stays byte-for-byte aligned with the root index", () => {
+  const match = worker.match(/const APP_HTML_BASE64 = "([A-Za-z0-9+/=]+)";/);
+  assert.ok(match, "expected the Worker to contain its frontend snapshot");
+  const embeddedFrontend = Buffer.from(match[1], "base64").toString("utf8");
+  assert.equal(embeddedFrontend, frontend, "rebuild the embedded frontend after changing index.html");
+  assert.ok(worker.includes('html.replace("</head>", \'  <script src="/config.js"></script>\''),
+    "the Worker must inject runtime configuration before frontend scripts execute");
+  assert.ok(worker.includes('window.HUSSAM_CONFIG = Object.freeze({apiBaseUrl:"",turnstileSiteKey:"0x4AAAAAAGGB8qiUN5rEEU35"})'),
+    "the public Turnstile site key and same-origin API configuration must be present");
+});
