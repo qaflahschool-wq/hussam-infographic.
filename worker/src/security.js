@@ -19,7 +19,7 @@ export function buildCorsHeaders(origin, allowedOrigins) {
     "Content-Type": "application/json; charset=utf-8",
     "Vary": "Origin",
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With, X-Admin-Bootstrap",
     "Access-Control-Max-Age": "600",
     "Cache-Control": "no-store"
   });
@@ -73,7 +73,14 @@ export async function readJsonLimited(request, maxBytes) {
     bytes.set(chunk, offset);
     offset += chunk.byteLength;
   }
-  const text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  let text;
+  try {
+    text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  } catch {
+    const error = new Error("INVALID_JSON");
+    error.code = "INVALID_JSON";
+    throw error;
+  }
   try {
     const value = JSON.parse(text || "{}");
     if (!value || typeof value !== "object" || Array.isArray(value)) {
@@ -88,8 +95,8 @@ export async function readJsonLimited(request, maxBytes) {
 }
 
 export function validateImageDataUrl(value, maxBytes) {
-  if (typeof value !== "string") return null;
-  const match = /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]+={0,2})$/.exec(value);
+  if (typeof value !== "string" || !Number.isSafeInteger(maxBytes) || maxBytes <= 0) return null;
+  const match = /^data:(image\\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]+={0,2})$/.exec(value);
   if (!match || match[2].length % 4 !== 0) return null;
   let binary;
   try {
@@ -98,7 +105,19 @@ export function validateImageDataUrl(value, maxBytes) {
     return null;
   }
   if (binary.length === 0 || binary.length > maxBytes) return null;
-  return { mimeType: match[1], base64Data: match[2], byteLength: binary.length };
+  const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
+  const mime = match[1];
+  const isJpeg = bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+  const isPng = bytes.length >= 8 &&
+    bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47 &&
+    bytes[4] === 0x0d && bytes[5] === 0x0a && bytes[6] === 0x1a && bytes[7] === 0x0a;
+  const isWebp = bytes.length >= 12 &&
+    String.fromCharCode(...bytes.slice(0, 4)) === "RIFF" &&
+    String.fromCharCode(...bytes.slice(8, 12)) === "WEBP";
+  if ((mime === "image/jpeg" && !isJpeg) ||
+      (mime === "image/png" && !isPng) ||
+      (mime === "image/webp" && !isWebp)) return null;
+  return { mimeType: mime, base64Data: match[2], byteLength: binary.length };
 }
 
 export function createOpaqueToken(byteLength = 32) {
@@ -129,9 +148,18 @@ export async function hashPassword(password, saltBase64, iterations = 310000) {
   if (typeof password !== "string" || password.length < 12 || password.length > 256) {
     throw new Error("PASSWORD_POLICY");
   }
-  const salt = saltBase64
-    ? Uint8Array.from(atob(saltBase64), (char) => char.charCodeAt(0))
-    : crypto.getRandomValues(new Uint8Array(16));
+  if (!Number.isSafeInteger(iterations) || iterations < 100000 || iterations > 600000) {
+    throw new Error("INVALID_PASSWORD_ITERATIONS");
+  }
+  let salt;
+  try {
+    salt = saltBase64
+      ? Uint8Array.from(atob(saltBase64), (char) => char.charCodeAt(0))
+      : crypto.getRandomValues(new Uint8Array(16));
+  } catch {
+    throw new Error("INVALID_PASSWORD_SALT");
+  }
+  if (salt.length < 16 || salt.length > 64) throw new Error("INVALID_PASSWORD_SALT");
   const key = await crypto.subtle.importKey(
     "raw",
     encoder.encode(password),
@@ -180,7 +208,11 @@ export async function findActiveSession(db, bearerToken, now = Date.now()) {
 }
 
 export async function createSession(db, { sessionType, adminId = null, deviceId = null, ttlMs }) {
-  if (!db || !["guest", "admin"].includes(sessionType) || !Number.isSafeInteger(ttlMs) || ttlMs <= 0) {
+  const validIdentity = sessionType === "guest"
+    ? Boolean(deviceId) && adminId === null
+    : sessionType === "admin" && Boolean(adminId) && deviceId === null;
+  if (!db || !validIdentity || !Number.isSafeInteger(ttlMs) || ttlMs <= 0 ||
+      !Number.isSafeInteger(Date.now() + ttlMs)) {
     throw new Error("INVALID_SESSION_ARGUMENTS");
   }
   const token = createOpaqueToken(32);
@@ -196,6 +228,10 @@ export async function createSession(db, { sessionType, adminId = null, deviceId 
 }
 
 export async function reserveGuestTrial(db, deviceId, maxTrials = 2, now = Date.now()) {
+  if (!db || typeof deviceId !== "string" || !deviceId ||
+      !Number.isSafeInteger(maxTrials) || maxTrials < 1 || !Number.isSafeInteger(now)) {
+    throw new Error("INVALID_TRIAL_RESERVATION");
+  }
   const result = await db.prepare(
     `UPDATE devices
         SET trial_used = trial_used + 1, last_seen_at = ?
@@ -213,10 +249,24 @@ export async function reserveGuestTrial(db, deviceId, maxTrials = 2, now = Date.
   return result ? { allowed: true, trialUsed: result.trial_used } : { allowed: false };
 }
 
-export async function releaseGuestTrial(db, deviceId) {
-  await db.prepare(
-    "UPDATE devices SET trial_used = CASE WHEN trial_used > 0 THEN trial_used - 1 ELSE 0 END WHERE id = ?"
-  ).bind(deviceId).run();
+export async function releaseGuestTrial(db, deviceId, reservationId) {
+  if (!db || typeof deviceId !== "string" || !deviceId ||
+      typeof reservationId !== "string" || !reservationId) return false;
+  const results = await db.batch([
+    db.prepare(
+      `UPDATE devices
+          SET trial_used = trial_used - 1
+        WHERE id = ? AND trial_used > 0
+          AND EXISTS (
+            SELECT 1 FROM usage_events
+             WHERE id = ? AND device_id = ? AND outcome = 'reserved'
+          )`
+    ).bind(deviceId, reservationId, deviceId),
+    db.prepare(
+      "UPDATE usage_events SET outcome = 'released', completed_at = ? WHERE id = ? AND device_id = ? AND outcome = 'reserved'"
+    ).bind(Date.now(), reservationId, deviceId)
+  ]);
+  return Number(results?.[0]?.meta?.changes || 0) === 1;
 }
 
 export function getBearerToken(request) {
