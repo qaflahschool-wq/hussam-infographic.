@@ -14,6 +14,17 @@ Mode: Read-only audit plus isolated GitHub backup/report branches. No production
 - Cloudflare deployment history identifies the Worker deployments as `quick_editor`; no GitHub-driven Worker deployment was established.
 - The inspected repository default branch contains only `index.html`; no Worker source, Wrangler config, automated tests, or deployment workflow was found at repository root.
 
+## Implementation follow-up — 2026-11-19
+The findings below describe the previously deployed Worker baseline. A replacement/hardening implementation has since been prepared in the isolated branch `work/hussam-ai-api-hardening`; the original production findings remain operationally open until that candidate is reviewed and explicitly deployed.
+
+- The owner confirmed the existing production D1 database `hussam-infographic-prod`, ID `e4a4107a-afa5-4176-9084-7522eb17ef2d`, and the Worker binding `DB`. This supersedes the earlier observation that the connected account view did not expose a D1 database/binding.
+- A pre-fix branch snapshot was created at `backup/pre-fixes-2026-11-19`.
+- The candidate Worker source now includes server-side sessions/entitlements, image signature validation, bounded password parameters, atomic bootstrap and activation redemption, request-specific trial refunds, atomic login throttling, bounded AI output normalization, and stricter CORS/input handling.
+- GitHub Actions passed: syntax checks, build, 18 tests, local D1 migration, and local Worker integration tests for concurrent bootstrap, concurrent login throttling, guest trial refund, activation-code redemption, and CORS. The run is [44529039738](https://github.com/qaflahschool-wq/hussam-infographic./actions/runs/44529039738).
+- A draft review PR is open: [PR #1](https://github.com/qaflahschool-wq/hussam-infographic./pull/1).
+
+No production secrets, Cloudflare settings, remote D1 data/schema, Worker deployment, or default-branch code have been changed. The D1 migration used by CI runs against the local Wrangler emulator only.
+
 ## Findings
 
 ### P0 — API has no server-side caller authentication
