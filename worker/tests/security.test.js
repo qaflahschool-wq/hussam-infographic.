@@ -10,6 +10,7 @@ import {
   constantTimeEqual,
   hashPassword,
   verifyPassword,
+  releaseGuestTrial,
   getBearerToken
 } from "../src/security.js";
 
@@ -21,6 +22,10 @@ test("CORS allows only an exact configured origin", () => {
   assert.equal(accepted.headers.get("Access-Control-Allow-Origin"), "https://example.test");
   assert.equal(rejected.allowed, false);
   assert.equal(rejected.headers.get("Access-Control-Allow-Origin"), null);
+});
+test("CORS permits the admin bootstrap header during preflight", () => {
+  const result = buildCorsHeaders("https://example.test", parseAllowedOrigins("https://example.test"));
+  assert.ok(result.headers.get("Access-Control-Allow-Headers").includes("X-Admin-Bootstrap"));
 });
 
 test("CORS does not create wildcard access for an absent Origin", () => {
@@ -47,13 +52,25 @@ test("readJsonLimited rejects a declared oversized body", async () => {
   await assert.rejects(() => readJsonLimited(request, 100), { code: "REQUEST_TOO_LARGE" });
 });
 
-test("image validator accepts supported data URLs and rejects malformed or unsupported values", () => {
-  const valid = validateImageDataUrl("data:image/jpeg;base64,aGVsbG8=", 10);
-  assert.equal(valid.mimeType, "image/jpeg");
-  assert.equal(valid.byteLength, 5);
+test("readJsonLimited maps malformed UTF-8 to INVALID_JSON", async () => {
+  const request = new Request("https://worker.test/v1/analyze", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: new Uint8Array([0xff, 0xfe])
+  });
+  await assert.rejects(() => readJsonLimited(request, 100), { code: "INVALID_JSON" });
+});
+
+test("image validator checks real file signatures and MIME agreement", () => {
+  const png = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j0y8AAAAASUVORK5CYII=";
+  const valid = validateImageDataUrl(png, 1024);
+  assert.equal(valid.mimeType, "image/png");
+  assert.ok(valid.byteLength > 8);
+  assert.equal(validateImageDataUrl("data:image/jpeg;base64,aGVsbG8=", 100), null);
+  assert.equal(validateImageDataUrl("data:image/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j0y8AAAAASUVORK5CYII=", 1024), null);
   assert.equal(validateImageDataUrl("data:image/svg+xml;base64,PHN2Zz4=", 100), null);
   assert.equal(validateImageDataUrl("data:image/png;base64,not base64", 100), null);
-  assert.equal(validateImageDataUrl("data:image/png;base64,aGVsbG8=", 2), null);
+  assert.equal(validateImageDataUrl(png, 2), null);
 });
 
 test("opaque tokens are random URL-safe values", () => {
@@ -77,6 +94,12 @@ test("passwords use salted PBKDF2 and verify without storing plaintext", async (
   assert.notEqual(stored.hash, "StrongPassphrase-2026");
   assert.equal(await verifyPassword("StrongPassphrase-2026", stored.salt, stored.hash, stored.iterations), true);
   assert.equal(await verifyPassword("wrong-passphrase", stored.salt, stored.hash, stored.iterations), false);
+});
+
+test("password hashing rejects unsafe PBKDF2 parameters and invalid salt sizes", async () => {
+  await assert.rejects(() => hashPassword("StrongPassphrase-2026", undefined, 99999), /INVALID_PASSWORD_ITERATIONS/);
+  await assert.rejects(() => hashPassword("StrongPassphrase-2026", undefined, 600001), /INVALID_PASSWORD_ITERATIONS/);
+  await assert.rejects(() => hashPassword("StrongPassphrase-2026", btoa("short")), /INVALID_PASSWORD_SALT/);
 });
 
 test("bearer token parser accepts only the documented format", () => {
