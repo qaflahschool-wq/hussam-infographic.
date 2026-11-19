@@ -12,7 +12,8 @@ This directory is the GitHub source workspace for the Cloudflare Worker. It was 
 - `src/index.js`: new versioned API Worker with D1-backed authentication, sessions, trial enforcement, subscription redemption, and Gemini analysis.
 - `src/security.js`: security primitives shared by the Worker.
 - `migrations/0001_initial.sql`: proposed D1 schema for sessions, trials, activation codes, subscriptions, login throttling, and minimal usage telemetry.
-- `scripts/build.mjs`: packages the root `index.html` and runtime configuration into static assets served by the same Worker.
+- `scripts/build.mjs`: creates a local packaging copy of the root `index.html` and runtime config for build verification.
+- The current Worker serves its synchronized embedded `index.html` at `/` and generates `/config.js` directly from Worker environment variables; it does not currently use an `ASSETS` binding.
 - `public/`: generated during `npm run build`; not maintained by hand.
 - `../AUDIT_REPORT_HUSSAM_AI_API.md`: audit findings and remediation plan.
 
@@ -38,22 +39,22 @@ Proposed model:
 - `POST /v1/admin/activation-codes`: create an activation code; admin session required.
 - `POST /v1/analyze`: authenticated lesson analysis; server enforces trial/paid entitlements.
 
-## Required runtime configuration (not configured yet)
-- D1 binding: `DB`
-- Secret: `GEMINI_API_KEY` (already exists in production; do not expose or rotate without approval)
-- Secret: `TURNSTILE_SECRET_KEY` (requires a configured Turnstile widget)
-- Secret: `ADMIN_BOOTSTRAP_TOKEN` (one-time first-admin provisioning; rotate/revoke after setup)
-- Secret: `DEVICE_ID_PEPPER` (high-entropy server-only pepper used to derive device identifiers; required in production)
-- Variable: `ALLOWED_ORIGINS` (exact deployed frontend origin(s), comma-separated)
-- Production must use `ENVIRONMENT=production` and `DEV_AUTH_BYPASS=false`. Turnstile bypass is permitted only when `ENVIRONMENT=development` and `DEV_AUTH_BYPASS=true`.
-- Optional secret/setting: external vision fallback must remain disabled unless the owner explicitly approves the provider and data-sharing disclosure.
+## Runtime configuration
+- D1 binding: `DB` points to the existing production D1 database in the production environment.
+- Secrets already present by name in Cloudflare: `GEMINI_API_KEY`, `TURNSTILE_SECRET_KEY`, `ADMIN_BOOTSTRAP_TOKEN`, and `DEVICE_ID_PEPPER`. Secret values were not read or changed.
+- Non-secret variables are declared in `wrangler.toml`: `ENVIRONMENT`, `DEV_AUTH_BYPASS`, `GEMINI_MODEL`, `ALLOWED_ORIGINS`, `HUSSAM_API_BASE_URL`, and `HUSSAM_TURNSTILE_SITE_KEY`.
+- The public Turnstile site key and API base URL are emitted by the Worker at `/config.js`; the private Turnstile secret remains server-only.
+- Production must use `ENVIRONMENT=production` and `DEV_AUTH_BYPASS=false`. The only bypass condition is explicit local development mode.
+- The current same-origin deployment uses an empty `HUSSAM_API_BASE_URL`, so browser API requests go to the Worker serving the app.
+- External vision fallback remains disabled unless the owner explicitly approves the provider and data-sharing disclosure.
 
-No values are stored in this repository. Configure secrets only after review and explicit production approval.
+The live Cloudflare plain-text variable values were not readable in the settings response. The candidate values above are from the isolated branch's Wrangler configuration; deploying them has not been approved or performed.
 
 ## Read-only production configuration check (2026-11-19)
 - The live Worker has the expected `DB` binding to `hussam-infographic-prod`.
 - The secret binding names `GEMINI_API_KEY`, `TURNSTILE_SECRET_KEY`, `DEVICE_ID_PEPPER`, and `ADMIN_BOOTSTRAP_TOKEN` are present. Secret values were not read.
-- The current Worker settings response did not expose plain-text variable bindings. Before deploying this branch, configure `ENVIRONMENT=production`, `DEV_AUTH_BYPASS=false`, `ALLOWED_ORIGINS` with the exact app origin(s), and `GEMINI_MODEL=gemini-2.5-flash`.
+- The production D1 aggregate check returned zero active administrators, devices, active subscriptions, unused activation codes, and redeemed activation codes. No row-level data was read. First-admin bootstrap and any legacy VIP migration therefore remain launch prerequisites.
+- The live Worker settings response did not expose plain-text variable values. The isolated Wrangler candidate declares production mode, bypass disabled, the Worker origin allow-list, Gemini model, and public frontend runtime config.
 - `compatibility_date` in this branch matches the current Worker setting (`2026-11-16`).
 
 ## D1 migration
