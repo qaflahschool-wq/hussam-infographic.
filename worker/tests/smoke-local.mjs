@@ -81,6 +81,18 @@ const admin = await call("/v1/auth/admin/login", {
 const adminToken = admin.data?.token;
 if (!adminToken) throw new Error("Admin session token missing");
 
+const throttledAttempts = await Promise.all(Array.from({ length: 10 }, () =>
+  call("/v1/auth/admin/login", {
+    method: "POST",
+    body: { username: "missing-user@example.test", password: "Wrong-Password-For-Rate-Limit-Test" }
+  })
+));
+const unauthorizedCount = throttledAttempts.filter((item) => item.status === 401).length;
+const limitedCount = throttledAttempts.filter((item) => item.status === 429).length;
+if (unauthorizedCount !== 8 || limitedCount !== 2) {
+  throw new Error("Concurrent login throttling was not atomic: expected 8 unauthorized and 2 rate-limited attempts");
+}
+
 const generated = await call("/v1/admin/activation-codes", {
   method: "POST",
   token: adminToken,
