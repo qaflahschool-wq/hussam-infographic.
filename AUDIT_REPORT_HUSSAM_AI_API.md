@@ -100,3 +100,15 @@ Recommendation: maintain Worker source in GitHub, add Wrangler configuration wit
 - Cloudflare settings changed: no.
 - Production Worker code changed: no.
 - Production deployment performed: no.
+
+
+## Final readiness review — 2026-11-19
+- Owner confirmation: there are currently no subscribers. No legacy VIP migration is required for the initial launch, subject to a final re-check immediately before release.
+- Frontend integration: decoded the Worker `APP_HTML_BASE64` snapshot and compared it with the branch's root `index.html`; both are exactly 264,807 characters and byte-for-byte identical. The Worker injects its public `/config.js` runtime configuration before the app's inline scripts execute.
+- Frontend API contract: the client obtains a server-issued guest/admin session, refreshes entitlement from `/v1/auth/session`, and sends analysis requests to `/v1/analyze` with a bearer token. The Gemini provider secret is read by the Worker; it is not used as a browser credential.
+- Packaging cleanup: removed an invalid redundant `worker/security.js` ZIP input; the complete `worker/src/` directory already includes `src/security.js`.
+- Added a regression test that fails if the embedded frontend snapshot drifts from root `index.html` or if runtime configuration injection is removed.
+- Latest pre-cleanup CI run `44532136658` passed all 18 tests, local D1 migration, local Worker smoke tests, and deployment ZIP packaging. A new CI run is required to validate the final packaging/test changes.
+- Production boundary: no Worker deployment, production setting change, secret rotation, D1 write, or remote migration has been performed. Secret values were not accessed.
+- Remaining release gates: verify production plain-text variables (`ENVIRONMENT=production`, `DEV_AUTH_BYPASS=false`, `ALLOWED_ORIGINS`, `GEMINI_MODEL`); create and verify a restorable production D1 backup before any schema/data change; confirm the live app hostname matches Turnstile and allowed origins; then run approved post-deployment acceptance tests.
+- This candidate is not yet approved for production release. Local CI success is not a production end-to-end test.
