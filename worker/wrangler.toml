@@ -8,6 +8,8 @@ ENVIRONMENT = "development"
 DEV_AUTH_BYPASS = "true"
 ALLOWED_ORIGINS = "http://localhost:8787,http://127.0.0.1:8787"
 GEMINI_MODEL = "gemini-2.5-flash"
+HUSSAM_API_BASE_URL = ""
+HUSSAM_TURNSTILE_SITE_KEY = "0x4AAAAAAGGB8qiUN5rEEU35"
 
 [[d1_databases]]
 binding = "DB"
@@ -23,6 +25,8 @@ workers_dev = true
 ENVIRONMENT = "production"
 DEV_AUTH_BYPASS = "false"
 GEMINI_MODEL = "gemini-2.5-flash"
+HUSSAM_API_BASE_URL = ""
+HUSSAM_TURNSTILE_SITE_KEY = "0x4AAAAAAGGB8qiUN5rEEU35"
 ALLOWED_ORIGINS = "https://hussam-ai-api.alshakliamohammed04.workers.dev"
 
 [[env.production.d1_databases]]
