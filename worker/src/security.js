@@ -1,6 +1,6 @@
 /**
  * Security primitives for HUSSAM AI API.
- * Isolated implementation module; production Worker entrypoint is not wired to it yet.
+ * Security primitives imported by the Worker entrypoint.
  */
 
 const encoder = new TextEncoder();
@@ -96,7 +96,7 @@ export async function readJsonLimited(request, maxBytes) {
 
 export function validateImageDataUrl(value, maxBytes) {
   if (typeof value !== "string" || !Number.isSafeInteger(maxBytes) || maxBytes <= 0) return null;
-  const match = /^data:(image\\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]+={0,2})$/.exec(value);
+  const match = /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/]+={0,2})$/.exec(value);
   if (!match || match[2].length % 4 !== 0) return null;
   let binary;
   try {
