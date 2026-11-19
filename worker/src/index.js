@@ -46,7 +46,7 @@ function originAllowed(request, allowed) {
 
 async function parseBody(request, limit = MAX_BODY_BYTES) {
   const contentType = (request.headers.get("Content-Type") || "").toLowerCase();
-  if (!contentType.startsWith("application/json")) {
+  if (!/^application\\/json(?:\\s*;|$)/.test(contentType)) {
     const e = new Error("UNSUPPORTED_CONTENT_TYPE");
     e.code = "UNSUPPORTED_CONTENT_TYPE";
     throw e;
@@ -59,7 +59,7 @@ function validateDeviceId(value) {
 }
 
 async function verifyTurnstile(token, request, env) {
-  if (env.DEV_AUTH_BYPASS === "true" && env.ENVIRONMENT !== "production") return true;
+  if (env.ENVIRONMENT === "development" && env.DEV_AUTH_BYPASS === "true") return true;
   if (!env.TURNSTILE_SECRET_KEY || typeof token !== "string" || token.length < 10) return false;
   const form = new URLSearchParams();
   form.set("secret", env.TURNSTILE_SECRET_KEY);
@@ -86,7 +86,7 @@ async function verifyTurnstile(token, request, env) {
 
 async function getOrCreateDevice(db, clientDeviceId, env) {
   if (!validateDeviceId(clientDeviceId)) return null;
-  const pepper = env.DEVICE_ID_PEPPER || (env.DEV_AUTH_BYPASS === "true" ? "local-development-only" : "");
+  const pepper = env.DEVICE_ID_PEPPER || (env.ENVIRONMENT === "development" && env.DEV_AUTH_BYPASS === "true" ? "local-development-only" : "");
   if (!pepper) throw new Error("DEVICE_ID_PEPPER_NOT_CONFIGURED");
   const deviceKeyHash = await sha256Hex(pepper + ":" + clientDeviceId);
   const now = Date.now();
@@ -103,6 +103,9 @@ async function getOrCreateDevice(db, clientDeviceId, env) {
 }
 
 async function reserveAuthAttempt(db, identityHash, now = Date.now()) {
+  await db.prepare(
+    "DELETE FROM auth_attempts WHERE created_at < ?"
+  ).bind(now - 24 * 60 * 60 * 1000).run();
   const id = crypto.randomUUID();
   const row = await db.prepare(
     "INSERT INTO auth_attempts (id, identity_hash, succeeded, created_at) " +
