@@ -102,6 +102,36 @@ test("password hashing rejects unsafe PBKDF2 parameters and invalid salt sizes",
   await assert.rejects(() => hashPassword("StrongPassphrase-2026", btoa("short")), /INVALID_PASSWORD_SALT/);
 });
 
+test("guest trial refund is idempotent for one reservation ID", async () => {
+  let trialUsed = 1;
+  let reservationState = "reserved";
+  const db = {
+    prepare(sql) {
+      return {
+        sql,
+        bind(...params) {
+          return { sql, params };
+        }
+      };
+    },
+    async batch(statements) {
+      assert.equal(statements.length, 2);
+      assert.match(statements[0].sql, /outcome = 'reserved'/);
+      assert.match(statements[1].sql, /outcome = 'reserved'/);
+      if (reservationState !== "reserved" || trialUsed < 1) {
+        return [{ meta: { changes: 0 } }, { meta: { changes: 0 } }];
+      }
+      trialUsed -= 1;
+      reservationState = "released";
+      return [{ meta: { changes: 1 } }, { meta: { changes: 1 } }];
+    }
+  };
+  assert.equal(await releaseGuestTrial(db, "device-1", "usage-1"), true);
+  assert.equal(trialUsed, 0);
+  assert.equal(await releaseGuestTrial(db, "device-1", "usage-1"), false);
+  assert.equal(trialUsed, 0);
+});
+
 test("bearer token parser accepts only the documented format", () => {
   const token = "A".repeat(43);
   const request = new Request("https://worker.test", { headers: { Authorization: `Bearer ${token}` } });
