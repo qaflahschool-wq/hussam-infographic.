@@ -479,7 +479,9 @@ const APP_CONFIG_JS = 'window.HUSSAM_CONFIG = Object.freeze({apiBaseUrl:"",turns
 function getAppHtml() {
   const binary = atob(APP_HTML_BASE64);
   const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
-  return new TextDecoder().decode(bytes);
+  const html = new TextDecoder().decode(bytes);
+  // Load the public runtime configuration before the app's inline scripts execute.
+  return html.replace("</head>", '  <script src="/config.js"></script>\\n</head>');
 }
 
 export default {
