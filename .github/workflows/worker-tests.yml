@@ -25,12 +25,12 @@ jobs:
       - run: npm run build
       - run: npm test
       - name: Apply D1 migrations to the local emulator
-        run: npx --yes wrangler@4 d1 migrations apply hussam-infographic-dev --local
+        run: npx --yes wrangler@4.165.0 d1 migrations apply hussam-infographic-dev --local
       - name: Configure local-only bootstrap secret
         run: printf 'ADMIN_BOOTSTRAP_TOKEN=ci-bootstrap-token-which-is-long-enough-2026\n' > .dev.vars
       - name: Start Worker and run local integration smoke tests
         run: |
-          npx --yes wrangler@4 dev --ip 127.0.0.1 --port 8787 > /tmp/hussam-wrangler.log 2>&1 &
+          npx --yes wrangler@4.165.0 dev --ip 127.0.0.1 --port 8787 > /tmp/hussam-wrangler.log 2>&1 &
           worker_pid=$!
           trap 'kill "$worker_pid" 2>/dev/null || true' EXIT
           ready=0
