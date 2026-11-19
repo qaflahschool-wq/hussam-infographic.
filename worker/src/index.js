@@ -481,7 +481,7 @@ function getAppHtml() {
   const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
   const html = new TextDecoder().decode(bytes);
   // Load the public runtime configuration before the app's inline scripts execute.
-  return html.replace("</head>", '  <script src="/config.js"></script>\\n</head>');
+  return html.replace("</head>", '  <script src="/config.js"></script>' + String.fromCharCode(10) + '</head>');
 }
 
 export default {
