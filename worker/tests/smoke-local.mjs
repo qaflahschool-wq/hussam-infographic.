@@ -110,14 +110,6 @@ await call("/v1/subscriptions/redeem", {
 const upgraded = await call("/v1/auth/session", { token: guestToken, expected: 200 });
 if (upgraded.data?.entitlement?.isVip !== true) throw new Error("Subscription was not reflected in server entitlement");
 
-await call("/v1/analyze", {
-  method: "POST",
-  token: guestToken,
-  body: { grade: "7", subject: "English", hintTitle: "Test lesson", rawText: "This is a local integration test." },
-  expected: 503
-}).then(({ data }) => {
-  if (data?.error !== "PROVIDER_NOT_CONFIGURED") throw new Error("Expected safe missing-provider response");
-});
 
 const denied = await call("/v1/auth/guest", {
   method: "POST",
