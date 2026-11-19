@@ -411,6 +411,9 @@ async function handleAnalyze(request, env, session, id) {
   const body = await parseBody(request);
   const input = validateAnalysisInput(body);
   if (input.error) return { payload: safeError(input.error, 400, id), status: 400 };
+  const startedAt = Date.now();
+  const usageId = crypto.randomUUID();
+  let trialReserved = false;
   if (session.session_type === "guest") {
     const entitlement = await getEntitlement(env.DB, session);
     if (!entitlement) return { payload: safeError("DEVICE_NOT_ALLOWED", 403, id), status: 403 };
@@ -422,25 +425,40 @@ async function handleAnalyze(request, env, session, id) {
     if (!entitlement.isVip) {
       const reservation = await reserveGuestTrial(env.DB, session.device_id, MAX_TRIALS, now);
       if (!reservation.allowed) return { payload: { ...safeError("TRIAL_LIMIT_REACHED", 402, id), entitlement }, status: 402 };
+      try {
+        await env.DB.prepare(
+          "INSERT INTO usage_events (id, session_id, device_id, request_id, outcome, created_at) VALUES (?, ?, ?, ?, 'reserved', ?)"
+        ).bind(usageId, session.id, session.device_id, id, startedAt).run();
+        trialReserved = true;
+      } catch (error) {
+        await env.DB.prepare(
+          "UPDATE devices SET trial_used = CASE WHEN trial_used > 0 THEN trial_used - 1 ELSE 0 END WHERE id = ?"
+        ).bind(session.device_id).run().catch(() => {});
+        throw error;
+      }
     }
   }
-  const startedAt = Date.now();
-  const usageId = crypto.randomUUID();
   try {
     const result = await callGemini(input, env);
-    await env.DB.prepare(
-      "INSERT INTO usage_events (id, session_id, device_id, request_id, outcome, provider, model, duration_ms, created_at, completed_at) VALUES (?, ?, ?, ?, 'succeeded', 'gemini', ?, ?, ?, ?)"
-    ).bind(usageId, session.id, session.device_id, id, result.model, Date.now() - startedAt, startedAt, Date.now()).run();
+    if (trialReserved) {
+      await env.DB.prepare(
+        "UPDATE usage_events SET outcome = 'succeeded', provider = 'gemini', model = ?, duration_ms = ?, completed_at = ? WHERE id = ? AND outcome = 'reserved'"
+      ).bind(result.model, Date.now() - startedAt, Date.now(), usageId).run();
+    } else {
+      await env.DB.prepare(
+        "INSERT INTO usage_events (id, session_id, device_id, request_id, outcome, provider, model, duration_ms, created_at, completed_at) VALUES (?, ?, ?, ?, 'succeeded', 'gemini', ?, ?, ?, ?)"
+      ).bind(usageId, session.id, session.device_id, id, result.model, Date.now() - startedAt, startedAt, Date.now()).run();
+    }
     const entitlement = session.session_type === "guest" ? await getEntitlement(env.DB, session) : { role: "admin", isVip: true };
     return { payload: { ...result.lesson, entitlement, requestId: id }, status: 200 };
   } catch (error) {
-    if (session.session_type === "guest") {
-      const current = await getEntitlement(env.DB, session);
-      if (current && !current.isVip) await releaseGuestTrial(env.DB, session.device_id);
+    if (trialReserved) {
+      await releaseGuestTrial(env.DB, session.device_id, usageId).catch(() => false);
+    } else {
+      await env.DB.prepare(
+        "INSERT INTO usage_events (id, session_id, device_id, request_id, outcome, provider, model, duration_ms, created_at, completed_at) VALUES (?, ?, ?, ?, 'failed', 'gemini', NULL, ?, ?, ?)"
+      ).bind(usageId, session.id, session.device_id, id, Date.now() - startedAt, startedAt, Date.now()).run().catch(() => {});
     }
-    await env.DB.prepare(
-      "INSERT INTO usage_events (id, session_id, device_id, request_id, outcome, provider, model, duration_ms, created_at, completed_at) VALUES (?, ?, ?, ?, 'failed', 'gemini', NULL, ?, ?, ?)"
-    ).bind(usageId, session.id, session.device_id, id, Date.now() - startedAt, startedAt, Date.now()).run().catch(() => {});
     const code = error?.message === "PROVIDER_NOT_CONFIGURED" ? "PROVIDER_NOT_CONFIGURED" :
       error?.message === "INVALID_AI_OUTPUT" ? "INVALID_AI_OUTPUT" :
       String(error?.message || "").startsWith("UPSTREAM_") ? "AI_PROVIDER_ERROR" :
