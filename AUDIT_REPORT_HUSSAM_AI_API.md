@@ -102,6 +102,16 @@ Recommendation: maintain Worker source in GitHub, add Wrangler configuration wit
 - Production deployment performed: no.
 
 
+## Final readiness review update — 2026-11-19
+- Production D1 aggregate-only query returned `active_admins=0`, `devices=0`, `active_subscriptions=0`, `unused_activation_codes=0`, and `redeemed_activation_codes=0`. No row-level records were read or changed. First-admin bootstrap is still required.
+- The owner confirmed there are currently no subscribers; this means the first launch does not require a VIP migration if that remains true at the release checkpoint.
+- The candidate runtime config was hardened: `/config.js` now derives `apiBaseUrl` and the public Turnstile site key from Worker environment variables. Wrangler declares the same-origin API default and public site key for development and production.
+- Added frontend contract checks for server-owned entitlements, API route wiring, no direct Gemini browser endpoint, and exact root/embedded HTML synchronization.
+- The first frontend-contract CI attempt caught a stale test that expected a hard-coded config string. The test was corrected to assert the new environment-driven contract.
+- Latest code/test CI passed at commit `1cd52e0b965635f47163757708474007bc7a8939`: 23/23 tests, syntax checks, build, local D1 migration, local Worker smoke tests, and deployable ZIP packaging. [Run details](https://github.com/qaflahschool-wq/hussam-infographic./actions/runs/44533184030).
+- The draft PR remains open and mergeable, but is intentionally not merged. No production deployment, remote D1 migration, secret mutation, Cloudflare setting update, or D1 write was performed.
+- Remaining gates are a verified restorable production backup, a check that the actual public hostname matches Turnstile and `ALLOWED_ORIGINS`, and post-deployment live-browser acceptance tests. A production backup and live end-to-end tests have not yet been performed.
+
 ## Final readiness review — 2026-11-19
 - Owner confirmation: there are currently no subscribers. No legacy VIP migration is required for the initial launch, subject to a final re-check immediately before release.
 - Frontend integration: decoded the Worker `APP_HTML_BASE64` snapshot and compared it with the branch's root `index.html`; both are exactly 264,807 characters and byte-for-byte identical. The Worker injects its public `/config.js` runtime configuration before the app's inline scripts execute.
