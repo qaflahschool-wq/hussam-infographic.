@@ -37,16 +37,45 @@ if (!guestToken) throw new Error("Guest session token missing");
 const guestSession = await call("/v1/auth/session", { token: guestToken, expected: 200 });
 if (guestSession.data?.entitlement?.role !== "guest") throw new Error("Guest entitlement missing");
 
-await call("/v1/auth/admin/bootstrap", {
+await call("/v1/analyze", {
   method: "POST",
-  headers: { "X-Admin-Bootstrap": bootstrapToken },
-  body: { username: "owner@example.test", password },
-  expected: 201
+  token: guestToken,
+  body: { grade: "7", subject: "English", hintTitle: "Trial refund test", rawText: "The provider is intentionally not configured in CI." },
+  expected: 503
+}).then(({ data }) => {
+  if (data?.error !== "PROVIDER_NOT_CONFIGURED") throw new Error("Expected safe missing-provider response for free trial");
 });
+const afterRefund = await call("/v1/auth/session", { token: guestToken, expected: 200 });
+if (afterRefund.data?.entitlement?.trialUsed !== 0) {
+  throw new Error("Failed provider request did not refund its exact guest trial reservation");
+}
+
+const bootstrapAttempts = await Promise.all([
+  call("/v1/auth/admin/bootstrap", {
+    method: "POST",
+    headers: { "X-Admin-Bootstrap": bootstrapToken },
+    body: { username: "owner@example.test", password },
+    expected: undefined
+  }),
+  call("/v1/auth/admin/bootstrap", {
+    method: "POST",
+    headers: { "X-Admin-Bootstrap": bootstrapToken },
+    body: { username: "second-owner@example.test", password },
+    expected: undefined
+  })
+]);
+const createdAdmin = bootstrapAttempts.find((item) => item.status === 201);
+const rejectedBootstrap = bootstrapAttempts.find((item) => item.status === 409);
+if (!createdAdmin || !rejectedBootstrap) {
+  throw new Error("Concurrent bootstrap did not create exactly one administrator");
+}
+const adminUsername = createdAdmin.data?.created ? (
+  bootstrapAttempts[0].status === 201 ? "owner@example.test" : "second-owner@example.test"
+) : "";
 
 const admin = await call("/v1/auth/admin/login", {
   method: "POST",
-  body: { username: "owner@example.test", password },
+  body: { username: adminUsername, password },
   expected: 200
 });
 const adminToken = admin.data?.token;
